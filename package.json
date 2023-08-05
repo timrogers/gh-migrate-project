@@ -1,0 +1,44 @@
+{
+  "name": "gh-migrate-project",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Migrate GitHub projects (https://docs.github.com/en/issues/planning-and-tracking-with-projects) between GitHub products, organizations and users",
+  "homepage": "https://github.com/timrogers/gh-migrate-project",
+  "scripts": {
+    "package": "node build.js && npx pkg dist/migrate-project.cjs --out-path bin",
+    "lint": "eslint . --ext .ts",
+    "lint-and-fix": "eslint . --ext .ts --fix",
+    "dev": "npx ts-node --esm src/index.ts"
+  },
+  "author": "Tim Rogers <me@timrogers.co.uk>",
+  "license": "MIT",
+  "dependencies": {
+    "@fast-csv/parse": "^4.3.6",
+    "@octokit/graphql": "^7.0.1",
+    "@octokit/plugin-paginate-graphql": "^4.0.0",
+    "boxen": "^7.1.1",
+    "chalk": "^5.3.0",
+    "commander": "^11.0.0",
+    "octokit": "^3.1.0",
+    "prompt-sync": "^4.2.0",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "@types/prompt-sync": "^4.2.0",
+    "@typescript-eslint/eslint-plugin": "^5.5.2",
+    "@typescript-eslint/parser": "^5.5.2",
+    "esbuild": "^0.18.18",
+    "eslint": "^8.46.0",
+    "eslint-config-prettier": "^8.9.0",
+    "eslint-config-standard-with-typescript": "^37.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "pkg": "^5.8.1",
+    "prettier": "^3.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/timrogers/gh-migrate-project.git"
+  }
+}
