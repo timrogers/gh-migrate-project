@@ -24,7 +24,7 @@ jobs:
       - name: Rename Windows binary to conform to GitHub CLI extension rules
         run: mv bin/migrate-project-win.exe bin/gh-migrate-project-windows-amd64.exe
       - name: Rename Linux binary to conform to GitHub CLI extension rules
-        run: mv bin/bundle-linux bin/gh-migrate-project-linux-amd64
+        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
