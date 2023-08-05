@@ -349,8 +349,8 @@ command
   .description('Export a GitHub project')
   .option(
     '--access-token <access_token>',
-    'The access token used to interact with the GitHub API. This can also be set using the GITHUB_TOKEN environment variable.',
-    process.env.GITHUB_TOKEN,
+    'The access token used to interact with the GitHub API. This can also be set using the EXPORT_GITHUB_TOKEN environment variable.',
+    process.env.EXPORT_GITHUB_TOKEN,
   )
   .option(
     '--base-url <base_url>',
@@ -398,7 +398,7 @@ command
 
       if (!accessToken) {
         throw new Error(
-          'You must specify a GitHub access token using the --access-token argument or GITHUB_TOKEN environment variable.',
+          'You must specify a GitHub access token using the --access-token argument or EXPORT_GITHUB_TOKEN environment variable.',
         );
       }
 
