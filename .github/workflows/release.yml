@@ -15,8 +15,10 @@ jobs:
         uses: actions/setup-node@v3.7.0
         with:
           node-version: 18.x
-      - name: Install dependencies and build
+      - name: Install dependencies
         run: npm ci
+      - name: Generate binaries for macOS, Linux and Windows
+        run: npm run package
       - name: Rename macOS binary to conform to GitHub CLI extension rules
         run: mv bin/migrate-project-macos bin/gh-migrate-project-darwin-amd64
       - name: Rename Windows binary to conform to GitHub CLI extension rules
