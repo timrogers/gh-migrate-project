@@ -27,7 +27,7 @@
     "@types/prompt-sync": "^4.2.0",
     "@typescript-eslint/eslint-plugin": "^5.5.2",
     "@typescript-eslint/parser": "^5.5.2",
-    "esbuild": "^0.18.18",
+    "esbuild": "^0.18.19",
     "eslint": "^8.46.0",
     "eslint-config-prettier": "^8.9.0",
     "eslint-config-standard-with-typescript": "^37.0.0",
