@@ -630,7 +630,6 @@ const addDraftIssueToProject = async ({
 
 const createProjectItemReferencingDraftIssue = async ({
   octokit,
-  logger,
   sourceProjectItem,
   targetProjectId,
 }: {
