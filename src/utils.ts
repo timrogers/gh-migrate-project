@@ -24,7 +24,7 @@ export const logRateLimitInformation = async (
   }
 };
 
-export const presentError = (e: any): string => {
+export const presentError = (e: unknown): string => {
   if (typeof e === 'string') return e;
   if (e instanceof RequestError) return e.message;
   if (e instanceof GraphqlResponseError) return e.message;
@@ -36,6 +36,6 @@ const actionErrorHandler = (error: Error): void => {
   process.exit(1);
 };
 
-export const actionRunner = (fn: (...args: any[]) => Promise<any>) => {
-  return async (...args: any[]) => await fn(...args).catch(actionErrorHandler);
+export const actionRunner = (fn: (...args: unknown[]) => Promise<unknown>) => {
+  return async (...args: unknown[]) => await fn(...args).catch(actionErrorHandler);
 };
