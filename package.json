@@ -24,7 +24,7 @@
     "winston": "^3.10.0"
   },
   "devDependencies": {
-    "@types/prompt-sync": "^4.2.0",
+    "@types/prompt-sync": "^4.2.1",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
     "esbuild": "^0.19.3",
