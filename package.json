@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "@fast-csv/parse": "^4.3.6",
-    "@octokit/graphql": "^7.0.1",
+    "@octokit/graphql": "^7.0.2",
     "@octokit/plugin-paginate-graphql": "^4.0.0",
     "boxen": "^7.1.1",
     "chalk": "^5.3.0",
