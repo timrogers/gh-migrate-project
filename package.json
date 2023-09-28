@@ -19,7 +19,7 @@
     "boxen": "^7.1.1",
     "chalk": "^5.3.0",
     "commander": "^11.0.0",
-    "octokit": "^3.1.0",
+    "octokit": "^3.1.1",
     "prompt-sync": "^4.2.0",
     "winston": "^3.10.0"
   },
