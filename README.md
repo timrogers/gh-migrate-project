@@ -58,6 +58,8 @@ gh migrate-project export \
     --project-number 1337 \
     # OPTIONAL: The base URL of the GitHub API, if you're migrating from a migration source other than GitHub.com.
     --base-url https://github.acme.inc/api/v3
+    # OPTIONAL: The URL of an HTTP(S) proxy to use for requests to the GitHub API (e.g. `http://localhost:3128`). This can also be set using the EXPORT_PROXY_URL environment variable.
+    --proxy-url https://10.0.0.1:3128
 ```
 
 When the export finishes, you'll have two files written to your current directory:
@@ -109,6 +111,8 @@ gh migrate-project import \
     --repository-mappings-path repository-mappings.csv \
     # OPTIONAL: The base URL of the GitHub API, if you're migrating to a migration target other than GitHub.com.
     --base-url https://github.acme.inc/api/v3
+    # OPTIONAL: The URL of an HTTP(S) proxy to use for requests to the GitHub API (e.g. `http://localhost:3128`). This can also be set using the IMPORT_PROXY_URL environment variable.
+    --proxy-url https://10.0.0.1:3128
 ```
 
 Near the start of the import, the tool will ask you to manually set up your options for the "Status" field. It will explain exactly what to do, and will validate that you've correctly copied the options from your migration source.

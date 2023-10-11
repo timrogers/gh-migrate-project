@@ -25,6 +25,7 @@ interface Arguments {
   projectOwner: string;
   projectOwnerType: ProjectOwnerType;
   projectNumber: number;
+  proxyUrl: string | undefined;
 }
 
 const getGlobalIdForProject = async ({
@@ -384,6 +385,11 @@ command
     'The number of the project to export',
     (value) => parseInt(value),
   )
+  .option(
+    '--proxy-url <proxy_url>',
+    'The URL of an HTTP(S) proxy to use for requests to the GitHub API (e.g. `http://localhost:3128`). This can also be set using the EXPORT_PROXY_URL environment variable.',
+    process.env.EXPORT_PROXY_URL,
+  )
   .action(
     actionRunner(async (opts: Arguments) => {
       const {
@@ -394,6 +400,7 @@ command
         projectOwner,
         projectOwnerType,
         projectNumber,
+        proxyUrl,
       } = opts;
 
       if (!accessToken) {
@@ -415,7 +422,7 @@ command
       }
 
       const logger = createLogger(true);
-      const octokit = createOctokit(accessToken, baseUrl);
+      const octokit = createOctokit(accessToken, baseUrl, proxyUrl);
 
       void logRateLimitInformation(logger, octokit);
       setInterval(() => {
