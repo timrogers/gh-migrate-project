@@ -30,7 +30,7 @@
     "esbuild": "^0.19.4",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
     "pkg": "^5.8.1",
     "prettier": "^3.0.3",
     "ts-node": "^10.9.1",
