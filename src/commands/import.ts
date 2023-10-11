@@ -33,6 +33,7 @@ interface Arguments {
   repositoryMappingsPath: string;
   projectOwner: string;
   projectOwnerType: ProjectOwnerType;
+  proxyUrl: string | undefined;
 }
 
 const readRepositoryMappings = async (
@@ -693,6 +694,11 @@ command
     '--project-owner <project_owner>',
     'The organization or user which should own the imported project',
   )
+  .option(
+    '--proxy-url <proxy_url>',
+    'The URL of an HTTP(S) proxy to use for requests to the GitHub API (e.g. `http://localhost:3128`). This can also be set using the IMPORT_PROXY_URL environment variable.',
+    process.env.IMPORT_PROXY_URL,
+  )
   .addOption(
     new Option(
       '--project-owner-type <project_owner_type>',
@@ -710,6 +716,7 @@ command
         repositoryMappingsPath,
         projectOwner,
         projectOwnerType,
+        proxyUrl,
       } = opts;
 
       if (!accessToken) {
@@ -731,7 +738,7 @@ command
       }
 
       const logger = createLogger(true);
-      const octokit = createOctokit(accessToken, baseUrl);
+      const octokit = createOctokit(accessToken, baseUrl, proxyUrl);
 
       void logRateLimitInformation(logger, octokit);
       setInterval(() => {

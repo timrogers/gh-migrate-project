@@ -16,6 +16,13 @@
   "rules": {
     "prettier/prettier": "error",
     "@typescript-eslint/strict-boolean-expressions": "off",
-    "@typescript-eslint/no-unnecessary-type-assertion": "off"
+    "@typescript-eslint/no-unnecessary-type-assertion": "off",
+    "@typescript-eslint/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description",
+        "minimumDescriptionLength": 3
+      }
+    ]
   }
 }

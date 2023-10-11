@@ -36,6 +36,8 @@ const actionErrorHandler = (error: Error): void => {
   process.exit(1);
 };
 
-export const actionRunner = (fn: (...args: unknown[]) => Promise<unknown>) => {
-  return async (...args: unknown[]) => await fn(...args).catch(actionErrorHandler);
+// @ts-expect-error - This is a hack to make the actionRunner function work
+export const actionRunner = (fn: (...args) => Promise<void>) => {
+  //@ts-expect-error - This is a hack to make the actionRunner function work
+  return async (...args) => await fn(...args).catch(actionErrorHandler);
 };
