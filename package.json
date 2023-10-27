@@ -21,7 +21,7 @@
     "commander": "^11.1.0",
     "octokit": "^3.1.1",
     "prompt-sync": "^4.2.0",
-    "undici": "^5.26.4",
+    "undici": "^5.27.0",
     "winston": "^3.11.0"
   },
   "devDependencies": {
