@@ -72,14 +72,6 @@ export interface Project {
     }>;
     totalCount: number;
   };
-  workflows: {
-    nodes: {
-      enabled: boolean;
-      name: string;
-      number: number;
-    };
-    totalCount: number;
-  };
   views: {
     nodes: Array<{
       filter: string;
