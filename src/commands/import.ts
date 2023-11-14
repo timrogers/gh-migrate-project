@@ -7,7 +7,7 @@ import prompt from 'prompt-sync';
 
 import { actionRunner, logRateLimitInformation } from '../utils.js';
 import VERSION from '../version.js';
-import { createLogger } from '../logger.js';
+import { Logger, createLogger } from '../logger.js';
 import { createOctokit } from '../octokit.js';
 import {
   type Project,
@@ -16,7 +16,6 @@ import {
 } from '../graphql-types.js';
 import { GraphqlResponseError } from '@octokit/graphql';
 import { getReferencedRepositories } from '../project-items.js';
-import type winston from 'winston';
 
 const command = new commander.Command();
 const { Option } = commander;
@@ -34,6 +33,7 @@ interface Arguments {
   projectOwner: string;
   projectOwnerType: ProjectOwnerType;
   proxyUrl: string | undefined;
+  verbose: boolean;
 }
 
 const readRepositoryMappings = async (
@@ -553,7 +553,7 @@ const createProjectItemReferencingIssueOrPullRequest = async ({
   sourceProjectItem: ProjectItem;
   octokit: Octokit;
   repositoryMappings: Map<string, string>;
-  logger: winston.Logger;
+  logger: Logger;
   targetProjectId: string;
 }): Promise<string | undefined> => {
   const sourceNameWithOwner = sourceProjectItem.content.repository.nameWithOwner;
@@ -635,7 +635,7 @@ const createProjectItemReferencingDraftIssue = async ({
   targetProjectId,
 }: {
   octokit: Octokit;
-  logger: winston.Logger;
+  logger: Logger;
   sourceProjectItem: ProjectItem;
   targetProjectId: string;
 }): Promise<string | undefined> => {
@@ -653,7 +653,7 @@ const createProjectItem = async (opts: {
   sourceProjectItem: ProjectItem;
   octokit: Octokit;
   repositoryMappings: Map<string, string>;
-  logger: winston.Logger;
+  logger: Logger;
   targetProjectId: string;
 }): Promise<string | undefined> => {
   switch (opts.sourceProjectItem.content.__typename) {
@@ -699,6 +699,7 @@ command
     'The URL of an HTTP(S) proxy to use for requests to the GitHub API (e.g. `http://localhost:3128`). This can also be set using the IMPORT_PROXY_URL environment variable.',
     process.env.IMPORT_PROXY_URL,
   )
+  .option('--verbose', 'Emit detailed, verbose logs', false)
   .addOption(
     new Option(
       '--project-owner-type <project_owner_type>',
@@ -713,10 +714,11 @@ command
         accessToken,
         baseUrl,
         inputPath,
-        repositoryMappingsPath,
         projectOwner,
         projectOwnerType,
         proxyUrl,
+        repositoryMappingsPath,
+        verbose,
       } = opts;
 
       if (!accessToken) {
@@ -737,8 +739,8 @@ command
         );
       }
 
-      const logger = createLogger(true);
-      const octokit = createOctokit(accessToken, baseUrl, proxyUrl);
+      const logger = createLogger(verbose);
+      const octokit = createOctokit(accessToken, baseUrl, proxyUrl, logger);
 
       const shouldCheckRateLimitAgain = await logRateLimitInformation(logger, octokit);
 

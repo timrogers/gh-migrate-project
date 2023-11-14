@@ -26,6 +26,7 @@ interface Arguments {
   projectOwnerType: ProjectOwnerType;
   projectNumber: number;
   proxyUrl: string | undefined;
+  verbose: boolean;
 }
 
 const getGlobalIdForProject = async ({
@@ -390,17 +391,19 @@ command
     'The URL of an HTTP(S) proxy to use for requests to the GitHub API (e.g. `http://localhost:3128`). This can also be set using the EXPORT_PROXY_URL environment variable.',
     process.env.EXPORT_PROXY_URL,
   )
+  .option('--verbose', 'Emit detailed, verbose logs', false)
   .action(
     actionRunner(async (opts: Arguments) => {
       const {
         accessToken,
         baseUrl,
+        projectNumber,
         projectOutputPath,
-        repositoryMappingsOutputPath,
         projectOwner,
         projectOwnerType,
-        projectNumber,
         proxyUrl,
+        repositoryMappingsOutputPath,
+        verbose,
       } = opts;
 
       if (!accessToken) {
@@ -421,8 +424,8 @@ command
         );
       }
 
-      const logger = createLogger(true);
-      const octokit = createOctokit(accessToken, baseUrl, proxyUrl);
+      const logger = createLogger(verbose);
+      const octokit = createOctokit(accessToken, baseUrl, proxyUrl, logger);
 
       const shouldCheckRateLimitAgain = await logRateLimitInformation(logger, octokit);
 
