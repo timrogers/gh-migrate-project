@@ -1,6 +1,7 @@
 import * as commander from 'commander';
 import { existsSync, writeFileSync } from 'fs';
 import { type Octokit } from 'octokit';
+import semver from 'semver';
 
 import { actionRunner, logRateLimitInformation } from '../utils.js';
 import VERSION from '../version.js';
@@ -8,6 +9,10 @@ import { createLogger } from '../logger.js';
 import { createOctokit } from '../octokit.js';
 import { type Project, type ProjectItem } from '../graphql-types.js';
 import { getReferencedRepositories } from '../project-items.js';
+import {
+  MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION,
+  getGitHubProductInformation,
+} from '../github-products.js';
 
 const command = new commander.Command();
 const { Option } = commander;
@@ -224,10 +229,16 @@ const getProjectItems = async ({
 const getProject = async ({
   id,
   octokit,
+  gitHubEnterpriseServerVersion,
 }: {
   id: string;
   octokit: Octokit;
+  gitHubEnterpriseServerVersion: string | undefined;
 }): Promise<Project> => {
+  // At the time of writing, these fields are only present on GitHub.com
+  const shouldGetFieldDescriptionAndColor =
+    typeof gitHubEnterpriseServerVersion === 'undefined';
+
   const response = (await octokit.graphql(
     `query getProject($id: ID!) {
       node(id: $id) {
@@ -261,8 +272,8 @@ const getProject = async ({
                 options {
                   id
                   name
-                  description
-                  color
+                  ${shouldGetFieldDescriptionAndColor ? 'description' : ''}
+                  ${shouldGetFieldDescriptionAndColor ? 'color' : ''}
                 }
               }
             }
@@ -427,6 +438,28 @@ command
         }, 30_000);
       }
 
+      const { isGitHubEnterpriseServer, gitHubEnterpriseServerVersion } =
+        await getGitHubProductInformation(octokit);
+
+      if (isGitHubEnterpriseServer) {
+        if (
+          semver.lte(
+            gitHubEnterpriseServerVersion,
+            MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION,
+          )
+        ) {
+          throw new Error(
+            `You are trying to export from GitHub Enterprise Server ${gitHubEnterpriseServerVersion}, but only ${MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION} onwards is supported.`,
+          );
+        }
+
+        logger.info(
+          `Running export in GitHub Enterprse Server ${gitHubEnterpriseServerVersion} mode`,
+        );
+      } else {
+        logger.info(`Running export in GitHub.com mode`);
+      }
+
       logger.info(
         `Looking up ID for project ${projectNumber} owned by ${projectOwnerType} ${projectOwner}...`,
       );
@@ -441,7 +474,11 @@ command
       );
 
       logger.info(`Fetching project by GraphQL ID ${projectId}...`);
-      const project = await getProject({ id: projectId, octokit });
+      const project = await getProject({
+        id: projectId,
+        octokit,
+        gitHubEnterpriseServerVersion,
+      });
       logger.info(`Successfully fetched project "${project.title}"`);
 
       logger.info(`Fetching project items...`);
