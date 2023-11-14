@@ -740,10 +740,13 @@ command
       const logger = createLogger(true);
       const octokit = createOctokit(accessToken, baseUrl, proxyUrl);
 
-      void logRateLimitInformation(logger, octokit);
-      setInterval(() => {
-        void logRateLimitInformation(logger, octokit);
-      }, 30_000);
+      const shouldCheckRateLimitAgain = await logRateLimitInformation(logger, octokit);
+
+      if (shouldCheckRateLimitAgain) {
+        setInterval(() => {
+          void logRateLimitInformation(logger, octokit);
+        }, 30_000);
+      }
 
       logger.info(`Reading project data from \`${inputPath}\`...`);
       const { project: sourceProject, projectItems: sourceProjectItems } = JSON.parse(

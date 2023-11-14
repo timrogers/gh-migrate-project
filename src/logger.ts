@@ -17,3 +17,14 @@ const generateLoggerOptions = (verbose: boolean): winston.LoggerOptions => {
 
 export const createLogger = (verbose: boolean): winston.Logger =>
   winston.createLogger(generateLoggerOptions(verbose));
+
+export interface Logger {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  debug: (message: string, meta?: any) => unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  info: (message: string, meta?: any) => unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  warn: (message: string, meta?: any) => unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  error: (message: string, meta?: any) => unknown;
+}
