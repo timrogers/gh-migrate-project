@@ -2,19 +2,33 @@
 
 A [GitHub CLI](https://cli.github.com/) [extension](https://cli.github.com/manual/gh_extension) for migrating [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects) between:
 
-* different GitHub products (e.g. GitHub Enterprise Server to GitHub.com)
-* organizations using the same GitHub product (e.g. classic GitHub.com organization to [Enterprise Managed Users](https://docs.github.com/en/enterprise-cloud@latest/admin/identity-and-access-management/using-enterprise-managed-users-for-iam/about-enterprise-managed-users) organization).
-* users using the same GitHub product
+- different GitHub products (e.g. GitHub Enterprise Server v3.8+ to GitHub.com, or vice versa)
+- organizations using the same GitHub product (e.g. classic GitHub.com organization to [Enterprise Managed Users](https://docs.github.com/en/enterprise-cloud@latest/admin/identity-and-access-management/using-enterprise-managed-users-for-iam/about-enterprise-managed-users) organization).
+- users using the same GitHub product
 
 ## Limitations
 
+### Classic projects are not supported
+
+This tool can't migrate so-called classic Projects - only the newer version of [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects).
+
+Classic Projects can be migrated with [GitHub Enterprise Importer](https://docs.github.com/en/migrations/using-github-enterprise-importer) or [`ghe-migrator`](https://docs.github.com/en/enterprise-cloud@latest/migrations/using-ghe-migrator/about-ghe-migrator).
+
+### Only GitHub Enterprise Server 3.8 onwards is supported
+
+[GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects) is only available in GitHub Enterprise Server 3.8 onwards, so this tool will only work with 3.8 onwards for exports and imports.
+
+### Not all data is migrated
+
 The following data is not migrated and will be skipped:
 
-* Views
-* The order of project items displayed in your views
-* Workflows
-* Iteration custom fields
-* Draft issues' assignees
+- Views
+- The order of project items displayed in your views
+- Workflows
+- Iteration custom fields
+- Draft issues' assignees
+
+### Draft issues will show the person running the migration as the author
 
 Migrated draft issues will show as being created by the person who ran the migration at the time they ran the migration. A note will be prepended to the body with original author login and timestamp.
 
@@ -66,8 +80,8 @@ gh migrate-project export \
 
 When the export finishes, you'll have two files written to your current directory:
 
-* `project.json`: The raw data of your project and all of its project items
-* `repository-mappings.csv`: A repository mappings CSV template that you need to fill out with the names of your repositories in the migration target
+- `project.json`: The raw data of your project and all of its project items
+- `repository-mappings.csv`: A repository mappings CSV template that you need to fill out with the names of your repositories in the migration target
 
 ### Step 4. Complete the repository mappings template
 

@@ -60,8 +60,8 @@ export interface Project {
       options?: Array<{
         id: string;
         name: string;
-        description: string;
-        color: ProjectSingleSelectFieldOptionColor;
+        description?: string;
+        color?: ProjectSingleSelectFieldOptionColor;
       }>;
     }>;
     totalCount: number;
