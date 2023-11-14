@@ -15,7 +15,7 @@ const generateLoggerOptions = (verbose: boolean): winston.LoggerOptions => {
   };
 };
 
-export const createLogger = (verbose: boolean): winston.Logger =>
+export const createLogger = (verbose: boolean): Logger =>
   winston.createLogger(generateLoggerOptions(verbose));
 
 export interface Logger {
