@@ -10,7 +10,7 @@ import { createOctokit } from '../octokit.js';
 import { type Project, type ProjectItem } from '../graphql-types.js';
 import { getReferencedRepositories } from '../project-items.js';
 import {
-  MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION,
+  MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS,
   getGitHubProductInformation,
 } from '../github-products.js';
 
@@ -445,11 +445,11 @@ command
         if (
           semver.lte(
             gitHubEnterpriseServerVersion,
-            MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION,
+            MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS,
           )
         ) {
           throw new Error(
-            `You are trying to export from GitHub Enterprise Server ${gitHubEnterpriseServerVersion}, but only ${MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION} onwards is supported.`,
+            `You are trying to export from GitHub Enterprise Server ${gitHubEnterpriseServerVersion}, but only ${MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS} onwards is supported.`,
           );
         }
 

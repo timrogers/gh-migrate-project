@@ -36,14 +36,14 @@ export enum ProjectItemFieldValueType {
 }
 
 export enum ProjectSingleSelectFieldOptionColor {
-  BLUE,
-  GRAY,
-  GREEN,
-  ORANGE,
-  PINK,
-  PURPLE,
-  RED,
-  YELLOW,
+  BLUE = 'BLUE',
+  GRAY = 'GRAY',
+  GREEN = 'GREEN',
+  ORANGE = 'ORANGE',
+  PINK = 'PINK',
+  PURPLE = 'PURPLE',
+  RED = 'RED',
+  YELLOW = 'YELLOW',
 }
 
 export interface Project {

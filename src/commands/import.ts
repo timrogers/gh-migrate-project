@@ -4,18 +4,19 @@ import { type Octokit } from 'octokit';
 import { parse } from '@fast-csv/parse';
 import boxen from 'boxen';
 import prompt from 'prompt-sync';
+import { GraphqlResponseError } from '@octokit/graphql';
 
 import { actionRunner, logRateLimitInformation } from '../utils.js';
 import VERSION from '../version.js';
 import { Logger, createLogger } from '../logger.js';
 import { createOctokit } from '../octokit.js';
 import {
+  ProjectSingleSelectFieldOptionColor,
   type Project,
   type ProjectItem,
-  type ProjectSingleSelectFieldOptionColor,
 } from '../graphql-types.js';
-import { GraphqlResponseError } from '@octokit/graphql';
 import { getReferencedRepositories } from '../project-items.js';
+import { getGitHubProductInformation } from '../github-products.js';
 
 const command = new commander.Command();
 const { Option } = commander;
@@ -157,8 +158,8 @@ const createProject = async ({
 
 interface SelectOption {
   name: string;
-  color: ProjectSingleSelectFieldOptionColor;
-  description: string;
+  color?: ProjectSingleSelectFieldOptionColor;
+  description?: string;
 }
 
 interface CreatedProjectField {
@@ -769,6 +770,17 @@ command
         );
       }
 
+      const { gitHubEnterpriseServerVersion, isGitHubEnterpriseServer } =
+        await getGitHubProductInformation(octokit);
+
+      if (isGitHubEnterpriseServer) {
+        throw new Error(
+          `You are trying to import into GitHub Enterprise Server ${gitHubEnterpriseServerVersion}, but only imports into GitHub.com are supported at this time.`,
+        );
+      } else {
+        logger.info(`Running import in GitHub.com mode`);
+      }
+
       logger.info(`Looking up ID for target ${projectOwnerType} ${projectOwner}...`);
       const ownerId = await getOwnerGlobalId({ octokit, projectOwner, projectOwnerType });
 
@@ -841,11 +853,29 @@ command
       for (const customFieldToCreate of customFieldsToCreate) {
         const { id, dataType, name, options } = customFieldToCreate;
         const fieldOptionsForCreation = options
-          ? options.map((option) => ({
-              name: option.name,
-              description: option.description,
-              color: option.color,
-            }))
+          ? options.map((option) => {
+              const newOption = {
+                name: option.name,
+                description: option.description,
+                color: option.color,
+              } as SelectOption;
+
+              if (typeof option.description === 'undefined') {
+                logger.warn(
+                  `Added a placeholder description for option "${option.name}" on custom field "${name}"`,
+                );
+                newOption.description = 'Placeholder description';
+              }
+
+              if (typeof option.color === 'undefined') {
+                logger.warn(
+                  `Added a default color for option "${option.name}" on custom field "${name}"`,
+                );
+                newOption.color = ProjectSingleSelectFieldOptionColor.BLUE;
+              }
+
+              return newOption;
+            })
           : [];
 
         const createdField = await createProjectField({
