@@ -274,14 +274,6 @@ const getProject = async ({
             }
             totalCount
           }
-          workflows(first: 100) {
-            nodes {
-              enabled
-              name
-              number
-            }
-            totalCount
-          }
           views(first: 100) {
             nodes {
               filter
