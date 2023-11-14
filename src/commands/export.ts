@@ -424,10 +424,13 @@ command
       const logger = createLogger(true);
       const octokit = createOctokit(accessToken, baseUrl, proxyUrl);
 
-      void logRateLimitInformation(logger, octokit);
-      setInterval(() => {
-        void logRateLimitInformation(logger, octokit);
-      }, 30_000);
+      const shouldCheckRateLimitAgain = await logRateLimitInformation(logger, octokit);
+
+      if (shouldCheckRateLimitAgain) {
+        setInterval(() => {
+          void logRateLimitInformation(logger, octokit);
+        }, 30_000);
+      }
 
       logger.info(
         `Looking up ID for project ${projectNumber} owned by ${projectOwnerType} ${projectOwner}...`,
