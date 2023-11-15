@@ -12,11 +12,10 @@ type GhesMetaResponse = DotcomMetaResponse & {
   };
 };
 
-// TODO: Check what GHES version supports Projects
-export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION = '3.8.0';
+export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS = '3.7.0';
 
-export const isSupportedGitHubEnterpriseServerVersion = (version: string) =>
-  semver.gte(version, MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION);
+export const isSupportedGitHubEnterpriseServerVersionForExports = (version: string) =>
+  semver.gte(version, MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS);
 
 export const getGitHubProductInformation = async (
   octokit: Octokit,
