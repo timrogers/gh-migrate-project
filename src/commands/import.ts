@@ -30,10 +30,11 @@ interface Arguments {
   accessToken?: string;
   baseUrl: string;
   inputPath: string;
-  repositoryMappingsPath: string;
   projectOwner: string;
   projectOwnerType: ProjectOwnerType;
+  projectTitle?: string;
   proxyUrl: string | undefined;
+  repositoryMappingsPath: string;
   verbose: boolean;
 }
 
@@ -691,6 +692,10 @@ command
     '--repository-mappings-path <repository_mappings_path>',
     'The path to your completed repository mappings file. This will be the --repository-mappings-output-path argument passed to the `export` command, which defaults to `repository-mappings.csv`.',
   )
+  .option(
+    '--project-title <project_name>',
+    'The title to use for the imported project. Defaults to the title of the source project.',
+  )
   .requiredOption(
     '--project-owner <project_owner>',
     'The organization or user which should own the imported project',
@@ -717,6 +722,7 @@ command
         inputPath,
         projectOwner,
         projectOwnerType,
+        projectTitle,
         proxyUrl,
         repositoryMappingsPath,
         verbose,
@@ -788,12 +794,14 @@ command
         `Successfully looked up ID for ${projectOwnerType} ${projectOwner}: ${ownerId}`,
       );
 
+      const title = projectTitle || sourceProject.title;
+
       const { id: targetProjectId, url: targetProjectUrl } = await createProject({
         octokit,
         ownerId,
-        title: sourceProject.title,
+        title,
       });
-      logger.info(`Created project "${sourceProject.title}" with ID ${targetProjectId}`);
+      logger.info(`Created project "${title}" with ID ${targetProjectId}`);
 
       const sourceProjectRepositoriesCount = sourceProject.repositories.nodes.length;
 
