@@ -677,7 +677,6 @@ command
   .option(
     '--access-token <access_token>',
     'The access token used to interact with the GitHub API. This can also be set using the IMPORT_GITHUB_TOKEN environment variable.',
-    process.env.IMPORT_GITHUB_TOKEN,
   )
   .option(
     '--base-url <base_url>',
@@ -717,7 +716,7 @@ command
   .action(
     actionRunner(async (opts: Arguments) => {
       const {
-        accessToken,
+        accessToken: accessTokenFromArguments,
         baseUrl,
         inputPath,
         projectOwner,
@@ -727,6 +726,8 @@ command
         repositoryMappingsPath,
         verbose,
       } = opts;
+
+      const accessToken = accessTokenFromArguments || process.env.IMPORT_GITHUB_TOKEN;
 
       if (!accessToken) {
         throw new Error(
