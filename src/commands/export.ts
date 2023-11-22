@@ -355,7 +355,6 @@ command
   .option(
     '--access-token <access_token>',
     'The access token used to interact with the GitHub API. This can also be set using the EXPORT_GITHUB_TOKEN environment variable.',
-    process.env.EXPORT_GITHUB_TOKEN,
   )
   .option(
     '--base-url <base_url>',
@@ -398,7 +397,7 @@ command
   .action(
     actionRunner(async (opts: Arguments) => {
       const {
-        accessToken,
+        accessToken: accessTokenFromArguments,
         baseUrl,
         projectNumber,
         projectOutputPath,
@@ -408,6 +407,8 @@ command
         repositoryMappingsOutputPath,
         verbose,
       } = opts;
+
+      const accessToken = accessTokenFromArguments || process.env.EXPORT_GITHUB_TOKEN;
 
       if (!accessToken) {
         throw new Error(
