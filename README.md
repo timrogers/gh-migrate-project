@@ -134,6 +134,8 @@ gh migrate-project import \
     --base-url https://github.acme.inc/api/v3 \
     # OPTIONAL: The URL of an HTTP(S) proxy to use for requests to the GitHub API (e.g. `http://localhost:3128`). This can also be set using the IMPORT_PROXY_URL environment variable.
     --proxy-url https://10.0.0.1:3128 \
+    # OPTIONAL: The title to use for the imported project. Defaults to the title of the source project.
+    --project-title "My Imported Project" \
     # OPTIONAL: Emit detailed, verbose logs (off by default)
     --verbose
 ```
