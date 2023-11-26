@@ -1,9 +1,9 @@
 import * as commander from 'commander';
 import { createReadStream, existsSync, readFileSync } from 'fs';
+import * as readline from 'node:readline/promises';
 import { type Octokit } from 'octokit';
 import { parse } from '@fast-csv/parse';
 import boxen from 'boxen';
-import prompt from 'prompt-sync';
 import { GraphqlResponseError } from '@octokit/graphql';
 
 import { actionRunner, logRateLimitInformation } from '../utils.js';
@@ -25,6 +25,11 @@ enum ProjectOwnerType {
   Organization = 'organization',
   User = 'user',
 }
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
 interface Arguments {
   accessToken?: string;
@@ -512,7 +517,7 @@ const promptUntilStatusFieldsCorrelate = async (
       );
     }
 
-    prompt({ sigint: true })('Press Enter to continue...');
+    await rl.question('Press Enter to continue...');
 
     return await promptUntilStatusFieldsCorrelate(
       { octokit, sourceProject, targetProjectId, targetProjectUrl },
