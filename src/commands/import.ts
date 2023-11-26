@@ -1,6 +1,6 @@
 import * as commander from 'commander';
 import { createReadStream, existsSync, readFileSync } from 'fs';
-import * as readline from 'readline/promises';
+import * as readline from 'node:readline/promises';
 import { type Octokit } from 'octokit';
 import { parse } from '@fast-csv/parse';
 import boxen from 'boxen';
