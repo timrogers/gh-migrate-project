@@ -5,7 +5,7 @@
   "description": "Migrate GitHub projects (https://docs.github.com/en/issues/planning-and-tracking-with-projects) between GitHub products, organizations and users",
   "homepage": "https://github.com/timrogers/gh-migrate-project",
   "scripts": {
-    "package": "node build.js && npx pkg dist/migrate-project.cjs --out-path bin",
+    "package": "node build.js && npx pkg dist/migrate-project.cjs --out-path bin --targets node18-linux-x64,node18-macos-x64,node18-win-x64",
     "lint": "eslint . --ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix",
     "dev": "npx ts-node --esm src/index.ts"
