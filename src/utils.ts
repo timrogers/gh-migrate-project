@@ -41,6 +41,7 @@ export const presentError = (e: unknown): string => {
 
 const actionErrorHandler = (error: Error): void => {
   console.error(chalk.red(error.message));
+  console.error(error.stack);
   process.exit(1);
 };
 
