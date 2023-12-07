@@ -691,10 +691,12 @@ command
   .requiredOption(
     '--input-path <input_path>',
     'The path to the exported project data. This will be the --project-output-path argument passed to the `export` command, which defaults to `project.json`.',
+    'project.json',
   )
   .requiredOption(
     '--repository-mappings-path <repository_mappings_path>',
     'The path to your completed repository mappings file. This will be the --repository-mappings-output-path argument passed to the `export` command, which defaults to `repository-mappings.csv`.',
+    'repository-mappings.csv',
   )
   .option(
     '--project-title <project_name>',
