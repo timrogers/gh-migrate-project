@@ -80,7 +80,9 @@ gh migrate-project export \
     # OPTIONAL: The URL of an HTTP(S) proxy to use for requests to the GitHub API (e.g. `http://localhost:3128`). This can also be set using the EXPORT_PROXY_URL environment variable.
     --proxy-url https://10.0.0.1:3128 \
     # OPTIONAL: Emit detailed, verbose logs (off by default)
-    --verbose
+    --verbose \
+    # OPTIONAL: Disable anonymous telemetry that gives the maintainers of this tool basic information about real-world usage.
+    --disable-telemetry
 ```
 
 When the export finishes, you'll have two files written to your current directory:
@@ -137,7 +139,9 @@ gh migrate-project import \
     # OPTIONAL: The title to use for the imported project. Defaults to the title of the source project.
     --project-title "My Imported Project" \
     # OPTIONAL: Emit detailed, verbose logs (off by default)
-    --verbose
+    --verbose \
+    # OPTIONAL: Disable anonymous telemetry that gives the maintainers of this tool basic information about real-world usage.
+    --disable-telemetry
 ```
 
 Near the start of the import, the tool will ask you to manually set up your options for the "Status" field. It will explain exactly what to do, and will validate that you've correctly copied the options from your migration source.
@@ -152,3 +156,13 @@ If you run into SSL connection errors and you are unable to set your proxy setti
 export NODE_TLS_REJECT_UNAUTHORIZED=0 # setting an environment variable in bash
 $Env:NODE_TLS_REJECT_UNAUTHORIZED = 0 # setting an environment variable in PowerShell
 ```
+
+## Telemetry
+
+This extension includes basic, anonymous telemetry to give the maintainers information about real-world usage. This data is limited to:
+
+- The number of exports and imports being run
+- The versions of GitHub Enterprise Server being used
+- The versions of the extension currently in used
+
+You can disable all telemetry by specifying the `--disable-telemetry` argument.

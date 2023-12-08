@@ -30,7 +30,7 @@ jobs:
       - name: Make macOS binary executable
         run: chmod +x bin/gh-migrate-project-darwin-amd64
       - name: Export a project from GitHub.com
-        run: ./bin/gh-migrate-project-darwin-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1
+        run: ./bin/gh-migrate-project-darwin-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1 --disable-telemetry
         env:
           EXPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Copy outputs to output/ directory
@@ -44,7 +44,7 @@ jobs:
           echo "source_repository,target_repository
           gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
       - name: Import project to GitHub.com
-        run: ./bin/gh-migrate-project-darwin-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox
+        run: ./bin/gh-migrate-project-darwin-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Upload outputs as artifacts
@@ -79,7 +79,7 @@ jobs:
       - name: Make Linux binary executable
         run: chmod +x bin/gh-migrate-project-linux-amd64
       - name: Export a project from GitHub.com
-        run: ./bin/gh-migrate-project-linux-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1
+        run: ./bin/gh-migrate-project-linux-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1 --disable-telemetry
         env:
           EXPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Copy outputs to output/ directory
@@ -93,7 +93,7 @@ jobs:
           echo "source_repository,target_repository
           gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
       - name: Import project to GitHub.com
-        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox
+        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Upload outputs as artifacts
@@ -133,7 +133,7 @@ jobs:
       - name: Create `output` directory
         run: mkdir output
       - name: Export a project from GitHub.com
-        run: bin/gh-migrate-project-windows-amd64.exe export --project-owner gh-migrate-project-sandbox --project-number 1
+        run: bin/gh-migrate-project-windows-amd64.exe export --project-owner gh-migrate-project-sandbox --project-number 1 --disable-telemetry
         env:
           EXPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Copy outputs to output/ directory
@@ -147,7 +147,7 @@ jobs:
           echo "source_repository,target_repository
           gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
       - name: Import project to GitHub.com
-        run: bin/gh-migrate-project-windows-amd64.exe import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox
+        run: bin/gh-migrate-project-windows-amd64.exe import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Upload outputs as artifacts
