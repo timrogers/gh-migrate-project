@@ -1,5 +1,6 @@
 import * as commander from 'commander';
 import { createReadStream, existsSync, readFileSync } from 'fs';
+import crypto from 'crypto';
 import * as readline from 'node:readline/promises';
 import { type Octokit } from 'octokit';
 import { parse } from '@fast-csv/parse';
@@ -17,6 +18,8 @@ import {
 } from '../graphql-types.js';
 import { getReferencedRepositories } from '../project-items.js';
 import { getGitHubProductInformation } from '../github-products.js';
+import { PostHog } from 'posthog-node';
+import { POSTHOG_API_KEY, POSTHOG_HOST } from '../posthog.js';
 
 const command = new commander.Command();
 const { Option } = commander;
@@ -34,6 +37,7 @@ const rl = readline.createInterface({
 interface Arguments {
   accessToken?: string;
   baseUrl: string;
+  disableTelemetry: boolean;
   inputPath: string;
   projectOwner: string;
   projectOwnerType: ProjectOwnerType;
@@ -712,6 +716,11 @@ command
     process.env.IMPORT_PROXY_URL,
   )
   .option('--verbose', 'Emit detailed, verbose logs', false)
+  .option(
+    '--disable-telemetry',
+    'Disable anonymous telemetry that gives the maintainers of this tool basic information about real-world usage. For more detailed information about the built-in telemetry, see the readme at https://github.com/timrogers/gh-migrate-project.',
+    false,
+  )
   .addOption(
     new Option(
       '--project-owner-type <project_owner_type>',
@@ -725,6 +734,7 @@ command
       const {
         accessToken: accessTokenFromArguments,
         baseUrl,
+        disableTelemetry,
         inputPath,
         projectOwner,
         projectOwnerType,
@@ -733,6 +743,8 @@ command
         repositoryMappingsPath,
         verbose,
       } = opts;
+
+      const posthog = new PostHog(POSTHOG_API_KEY, { host: POSTHOG_HOST });
 
       const accessToken = accessTokenFromArguments || process.env.IMPORT_GITHUB_TOKEN;
 
@@ -793,6 +805,18 @@ command
         );
       } else {
         logger.info(`Running import in GitHub.com mode`);
+      }
+
+      if (!disableTelemetry) {
+        posthog.capture({
+          distinctId: crypto.randomUUID(),
+          event: 'import_start',
+          properties: {
+            github_enterprise_server_version: gitHubEnterpriseServerVersion,
+            is_github_enterprise_server: isGitHubEnterpriseServer,
+            version: VERSION,
+          },
+        });
       }
 
       logger.info(`Looking up ID for target ${projectOwnerType} ${projectOwner}...`);
@@ -1024,6 +1048,7 @@ command
         ),
       );
 
+      await posthog.shutdownAsync();
       process.exit(0);
     }),
   );

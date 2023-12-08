@@ -1,5 +1,6 @@
 import * as commander from 'commander';
 import { existsSync, writeFileSync } from 'fs';
+import crypto from 'crypto';
 import { type Octokit } from 'octokit';
 import semver from 'semver';
 
@@ -13,6 +14,8 @@ import {
   MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS,
   getGitHubProductInformation,
 } from '../github-products.js';
+import { PostHog } from 'posthog-node';
+import { POSTHOG_API_KEY, POSTHOG_HOST } from '../posthog.js';
 
 const command = new commander.Command();
 const { Option } = commander;
@@ -25,6 +28,7 @@ enum ProjectOwnerType {
 interface Arguments {
   accessToken?: string;
   baseUrl: string;
+  disableTelemetry: boolean;
   projectOutputPath: string;
   repositoryMappingsOutputPath: string;
   projectOwner: string;
@@ -394,11 +398,17 @@ command
     process.env.EXPORT_PROXY_URL,
   )
   .option('--verbose', 'Emit detailed, verbose logs', false)
+  .option(
+    '--disable-telemetry',
+    'Disable anonymous telemetry that gives the maintainers of this tool basic information about real-world usage. For more detailed information about the built-in telemetry, see the readme at https://github.com/timrogers/gh-migrate-project.',
+    false,
+  )
   .action(
     actionRunner(async (opts: Arguments) => {
       const {
         accessToken: accessTokenFromArguments,
         baseUrl,
+        disableTelemetry,
         projectNumber,
         projectOutputPath,
         projectOwner,
@@ -407,6 +417,8 @@ command
         repositoryMappingsOutputPath,
         verbose,
       } = opts;
+
+      const posthog = new PostHog(POSTHOG_API_KEY, { host: POSTHOG_HOST });
 
       const accessToken = accessTokenFromArguments || process.env.EXPORT_GITHUB_TOKEN;
 
@@ -461,6 +473,18 @@ command
         logger.info(`Running export in GitHub.com mode`);
       }
 
+      if (!disableTelemetry) {
+        posthog.capture({
+          distinctId: crypto.randomUUID(),
+          event: 'export_start',
+          properties: {
+            github_enterprise_server_version: gitHubEnterpriseServerVersion,
+            is_github_enterprise_server: isGitHubEnterpriseServer,
+            version: VERSION,
+          },
+        });
+      }
+
       logger.info(
         `Looking up ID for project ${projectNumber} owned by ${projectOwnerType} ${projectOwner}...`,
       );
@@ -507,6 +531,8 @@ command
       logger.info(
         `Successfully wrote repositories mappings CSV to ${repositoryMappingsOutputPath}`,
       );
+
+      await posthog.shutdownAsync();
       process.exit(0);
     }),
   );
