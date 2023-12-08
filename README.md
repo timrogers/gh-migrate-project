@@ -143,3 +143,12 @@ gh migrate-project import \
 Near the start of the import, the tool will ask you to manually set up your options for the "Status" field. It will explain exactly what to do, and will validate that you've correctly copied the options from your migration source.
 
 Once you've set up the "Status" field, your project will be imported. Watch out for `warn` lines in the logs, which will let you know about data which hasn't been imported.
+
+### Troubleshooting
+
+If you run into SSL connection errors and you are unable to set your proxy settings with the `--proxy-url` parameter, you can set the `NODE_TLS_REJECT_UNAUTHORIZED=0` environment variable to bypass:
+
+```
+export NODE_TLS_REJECT_UNAUTHORIZED=0 # setting an environment variable in bash
+$Env:NODE_TLS_REJECT_UNAUTHORIZED = 0 # setting an environment variable in PowerShell
+```
