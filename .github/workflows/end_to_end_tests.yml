@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Download macOS binary
-        uses: dawidd6/action-download-artifact@268677152d06ba59fcec7a7f0b5d961b6ccd7e1e
+        uses: dawidd6/action-download-artifact@e7466d1a7587ed14867642c2ca74b5bcc1e19a2d
         with:
           run_id: ${{ github.event.workflow_run.id }}
           name: package-macos
@@ -69,7 +69,7 @@ jobs:
 
     steps:
       - name: Download Linux binary
-        uses: dawidd6/action-download-artifact@268677152d06ba59fcec7a7f0b5d961b6ccd7e1e
+        uses: dawidd6/action-download-artifact@e7466d1a7587ed14867642c2ca74b5bcc1e19a2d
         with:
            run_id: ${{ github.event.workflow_run.id }}
            name: package-linux
@@ -125,7 +125,7 @@ jobs:
 
     steps:
       - name: Download Windows binary
-        uses: dawidd6/action-download-artifact@268677152d06ba59fcec7a7f0b5d961b6ccd7e1e
+        uses: dawidd6/action-download-artifact@e7466d1a7587ed14867642c2ca74b5bcc1e19a2d
         with:
           run_id: ${{ github.event.workflow_run.id }}
           name: package-windows
