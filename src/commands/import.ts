@@ -846,22 +846,22 @@ command
           index,
           sourceProjectRepository,
         ] of sourceProject.repositories.nodes.entries()) {
-          logger.info(
-            `Linking repository ${sourceProjectRepository.nameWithOwner} (${
-              index + 1
-            }/${sourceProjectRepositoriesCount})`,
-          );
-
           const targetRepositoryNameWithOwner = repositoryMappings.get(
             sourceProjectRepository.nameWithOwner,
           );
 
           if (!targetRepositoryNameWithOwner) {
             logger.warn(
-              `Skipping repository ${sourceProjectRepository.nameWithOwner} because there is no repository mapping`,
+              `Skipping source repository ${sourceProjectRepository.nameWithOwner} because there is no repository mapping`,
             );
             continue;
           }
+
+          logger.info(
+            `Linking repository ${targetRepositoryNameWithOwner} (${
+              index + 1
+            }/${sourceProjectRepositoriesCount})`,
+          );
 
           const [targetRepositoryOwner, targetRepositoryName] =
             targetRepositoryNameWithOwner.split('/');
