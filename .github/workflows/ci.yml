@@ -42,17 +42,17 @@ jobs:
       - name: Rename Linux binary to conform to GitHub CLI extension rules
         run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
       - name: Upload macOS binary as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: package-macos
           path: bin/gh-migrate-project-darwin-amd64
       - name: Upload Linux binary as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: package-linux
           path: bin/gh-migrate-project-linux-amd64
       - name: Upload Windows binary as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: package-windows
           path: bin/gh-migrate-project-windows-amd64.exe
