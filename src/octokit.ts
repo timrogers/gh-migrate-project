@@ -1,3 +1,4 @@
+import { STATUS_CODES } from 'http';
 import { fetch as undiciFetch, ProxyAgent, RequestInfo, RequestInit } from 'undici';
 import { Octokit, RequestError } from 'octokit';
 import { paginateGraphql } from '@octokit/plugin-paginate-graphql';
@@ -22,20 +23,42 @@ export const createOctokit = (
   const octokit = new OctokitWithPaginateGraphql({
     auth: token,
     baseUrl,
-    request: { fetch: customFetch },
+    request: {
+      fetch: customFetch,
+    },
   });
 
-  octokit.hook.after('request', async (response, options) => {
-    logger.debug(`${options.method} ${options.url}: ${response.status}`);
-  });
-
-  octokit.hook.error('request', async (error, options) => {
-    if (error instanceof RequestError) {
+  octokit.hook.before('request', async (options) => {
+    if (options.query) {
       logger.debug(
-        `${options.method} ${options.url}: ${error.status} - ${error.message}`,
+        `Request: ${options.method} ${options.baseUrl}${options.url} - ${options.query}`,
+      );
+    } else if (options.method === 'POST') {
+      logger.debug(
+        `Request: ${options.method} ${options.baseUrl}${options.url} - [request body not logged]`,
       );
     } else {
-      logger.debug(`${options.method} ${options.url}: ${error.name} - ${error.message}`);
+      logger.debug(`Request: ${options.method} ${options.baseUrl}${options.url}`);
+    }
+  });
+
+  octokit.hook.after('request', async (response) => {
+    logger.debug(
+      `Response: ${response.status} ${STATUS_CODES[response.status]} - ${JSON.stringify(
+        response.data,
+      )}`,
+    );
+  });
+
+  octokit.hook.error('request', async (error) => {
+    if (error instanceof RequestError) {
+      logger.debug(
+        `Error: ${error.status} ${STATUS_CODES[error.status]}${
+          error.response ? ` - ${JSON.stringify(error.response.data)}` : ''
+        }`,
+      );
+    } else {
+      logger.debug(`Error: ${error.message}}`);
     }
 
     throw error;
