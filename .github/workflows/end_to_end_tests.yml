@@ -48,7 +48,7 @@ jobs:
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Upload outputs as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macos-outputs
           path: output
@@ -97,13 +97,13 @@ jobs:
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Upload outputs as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-outputs
           path: output
       - name: Upload
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
             name: dbg
             retention-days: 1
@@ -151,7 +151,7 @@ jobs:
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Upload outputs as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-outputs
           path: output
