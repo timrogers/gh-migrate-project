@@ -8,7 +8,7 @@ import { Logger } from './logger';
 const OctokitWithPaginateGraphql = Octokit.plugin(paginateGraphql);
 
 export const createOctokit = (
-  token: string,
+  token: string | undefined,
   baseUrl: string,
   proxyUrl: string | undefined,
   logger: Logger,

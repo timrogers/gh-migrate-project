@@ -7,7 +7,7 @@ import { parse } from '@fast-csv/parse';
 import boxen from 'boxen';
 import { GraphqlResponseError } from '@octokit/graphql';
 
-import { actionRunner, logRateLimitInformation } from '../utils.js';
+import { actionRunner, checkForUpdates, logRateLimitInformation } from '../utils.js';
 import VERSION from '../version.js';
 import { Logger, createLogger } from '../logger.js';
 import { createOctokit } from '../octokit.js';
@@ -44,6 +44,7 @@ interface Arguments {
   projectTitle?: string;
   proxyUrl: string | undefined;
   repositoryMappingsPath: string;
+  skipUpdateCheck: boolean;
   verbose: boolean;
 }
 
@@ -729,6 +730,7 @@ command
       .choices(['organization', 'user'])
       .default(ProjectOwnerType.Organization),
   )
+  .option('--skip-update-check', 'Skip automatic check for updates to this tool', false)
   .action(
     actionRunner(async (opts: Arguments) => {
       const {
@@ -741,8 +743,13 @@ command
         projectTitle,
         proxyUrl,
         repositoryMappingsPath,
+        skipUpdateCheck,
         verbose,
       } = opts;
+
+      const logger = createLogger(verbose);
+
+      if (!skipUpdateCheck) checkForUpdates(proxyUrl, logger);
 
       const posthog = new PostHog(POSTHOG_API_KEY, { host: POSTHOG_HOST });
 
@@ -766,7 +773,6 @@ command
         );
       }
 
-      const logger = createLogger(verbose);
       const octokit = createOctokit(accessToken, baseUrl, proxyUrl, logger);
 
       const shouldCheckRateLimitAgain = await logRateLimitInformation(logger, octokit);

@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import { type Octokit } from 'octokit';
 import semver from 'semver';
 
-import { actionRunner, logRateLimitInformation } from '../utils.js';
+import { actionRunner, checkForUpdates, logRateLimitInformation } from '../utils.js';
 import VERSION from '../version.js';
 import { createLogger } from '../logger.js';
 import { createOctokit } from '../octokit.js';
@@ -35,6 +35,7 @@ interface Arguments {
   projectOwnerType: ProjectOwnerType;
   projectNumber: number;
   proxyUrl: string | undefined;
+  skipUpdateCheck: boolean;
   verbose: boolean;
 }
 
@@ -403,6 +404,7 @@ command
     'Disable anonymous telemetry that gives the maintainers of this tool basic information about real-world usage. For more detailed information about the built-in telemetry, see the readme at https://github.com/timrogers/gh-migrate-project.',
     false,
   )
+  .option('--skip-update-check', 'Skip automatic check for updates to this tool', false)
   .action(
     actionRunner(async (opts: Arguments) => {
       const {
@@ -415,8 +417,13 @@ command
         projectOwnerType,
         proxyUrl,
         repositoryMappingsOutputPath,
+        skipUpdateCheck,
         verbose,
       } = opts;
+
+      const logger = createLogger(verbose);
+
+      if (!skipUpdateCheck) checkForUpdates(proxyUrl, logger);
 
       const posthog = new PostHog(POSTHOG_API_KEY, { host: POSTHOG_HOST });
 
@@ -440,7 +447,6 @@ command
         );
       }
 
-      const logger = createLogger(verbose);
       const octokit = createOctokit(accessToken, baseUrl, proxyUrl, logger);
 
       const shouldCheckRateLimitAgain = await logRateLimitInformation(logger, octokit);
