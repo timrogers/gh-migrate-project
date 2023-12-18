@@ -1,6 +1,6 @@
 {
   "name": "gh-migrate-project",
-  "version": "0.6.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "Migrate GitHub projects (https://docs.github.com/en/issues/planning-and-tracking-with-projects) between GitHub products, organizations and users",
   "homepage": "https://github.com/timrogers/gh-migrate-project",
