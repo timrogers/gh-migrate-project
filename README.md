@@ -82,7 +82,9 @@ gh migrate-project export \
     # OPTIONAL: Emit detailed, verbose logs (off by default)
     --verbose \
     # OPTIONAL: Disable anonymous telemetry that gives the maintainers of this tool basic information about real-world usage.
-    --disable-telemetry
+    --disable-telemetry \
+    # OPTIONAL: Skip automatic check for updates to this tool
+    --skip-update-check
 ```
 
 When the export finishes, you'll have two files written to your current directory:
@@ -141,7 +143,9 @@ gh migrate-project import \
     # OPTIONAL: Emit detailed, verbose logs (off by default)
     --verbose \
     # OPTIONAL: Disable anonymous telemetry that gives the maintainers of this tool basic information about real-world usage.
-    --disable-telemetry
+    --disable-telemetry \
+    # OPTIONAL: Skip automatic check for updates to this tool
+    --skip-update-check
 ```
 
 Near the start of the import, the tool will ask you to manually set up your options for the "Status" field. It will explain exactly what to do, and will validate that you've correctly copied the options from your migration source.
