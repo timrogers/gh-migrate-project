@@ -101,13 +101,6 @@ jobs:
         with:
           name: linux-outputs
           path: output
-      - name: Upload
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-            name: dbg
-            retention-days: 1
-            path: ${{ github.event_path }}
       - name: Set Status Check
         uses: LouisBrunner/checks-action@c6dbaea4f9c79ccfe67c038acddaf713518b255d
         if: always()
@@ -204,13 +197,6 @@ jobs:
         with:
           name: linux-outputs-ghes-311
           path: output
-      - name: Upload
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-            name: dbg
-            retention-days: 1
-            path: ${{ github.event_path }}
       - name: Set Status Check
         uses: LouisBrunner/checks-action@c6dbaea4f9c79ccfe67c038acddaf713518b255d
         if: always()
