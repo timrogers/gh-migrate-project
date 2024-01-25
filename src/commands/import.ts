@@ -6,6 +6,8 @@ import { type Octokit } from 'octokit';
 import { parse } from '@fast-csv/parse';
 import boxen from 'boxen';
 import { GraphqlResponseError } from '@octokit/graphql';
+import semver from 'semver';
+import { PostHog } from 'posthog-node';
 
 import { actionRunner, checkForUpdates, logRateLimitInformation } from '../utils.js';
 import VERSION from '../version.js';
@@ -17,8 +19,10 @@ import {
   type ProjectItem,
 } from '../graphql-types.js';
 import { getReferencedRepositories } from '../project-items.js';
-import { getGitHubProductInformation } from '../github-products.js';
-import { PostHog } from 'posthog-node';
+import {
+  MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_IMPORTS,
+  getGitHubProductInformation,
+} from '../github-products.js';
 import { POSTHOG_API_KEY, POSTHOG_HOST } from '../posthog.js';
 
 const command = new commander.Command();
@@ -806,11 +810,22 @@ command
         await getGitHubProductInformation(octokit);
 
       if (isGitHubEnterpriseServer) {
-        throw new Error(
-          `You are trying to import into GitHub Enterprise Server ${gitHubEnterpriseServerVersion}, but only imports into GitHub.com are supported at this time.`,
+        if (
+          semver.lte(
+            gitHubEnterpriseServerVersion,
+            MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_IMPORTS,
+          )
+        ) {
+          throw new Error(
+            `You are trying to import into GitHub Enterprise Server ${gitHubEnterpriseServerVersion}, but only ${MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_IMPORTS} onwards is supported.`,
+          );
+        }
+
+        logger.info(
+          `Running export in GitHub Enterprse Server ${gitHubEnterpriseServerVersion} mode`,
         );
       } else {
-        logger.info(`Running import in GitHub.com mode`);
+        logger.info(`Running export in GitHub.com mode`);
       }
 
       if (!disableTelemetry) {

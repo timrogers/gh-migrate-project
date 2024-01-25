@@ -1,9 +1,15 @@
 # `gh migrate-project`
 
-A [GitHub CLI](https://cli.github.com/) [extension](https://cli.github.com/manual/gh_extension) for migrating [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects) between:
+A [GitHub CLI](https://cli.github.com/) [extension](https://cli.github.com/manual/gh_extension) for migrating [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects) between GitHub accounts and products
 
-- GitHub Enterprise Server v3.7+ and GitHub.com
-- owners (organizations or users) on GitHub.com (e.g. from a classic GitHub.com organization to [Enterprise Managed Users](https://docs.github.com/en/enterprise-cloud@latest/admin/identity-and-access-management/using-enterprise-managed-users-for-iam/about-enterprise-managed-users) organization)
+## Supported migration paths
+
+* From GitHub Enterprise Server v3.7+ to:
+  * GitHub.com
+  * GitHub Enterprise Server v3.11+
+* From GitHub.com to:
+  * Another organization or user account on GitHub.com (e.g. from a classic GitHub.com organization to [Enterprise Managed Users](https://docs.github.com/en/enterprise-cloud@latest/admin/identity-and-access-management/using-enterprise-managed-users-for-iam/about-enterprise-managed-users) organization)
+  * GitHub Enterprise Server v3.11+
 
 ## Limitations
 
@@ -13,15 +19,6 @@ This tool can't migrate so-called classic Projects - only the newer version of [
 
 Classic Projects can be migrated with [GitHub Enterprise Importer](https://docs.github.com/en/migrations/using-github-enterprise-importer) or [`ghe-migrator`](https://docs.github.com/en/enterprise-cloud@latest/migrations/using-ghe-migrator/about-ghe-migrator).
 
-### Exports are supported from GitHub Enterprise Server, but only 3.7 onwards
-
-[GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects) is only available in GitHub Enterprise Server 3.7 onwards, so this tool will only work with 3.7 onwards for exports.
-
-### Once data has been exported, it can only be imported to GitHub.com
-
-At this time, imports to GitHub Enterprise Server are not supported, so you won't be able to use this tool to move between Enterprise Server instances or from GitHub.com to your own Enterprise Server.
-
-This will be fixable with some work, but it's complicated because of GraphQL API differences between GitHub.com and current Enterprise Server versions.
 
 ### Not all data is migrated
 
