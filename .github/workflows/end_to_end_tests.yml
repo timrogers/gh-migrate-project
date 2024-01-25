@@ -189,7 +189,7 @@ jobs:
           echo "source_repository,target_repository
           gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
       - name: Import project to GHES v3.11
-        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry --base-url --base-url ${{ secrets.GHES_311_BASE_URL }}
+        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry --base-url ${{ secrets.GHES_311_BASE_URL }}
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GHES_311_ACCESS_TOKEN }}
       - name: Upload outputs as artifacts
