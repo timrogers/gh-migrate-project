@@ -3,6 +3,7 @@ import { existsSync, writeFileSync } from 'fs';
 import crypto from 'crypto';
 import { type Octokit } from 'octokit';
 import semver from 'semver';
+import { PostHog } from 'posthog-node';
 
 import { actionRunner, checkForUpdates, logRateLimitInformation } from '../utils.js';
 import VERSION from '../version.js';
@@ -14,7 +15,6 @@ import {
   MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS,
   getGitHubProductInformation,
 } from '../github-products.js';
-import { PostHog } from 'posthog-node';
 import { POSTHOG_API_KEY, POSTHOG_HOST } from '../posthog.js';
 
 const command = new commander.Command();
