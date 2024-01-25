@@ -13,10 +13,10 @@ permissions:
 
 jobs:
   end_to_end_tests_macos:
-    name: Run end to end tests (macOS/GitHub.com)
+    name: Run end to end tests (GitHub.com to GitHub.com on macOS)
     runs-on: macos-latest
     env:
-      check_name: End to end tests (macOS/GitHub.com)
+      check_name: End to end tests (GitHub.com to GitHub.com on macOS)
 
     steps:
       - name: Download macOS binary
@@ -62,10 +62,10 @@ jobs:
           conclusion: ${{ job.status }}
   
   end_to_end_tests_linux:
-    name: Run end to end tests (Linux/GitHub.com)
+    name: Run end to end tests (GitHub.com to GitHub.com on Linux)
     runs-on: ubuntu-latest
     env:
-      check_name: End to end tests (Linux/GitHub.com)
+      check_name: End to end tests (GitHub.com to GitHub.com on Linux)
 
     steps:
       - name: Download Linux binary
@@ -118,10 +118,10 @@ jobs:
           conclusion: ${{ job.status }}
 
   end_to_end_tests_windows:
-    name: Run end to end tests (Windows/GitHub.com)
+    name: Run end to end tests (GitHub.com to GitHub.com on Windows)
     runs-on: windows-latest
     env:
-      check_name: End to end tests (Windows/GitHub.com)
+      check_name: End to end tests (GitHub.com to GitHub.com on Windows)
 
     steps:
       - name: Download Windows binary
