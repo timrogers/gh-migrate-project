@@ -1,6 +1,5 @@
 import type { Octokit } from 'octokit';
 import { Endpoints } from '@octokit/types';
-import semver from 'semver';
 
 type DotcomMetaResponse = Endpoints['GET /meta']['response'];
 
@@ -13,9 +12,6 @@ type GhesMetaResponse = DotcomMetaResponse & {
 };
 
 export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS = '3.7.0';
-
-export const isSupportedGitHubEnterpriseServerVersionForExports = (version: string) =>
-  semver.gte(version, MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS);
 
 export const getGitHubProductInformation = async (
   octokit: Octokit,
