@@ -6,10 +6,10 @@ A [GitHub CLI](https://cli.github.com/) [extension](https://cli.github.com/manua
 
 * From GitHub Enterprise Server v3.7+ to:
   * GitHub.com
-  * GitHub Enterprise Server v3.11+
+  * GitHub Enterprise Server v3.10+
 * From GitHub.com to:
   * Another organization or user account on GitHub.com (e.g. from a classic GitHub.com organization to [Enterprise Managed Users](https://docs.github.com/en/enterprise-cloud@latest/admin/identity-and-access-management/using-enterprise-managed-users-for-iam/about-enterprise-managed-users) organization)
-  * GitHub Enterprise Server v3.11+
+  * GitHub Enterprise Server v3.10+
 
 ## Limitations
 
