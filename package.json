@@ -23,7 +23,7 @@
     "posthog-node": "^3.6.3",
     "semver": "^7.6.0",
     "undici": "^6.6.2",
-    "winston": "^3.11.0"
+    "winston": "^3.12.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.0.0",
