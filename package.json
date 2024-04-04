@@ -22,7 +22,7 @@
     "octokit": "^3.1.2",
     "posthog-node": "^3.6.3",
     "semver": "^7.6.0",
-    "undici": "^6.10.2",
+    "undici": "^6.11.1",
     "winston": "^3.13.0"
   },
   "devDependencies": {
