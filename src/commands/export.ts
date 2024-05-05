@@ -425,7 +425,10 @@ command
 
       if (!skipUpdateCheck) checkForUpdates(proxyUrl, logger);
 
-      const posthog = new PostHog(POSTHOG_API_KEY, { host: POSTHOG_HOST });
+      const posthog = new PostHog(POSTHOG_API_KEY, {
+        disabled: disableTelemetry,
+        host: POSTHOG_HOST,
+      });
 
       const accessToken = accessTokenFromArguments || process.env.EXPORT_GITHUB_TOKEN;
 
@@ -538,7 +541,7 @@ command
         `Successfully wrote repositories mappings CSV to ${repositoryMappingsOutputPath}`,
       );
 
-      await posthog.shutdownAsync();
+      await posthog.shutdown();
       process.exit(0);
     }),
   );
