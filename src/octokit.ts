@@ -1,11 +1,11 @@
 import { STATUS_CODES } from 'http';
 import { fetch as undiciFetch, ProxyAgent, RequestInfo, RequestInit } from 'undici';
 import { Octokit, RequestError } from 'octokit';
-import { paginateGraphql } from '@octokit/plugin-paginate-graphql';
+import { paginateGraphQL } from '@octokit/plugin-paginate-graphql';
 
 import { Logger } from './logger';
 
-const OctokitWithPaginateGraphql = Octokit.plugin(paginateGraphql);
+const OctokitWithPaginateGraphQL = Octokit.plugin(paginateGraphQL);
 
 export const createOctokit = (
   token: string | undefined,
@@ -20,7 +20,7 @@ export const createOctokit = (
     });
   };
 
-  const octokit = new OctokitWithPaginateGraphql({
+  const octokit = new OctokitWithPaginateGraphQL({
     auth: token,
     baseUrl,
     request: {
