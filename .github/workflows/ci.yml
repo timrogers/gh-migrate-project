@@ -269,8 +269,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Get the version
+        id: get_tag_version
+        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
       - name: Check version matches
-        run: ./script/check-version ${{ github.ref }}
+        run: ./script/check-version ${{ steps.get_tag_version.outputs.version }}
   create_release:
     name: Create release
     if: startsWith(github.ref, 'refs/tags/')
