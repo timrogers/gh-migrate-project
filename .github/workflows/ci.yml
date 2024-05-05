@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4.0.2
         with:
-          node-version: 18.x
+          node-version: 20.x
           cache: 'npm'
       - run: npm ci
       - run: npm run lint
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4.0.2
         with:
-          node-version: 18.x
+          node-version: 20.x
           cache: 'npm'
       - run: npm ci
       - name: Generate binaries for macOS, Linux and Windows
@@ -66,7 +66,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4.0.2
         with:
-          node-version: 18.x
+          node-version: 20.x
           cache: 'npm'
       - run: npm ci
       - name: Generate binaries for macOS, Linux and Windows
@@ -107,7 +107,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4.0.2
         with:
-          node-version: 18.x
+          node-version: 20.x
           cache: 'npm'
       - run: npm ci
       - name: Generate binaries for macOS, Linux and Windows
@@ -146,7 +146,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4.0.2
         with:
-          node-version: 18.x
+          node-version: 20.x
           cache: 'npm'
       - run: npm ci
       - name: Generate binaries for macOS, Linux and Windows
@@ -187,7 +187,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4.0.2
         with:
-          node-version: 18.x
+          node-version: 20.x
           cache: 'npm'
       - run: npm ci
       - name: Generate binaries for macOS, Linux and Windows
@@ -232,7 +232,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4.0.2
         with:
-          node-version: 18.x
+          node-version: 20.x
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
@@ -259,11 +259,23 @@ jobs:
         with:
           name: package-windows
           path: bin/gh-migrate-project-windows-amd64.exe
+  check_release_tag_matches_version:
+    name: Check release tag matches version
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    needs: ['package', 'test_and_lint', 'end_to_end_tests_linux_ghes_311', 'end_to_end_tests_linux_ghes_310', 'end_to_end_tests_windows', 'end_to_end_tests_linux', 'end_to_end_tests_macos']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check version matches
+        run: ./script/check-version ${{ github.ref }}
   create_release:
     name: Create release
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
-    needs: ['package', 'test_and_lint', 'end_to_end_tests_linux_ghes_311', 'end_to_end_tests_linux_ghes_310', 'end_to_end_tests_windows', 'end_to_end_tests_linux', 'end_to_end_tests_macos']
+    needs: ['check_release_tag_matches_version']
     permissions:
       contents: write
     steps:

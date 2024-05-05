@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Get the version from package.json using jq
+PACKAGE_VERSION=v$(jq -r .version package.json)
+
+# Compare the version argument with the version from package.json
+if [ "$1" != "$PACKAGE_VERSION" ]; then
+    echo "⚠️ Version provided in argument ($1) does not match version in package.json ($PACKAGE_VERSION)"
+    exit 1
+fi
+
+echo "Versions match ✅"
+exit 0
