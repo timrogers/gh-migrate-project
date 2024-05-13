@@ -5,7 +5,6 @@ import * as readline from 'node:readline/promises';
 import { type Octokit } from 'octokit';
 import { parse } from '@fast-csv/parse';
 import boxen from 'boxen';
-import { GraphqlResponseError } from '@octokit/graphql';
 import semver from 'semver';
 import { PostHog } from 'posthog-node';
 
@@ -218,10 +217,7 @@ const getIssueOrPullRequestByRepositoryAndNumber = async ({
 
     return response.repository.issueOrPullRequest;
   } catch (e) {
-    if (
-      e instanceof GraphqlResponseError &&
-      e.message.startsWith('Could not resolve to an issue or pull request')
-    ) {
+    if (e.message.includes('Could not resolve to an issue or pull request')) {
       return null;
     } else {
       throw e;
