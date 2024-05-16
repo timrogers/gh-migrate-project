@@ -1,6 +1,6 @@
 {
   "name": "gh-migrate-project",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "type": "module",
   "description": "A GitHub CLI (https://cli.github.com/) extension for migrating GitHub Projects (https://docs.github.com/en/issues/planning-and-tracking-with-projects) between GitHub accounts and products",
   "homepage": "https://github.com/timrogers/gh-migrate-project",
