@@ -79,3 +79,15 @@ export const actionRunner = (fn: (...args) => Promise<void>) => {
   //@ts-expect-error - This is a hack to make the actionRunner function work
   return async (...args) => await fn(...args).catch(actionErrorHandler);
 };
+
+export const normalizeBaseUrl = (baseUrl: string, logger: Logger): string => {
+  if (baseUrl.endsWith('/')) {
+    const normalizedBaseUrl = baseUrl.slice(0, -1);
+    logger.info(
+      `Automatically removing trailing slash from base URL - base URL is now ${normalizedBaseUrl}`,
+    );
+    return normalizedBaseUrl;
+  }
+
+  return baseUrl;
+};
