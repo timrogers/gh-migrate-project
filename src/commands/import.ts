@@ -47,6 +47,7 @@ interface Arguments {
   projectTitle?: string;
   proxyUrl: string | undefined;
   repositoryMappingsPath: string;
+  skipCertificateVerification: boolean;
   skipUpdateCheck: boolean;
   verbose: boolean;
 }
@@ -731,6 +732,11 @@ command
       .default(ProjectOwnerType.Organization),
   )
   .option('--skip-update-check', 'Skip automatic check for updates to this tool', false)
+  .option(
+    '--skip-certificate-verification',
+    'Skip verification of SSL certificates when connecting to GitHub. You may need to use this option if connecting to a GitHub Enterprise Server instance with a self-signed certificate, or if you have configured a proxy.',
+    false,
+  )
   .action(
     actionRunner(async (opts: Arguments) => {
       const {
@@ -743,11 +749,14 @@ command
         projectTitle,
         proxyUrl,
         repositoryMappingsPath,
+        skipCertificateVerification,
         skipUpdateCheck,
         verbose,
       } = opts;
 
       const logger = createLogger(verbose);
+
+      if (skipCertificateVerification) process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
       if (!skipUpdateCheck) checkForUpdates(proxyUrl, logger);
 
