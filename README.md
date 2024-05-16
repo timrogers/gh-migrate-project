@@ -80,6 +80,8 @@ gh migrate-project export \
     --verbose \
     # OPTIONAL: Disable anonymous telemetry that gives the maintainers of this tool basic information about real-world usage.
     --disable-telemetry \
+    # OPTIONAL: Skip verification of SSL certificates when connecting to GitHub. You may need to use this option if connecting to a GitHub Enterprise Server instance with a self-signed certificate, or if you have configured a proxy.
+    --skip-certificate-verification \
     # OPTIONAL: Skip automatic check for updates to this tool
     --skip-update-check
 ```
@@ -141,6 +143,8 @@ gh migrate-project import \
     --verbose \
     # OPTIONAL: Disable anonymous telemetry that gives the maintainers of this tool basic information about real-world usage.
     --disable-telemetry \
+    # OPTIONAL: Skip verification of SSL certificates when connecting to GitHub. You may need to use this option if connecting to a GitHub Enterprise Server instance with a self-signed certificate, or if you have configured a proxy.
+    --skip-certificate-verification \
     # OPTIONAL: Skip automatic check for updates to this tool
     --skip-update-check
 ```
@@ -151,12 +155,7 @@ Once you've set up the "Status" field, your project will be imported. Watch out 
 
 ### Troubleshooting
 
-If you run into SSL connection errors and you are unable to set your proxy settings with the `--proxy-url` parameter, you can set the `NODE_TLS_REJECT_UNAUTHORIZED=0` environment variable to bypass:
-
-```
-export NODE_TLS_REJECT_UNAUTHORIZED=0 # setting an environment variable in bash
-$Env:NODE_TLS_REJECT_UNAUTHORIZED = 0 # setting an environment variable in PowerShell
-```
+If you are connecting to a GitHub Enterprise Server instance with a self-signed certificate, or if you have configured a proxy, you may experience SSL/TLS related errors. You can skip certificate verification with the `--skip-certificate-verification` argument.
 
 ## Telemetry
 
