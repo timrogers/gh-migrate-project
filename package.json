@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.9.0",
-    "@typescript-eslint/parser": "^7.8.0",
+    "@typescript-eslint/parser": "^7.9.0",
     "@yao-pkg/pkg": "^5.11.5",
     "esbuild": "^0.21.3",
     "eslint": "^8.57.0",
