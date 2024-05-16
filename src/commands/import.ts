@@ -686,6 +686,109 @@ const createProjectItem = async (opts: {
   }
 };
 
+const importProjectItem = async (opts: {
+  logger: Logger;
+  octokit: Octokit;
+  projectItemIndex: number;
+  projectItemsCount: number;
+  repositoryMappings: Map<string, string>;
+  sourceProjectItem: ProjectItem;
+  sourceToTargetCustomFieldMappings: Map<string, CustomField>;
+  targetProjectId: string;
+}): Promise<void> => {
+  const {
+    logger,
+    octokit,
+    projectItemIndex,
+    projectItemsCount,
+    repositoryMappings,
+    sourceProjectItem,
+    sourceToTargetCustomFieldMappings,
+    targetProjectId,
+  } = opts;
+
+  logger.info(
+    `Creating project item ${
+      projectItemIndex + 1
+    }/${projectItemsCount} based on source project item ${sourceProjectItem.id}...`,
+  );
+
+  const createdProjectItemId = await createProjectItem({
+    octokit,
+    sourceProjectItem,
+    targetProjectId,
+    repositoryMappings,
+    logger,
+  });
+
+  // Check if the project item was skipped due to a missing repository mapping
+  if (!createdProjectItemId) {
+    return;
+  }
+
+  logger.info(
+    `Created project item ${createdProjectItemId} based on source project item ${sourceProjectItem.id}`,
+  );
+
+  if (sourceProjectItem.isArchived) {
+    logger.info(`Archiving project item ${createdProjectItemId}...`);
+    await archiveProjectItem({
+      octokit,
+      projectId: targetProjectId,
+      itemId: createdProjectItemId,
+    });
+    logger.info(`Archived project item ${createdProjectItemId}`);
+  }
+
+  const sourceProjectItemCustomFieldValues = sourceProjectItem.fieldValues.nodes.filter(
+    isProjectItemCustomFieldValue,
+  );
+  const customFieldsCount = sourceProjectItemCustomFieldValues.length;
+
+  for (const [
+    fieldIndex,
+    sourceProjectItemCustomField,
+  ] of sourceProjectItemCustomFieldValues.entries()) {
+    logger.info(
+      `Setting field "${sourceProjectItemCustomField.field.name}" (${
+        fieldIndex + 1
+      }/${customFieldsCount}) on project item ${createdProjectItemId}...`,
+    );
+
+    const fieldMapping = sourceToTargetCustomFieldMappings.get(
+      sourceProjectItemCustomField.field.id,
+    );
+
+    if (!fieldMapping) {
+      logger.warn(
+        `Skipping field ${sourceProjectItemCustomField.field.id} because there is no mapping for the field`,
+      );
+      continue;
+    }
+
+    const { targetId: targetFieldId, optionMappings } = fieldMapping;
+    const value = {
+      date: sourceProjectItemCustomField.date,
+      number: sourceProjectItemCustomField.number,
+      text: sourceProjectItemCustomField.text,
+      singleSelectOptionId:
+        sourceProjectItemCustomField.optionId && optionMappings
+          ? optionMappings.get(sourceProjectItemCustomField.optionId)
+          : undefined,
+    };
+    await updateProjectItemFieldValue({
+      octokit,
+      projectId: targetProjectId,
+      itemId: createdProjectItemId,
+      fieldId: targetFieldId,
+      value,
+    });
+    logger.info(
+      `Finished setting field "${sourceProjectItemCustomField.field.name}" on project item ${createdProjectItemId}`,
+    );
+  }
+};
+
 command
   .name('import')
   .version(VERSION)
@@ -1002,85 +1105,17 @@ command
 
       logger.info(`Creating ${projectItemsCount} project item(s)...`);
 
-      for (const [itemIndex, sourceProjectItem] of sourceProjectItems.entries()) {
-        logger.info(
-          `Creating project item ${
-            itemIndex + 1
-          }/${projectItemsCount} based on source project item ${sourceProjectItem.id}...`,
-        );
-
-        const createdProjectItemId = await createProjectItem({
-          octokit,
-          sourceProjectItem,
-          targetProjectId,
-          repositoryMappings,
+      for (const [projectItemIndex, sourceProjectItem] of sourceProjectItems.entries()) {
+        await importProjectItem({
           logger,
+          octokit,
+          projectItemIndex,
+          projectItemsCount,
+          repositoryMappings,
+          sourceProjectItem,
+          sourceToTargetCustomFieldMappings,
+          targetProjectId,
         });
-
-        if (!createdProjectItemId) {
-          continue;
-        }
-
-        logger.info(
-          `Created project item ${createdProjectItemId} based on source project item ${sourceProjectItem.id}`,
-        );
-
-        if (sourceProjectItem.isArchived) {
-          logger.info(`Archiving project item ${createdProjectItemId}...`);
-          await archiveProjectItem({
-            octokit,
-            projectId: targetProjectId,
-            itemId: createdProjectItemId,
-          });
-          logger.info(`Archived project item ${createdProjectItemId}`);
-        }
-
-        const sourceProjectItemCustomFieldValues =
-          sourceProjectItem.fieldValues.nodes.filter(isProjectItemCustomFieldValue);
-        const customFieldsCount = sourceProjectItemCustomFieldValues.length;
-
-        for (const [
-          fieldIndex,
-          sourceProjectItemCustomField,
-        ] of sourceProjectItemCustomFieldValues.entries()) {
-          logger.info(
-            `Setting field "${sourceProjectItemCustomField.field.name}" (${
-              fieldIndex + 1
-            }/${customFieldsCount}) on project item ${createdProjectItemId}...`,
-          );
-
-          const fieldMapping = sourceToTargetCustomFieldMappings.get(
-            sourceProjectItemCustomField.field.id,
-          );
-
-          if (!fieldMapping) {
-            logger.warn(
-              `Skipping field ${sourceProjectItemCustomField.field.id} because there is no mapping for the field`,
-            );
-            continue;
-          }
-
-          const { targetId: targetFieldId, optionMappings } = fieldMapping;
-          const value = {
-            date: sourceProjectItemCustomField.date,
-            number: sourceProjectItemCustomField.number,
-            text: sourceProjectItemCustomField.text,
-            singleSelectOptionId:
-              sourceProjectItemCustomField.optionId && optionMappings
-                ? optionMappings.get(sourceProjectItemCustomField.optionId)
-                : undefined,
-          };
-          await updateProjectItemFieldValue({
-            octokit,
-            projectId: targetProjectId,
-            itemId: createdProjectItemId,
-            fieldId: targetFieldId,
-            value,
-          });
-          logger.info(
-            `Finished setting field "${sourceProjectItemCustomField.field.name}" on project item ${createdProjectItemId}`,
-          );
-        }
       }
 
       console.log(
