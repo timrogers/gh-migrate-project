@@ -8,7 +8,12 @@ import boxen from 'boxen';
 import semver from 'semver';
 import { PostHog } from 'posthog-node';
 
-import { actionRunner, checkForUpdates, logRateLimitInformation } from '../utils.js';
+import {
+  actionRunner,
+  checkForUpdates,
+  logRateLimitInformation,
+  normalizeBaseUrl,
+} from '../utils.js';
 import VERSION from '../version.js';
 import { Logger, createLogger } from '../logger.js';
 import { createOctokit } from '../octokit.js';
@@ -735,7 +740,7 @@ command
     actionRunner(async (opts: Arguments) => {
       const {
         accessToken: accessTokenFromArguments,
-        baseUrl,
+        baseUrl: baseUrlFromArguments,
         disableTelemetry,
         inputPath,
         projectOwner,
@@ -775,6 +780,8 @@ command
           `The repository mappings path, \`${repositoryMappingsPath}\` doesn't exist. Please check the --repository-mappings-path argument, and try again.`,
         );
       }
+
+      const baseUrl = normalizeBaseUrl(baseUrlFromArguments, logger);
 
       const octokit = createOctokit(accessToken, baseUrl, proxyUrl, logger);
 
