@@ -432,7 +432,7 @@ command
 
       if (skipCertificateVerification) process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-      if (proxyUrl && !skipCertificateVerification) {
+      if (proxyUrl && process.env.NODE_TLS_REJECT_UNAUTHORIZED !== '0') {
         logger.warn(
           'You have specified a proxy URL, but have not disabled certificate verification. This is likely to cause SSL connection errors. If you encounter SSL errors, make sure you are on a trusted network, and then try again with the --skip-certificate-verification flag.',
         );
