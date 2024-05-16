@@ -695,7 +695,7 @@ command
   )
   .option(
     '--base-url <base_url>',
-    'The base URL for the GitHub API. You only need to set this if you are migrating from a GitHub product other than GitHub.com',
+    'The base URL for the GitHub API (e.g. `https://ghes.acme.corp/api/v3`). You only need to set this if you are not importing to GitHub.com.',
     'https://api.github.com',
   )
   .requiredOption(
