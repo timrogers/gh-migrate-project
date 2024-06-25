@@ -37,7 +37,7 @@ jobs:
       - name: Make macOS binary executable
         run: chmod +x bin/gh-migrate-project-darwin-amd64
       - name: Export a project from GitHub.com
-        run: ./bin/gh-migrate-project-darwin-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1 --disable-telemetry
+        run: ./bin/gh-migrate-project-darwin-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1026 --disable-telemetry
         env:
           EXPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Copy outputs to output/ directory
@@ -78,7 +78,7 @@ jobs:
       - name: Make Linux binary executable
         run: chmod +x bin/gh-migrate-project-linux-amd64
       - name: Export a project from GitHub.com
-        run: ./bin/gh-migrate-project-linux-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1 --disable-telemetry
+        run: ./bin/gh-migrate-project-linux-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1026 --disable-telemetry
         env:
           EXPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Copy outputs to output/ directory
@@ -117,7 +117,7 @@ jobs:
       - name: Create `output` directory
         run: mkdir output
       - name: Export a project from GitHub.com
-        run: bin/gh-migrate-project-windows-amd64.exe export --project-owner gh-migrate-project-sandbox --project-number 1 --disable-telemetry
+        run: bin/gh-migrate-project-windows-amd64.exe export --project-owner gh-migrate-project-sandbox --project-number 1026 --disable-telemetry
         env:
           EXPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Copy outputs to output/ directory
@@ -158,7 +158,7 @@ jobs:
       - name: Make Linux binary executable
         run: chmod +x bin/gh-migrate-project-linux-amd64
       - name: Export a project from GitHub.com
-        run: ./bin/gh-migrate-project-linux-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1 --disable-telemetry
+        run: ./bin/gh-migrate-project-linux-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1026 --disable-telemetry
         env:
           EXPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Copy outputs to output/ directory
@@ -199,7 +199,7 @@ jobs:
       - name: Make Linux binary executable
         run: chmod +x bin/gh-migrate-project-linux-amd64
       - name: Export a project from GitHub.com
-        run: ./bin/gh-migrate-project-linux-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1 --disable-telemetry
+        run: ./bin/gh-migrate-project-linux-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1026 --disable-telemetry
         env:
           EXPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Copy outputs to output/ directory
