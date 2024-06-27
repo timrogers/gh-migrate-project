@@ -53,7 +53,7 @@ From time to time, we need to add or remove supported GitHub Enterprise Server v
 ### Adding support for a new GitHub Enterprise Server (GHES) version, including automated tests
 
 1. Deploy a GitHub Enterprise Server (GHES) instance of the required version
-1. Create a personal access token (PAT) with the `repo`, `admin:org`, `project` and `site_admin` scopes
+1. Create a personal access token (PAT) with the `repo`, `admin:org`, `site_admin` and `project` scopes
 1. Seed the GHES instance with data. You can do this by running `GITHUB_TOKEN=token GITHUB_BASE_URL=https://ghes.acme.com/api/v3 npm run seed-github-enterprise-server-instance`, replacing the environment variables as appropriate.
 1. Create new [Actions secrets](https://github.com/timrogers/gh-migrate-project/settings/secrets/actions) and [Dependabot secrets](https://github.com/timrogers/gh-migrate-project/settings/secrets/dependabot) for the new GHES instance:
 
