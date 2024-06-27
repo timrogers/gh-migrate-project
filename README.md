@@ -11,29 +11,6 @@ A [GitHub CLI](https://cli.github.com/) [extension](https://cli.github.com/manua
   * Another organization or user account on GitHub.com (e.g. from a classic GitHub.com organization to [Enterprise Managed Users](https://docs.github.com/en/enterprise-cloud@latest/admin/identity-and-access-management/using-enterprise-managed-users-for-iam/about-enterprise-managed-users) organization)
   * GitHub Enterprise Server v3.10+
 
-## Limitations
-
-### Classic projects are not supported
-
-This tool can't migrate so-called classic Projects - only the newer version of [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects).
-
-Classic Projects can be migrated with [GitHub Enterprise Importer](https://docs.github.com/en/migrations/using-github-enterprise-importer) or [`ghe-migrator`](https://docs.github.com/en/enterprise-cloud@latest/migrations/using-ghe-migrator/about-ghe-migrator).
-
-
-### Not all data is migrated
-
-The following data is not migrated and will be skipped:
-
-- Views
-- The order of project items displayed in your views
-- Workflows
-- Iteration custom fields
-- Draft issues' assignees
-
-### Draft issues will show the person running the migration as the author
-
-Migrated draft issues will show as being created by the person who ran the migration at the time they ran the migration. A note will be prepended to the body with original author login and timestamp.
-
 ## Instructions
 
 ### Step 1. Install the GitHub CLI extension
@@ -153,7 +130,37 @@ Near the start of the import, the tool will ask you to manually set up your opti
 
 Once you've set up the "Status" field, your project will be imported. Watch out for `warn` lines in the logs, which will let you know about data which hasn't been imported.
 
-### Troubleshooting
+## Limitations
+
+### Classic projects are not supported
+
+This tool can't migrate so-called classic Projects - only the newer version of [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects).
+
+Classic Projects can be migrated with [GitHub Enterprise Importer](https://docs.github.com/en/migrations/using-github-enterprise-importer) or [`ghe-migrator`](https://docs.github.com/en/enterprise-cloud@latest/migrations/using-ghe-migrator/about-ghe-migrator).
+
+### Not all data is migrated
+
+The following data is not migrated and will be skipped:
+
+- Views
+- The order of project items displayed in your views
+- Workflows
+- Iteration custom fields
+- Draft issues' assignees
+
+### Supported GitHub Enterprise Server versions
+
+This tool only commits to supporting [GitHub Enterprise Server releases supported by GitHub](https://docs.github.com/en/enterprise-server/admin/all-releases). Releases are deprecated roughly a year after release, and once a release is deprecated, we will drop support in this tool.
+
+If you want to export from or import to an old GitHub Enterprise Server version, you may need to use an earlier version of the tool:
+
+* For exports from GitHub Enterprise Server v3.7, v3.8 or v3.9, use version `v1.3.0` or earlier (`gh extension install timrogers/gh-migrate-project --pin v1.3.0`)
+
+### Draft issues will show the person running the migration as the author
+
+Migrated draft issues will show as being created by the person who ran the migration at the time they ran the migration. A note will be prepended to the body with original author login and timestamp.
+
+## Troubleshooting
 
 If you are connecting to a GitHub Enterprise Server instance with a self-signed certificate, or if you have configured a proxy, you may experience SSL/TLS related errors. You can skip certificate verification with the `--skip-certificate-verification` argument.
 
