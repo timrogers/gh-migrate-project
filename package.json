@@ -8,7 +8,9 @@
     "package": "node build.js && npx pkg dist/migrate-project.cjs --out-path bin --targets node18-linux-x64,node18-macos-x64,node18-win-x64",
     "lint": "eslint . --ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix",
-    "dev": "npx ts-node --esm src/index.ts"
+    "dev": "npx ts-node --esm src/index.ts",
+    "clean-up-organization-projects": "npx ts-node --esm script/clean-up-organization-projects.ts",
+    "seed-github-enterprise-server-instance": "npx ts-node --esm script/seed-github-enterprise-server-instance.ts"
   },
   "author": "Tim Rogers <me@timrogers.co.uk>",
   "license": "MIT",
