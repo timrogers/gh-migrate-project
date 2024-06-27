@@ -10,6 +10,6 @@
     "noImplicitAny": true,
     "moduleResolution": "Node",
   },
-  "include": ["./src"],
+  "include": ["./src", "./script"],
   "exclude": ["node_modules"]
 }
