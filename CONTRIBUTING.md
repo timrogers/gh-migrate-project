@@ -48,6 +48,8 @@ To clean up old projects, set `GITHUB_TOKEN` to a token with access to the `gh-m
 
 This tool supports exports from and imports to GitHub Enterprise Server (GHES).
 
+We only commit to supporting [GitHub Enterprise Server releases supported by GitHub](https://docs.github.com/en/enterprise-server/admin/all-releases). Releases are deprecated roughly a year after release, and once a release is deprecated, we will drop support in this tool.
+
 From time to time, we need to add or remove supported GitHub Enterprise Server versions. We may also need to re-provision existing GitHub Enterprise Server versions with a new instance and/or new access token.
 
 ### Adding support for a new GitHub Enterprise Server (GHES) version, including automated tests
