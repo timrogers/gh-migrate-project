@@ -4,7 +4,7 @@ A [GitHub CLI](https://cli.github.com/) [extension](https://cli.github.com/manua
 
 ## Supported migration paths
 
-* From GitHub Enterprise Server v3.7+ to:
+* From GitHub Enterprise Server v3.10+ to:
   * GitHub.com
   * GitHub Enterprise Server v3.10+
 * From GitHub.com to:
