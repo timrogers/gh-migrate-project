@@ -64,6 +64,7 @@ From time to time, we need to add or remove supported GitHub Enterprise Server v
 1. Rename the job to an appropriate name for the new version, e.g. `end_to_end_tests_linux_ghes_312`
 1. Update the GHES version in the job's `name`
 1. In the "Import project to GHES" step, update the two secrets references to refer to your new secrets
+1. In the "Upload outputs as artifacts", update the name with the new GHES version (e.g. `linux-outputs-ghes-312`)
 1. Update the `needs` configuration for the `check_release_tag_matches_version` job to include the name of your new job
 
 ### Removing support for a GitHub Enterprise Server (GHES) version
