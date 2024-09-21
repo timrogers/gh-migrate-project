@@ -510,19 +510,24 @@ const promptUntilStatusFieldsCorrelate = async (
       mappings,
     };
   } catch (e) {
+    const expectedOptionsAsString = expectedOptions.sort().join(', ');
+
     if (isFirstRun) {
       console.log(
         boxen(
-          `Your new project has been created.\n\nYou now need to manually update the "Status" field's options to match your source. Here's what you need to do:\n\n1. Go to <${targetProjectUrl}/settings/fields/Status>.\n2. Make sure you have exactly the following options configured: ${expectedOptions.join(
-            ', ',
-          )}\n\nOnce you've done that, hit Enter and we'll check that everything looks good.`,
+          `Your new project has been created.\n\nYou now need to manually update the "Status" field's options to match your source. Here's what you need to do:\n\n1. Go to <${targetProjectUrl}/settings/fields/Status>.\n2. Make sure you have exactly the following options configured:\n\n${expectedOptionsAsString}\n\nOnce you've done that, hit Enter and we'll check that everything looks good.`,
           { padding: 1, margin: 1, borderStyle: 'double' },
         ),
       );
     } else {
+      const foundOptionsAsString = targetProjectStatusField.options
+        .map((option) => option.name)
+        .sort()
+        .join(', ');
+
       console.log(
         boxen(
-          "Your \"Status\" field's options don't look quite right. Please double check, and then when you're ready, hit Enter.",
+          `The options for the "Status" field in your new project don't match your source project.\n\nYour source project's "Status" field has the following options:\n\n${expectedOptionsAsString}\n\nYour new project's "Status" field has the following options:\n\n${foundOptionsAsString}\n\nMake sure the options match exactly, and then when you're ready, hit Enter.`,
           { padding: 1, margin: 1, borderStyle: 'double' },
         ),
       );
