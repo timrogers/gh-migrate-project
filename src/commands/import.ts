@@ -461,10 +461,28 @@ const correlateCustomFieldOptions = (
   }
 
   for (const oldOption of oldOptions) {
-    const newOption = newOptions.find((option) => option.name === oldOption.name);
+    const correlatingNewOption = newOptions.find(
+      (option) => option.name === oldOption.name,
+    );
 
-    if (newOption) {
-      map.set(oldOption.id, newOption.id);
+    if (correlatingNewOption) {
+      map.set(oldOption.id, correlatingNewOption.id);
+    } else {
+      throw new Error(
+        `Unable to correlate custom field options - expected to find "${oldOption.name}" option`,
+      );
+    }
+  }
+
+  for (const newOption of newOptions) {
+    const correlatingOldOption = oldOptions.find(
+      (option) => option.name === newOption.name,
+    );
+
+    if (!correlatingOldOption) {
+      throw new Error(
+        `Unable to correlate custom field options - found unexpected "${newOption.name}" option`,
+      );
     }
   }
 
