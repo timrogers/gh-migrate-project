@@ -8,9 +8,9 @@
     "package": "node build.js && npx pkg dist/migrate-project.cjs --out-path bin --targets node20-linux-x64,node20-macos-x64,node20-win-x64",
     "lint": "eslint . --ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix",
-    "dev": "npx ts-node --esm src/index.ts",
-    "clean-up-organization-projects": "npx ts-node --esm script/clean-up-organization-projects.ts",
-    "seed-github-enterprise-server-instance": "npx ts-node --esm script/seed-github-enterprise-server-instance.ts"
+    "dev": "npx tsx --esm src/index.ts",
+    "clean-up-organization-projects": "npx tsx script/clean-up-organization-projects.ts",
+    "seed-github-enterprise-server-instance": "npx tsx script/seed-github-enterprise-server-instance.ts"
   },
   "author": "Tim Rogers <me@timrogers.co.uk>",
   "license": "MIT",
@@ -36,7 +36,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
     "prettier": "^3.3.3",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.19.1",
     "typescript": "^5.5.3"
   },
   "repository": {
