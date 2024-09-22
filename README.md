@@ -154,8 +154,8 @@ This tool only commits to supporting [GitHub Enterprise Server releases supporte
 
 If you want to export from or import to an old GitHub Enterprise Server version, you may need to use an earlier version of the tool:
 
-- For exports from and imports to GitHub Enterprise Server v3.10, use version `v2.1.0` or earlier (`gh extension install timrogers/gh-migrate-project --pin v2.1.0
-- For exports from GitHub Enterprise Server v3.7, v3.8 or v3.9, use version `v1.3.0` or earlier (`gh extension install timrogers/gh-migrate-project --pin v1.3.0`)`)
+- For exports from and imports to GitHub Enterprise Server v3.10, use version `v2.1.0` or earlier (`gh extension install timrogers/gh-migrate-project --pin v2.1.0`)
+- For exports from GitHub Enterprise Server v3.7, v3.8 or v3.9, use version `v1.3.0` or earlier (`gh extension install timrogers/gh-migrate-project --pin v1.3.0`)
 
 ### Draft issues will show the person running the migration as the author
 
