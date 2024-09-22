@@ -394,7 +394,6 @@ jobs:
         'end_to_end_tests_linux_ghes_313',
         'end_to_end_tests_linux_ghes_312',
         'end_to_end_tests_linux_ghes_311',
-        'end_to_end_tests_linux_ghes_310',
         'end_to_end_tests_windows',
         'end_to_end_tests_linux',
         'end_to_end_tests_macos',
