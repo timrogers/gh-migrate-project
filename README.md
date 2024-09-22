@@ -94,7 +94,7 @@ If you don't want to map a repository - for example because it hasn't been migra
 
 You've exported your data and filled out the repository mappings template. You can now import your project into your migration target.
 
-To export a project, you'll need a token with appropriate permissions. The extension won't use your existing login session for the GitHub CLI. You'll need a classic token with the `read:project` and `repo` scopes, [authorized for SSO](https://docs.github.com/en/enterprise-cloud@latest/authentication/authenticating-with-saml-single-sign-on/authorizing-a-personal-access-token-for-use-with-saml-single-sign-on) if applicable. If you're creating an organization project, you'll also need the `read:org` scope.
+To export a project, you'll need a token with appropriate permissions. The extension won't use your existing login session for the GitHub CLI. You'll need a classic token with the `project` and `repo` scopes, [authorized for SSO](https://docs.github.com/en/enterprise-cloud@latest/authentication/authenticating-with-saml-single-sign-on/authorizing-a-personal-access-token-for-use-with-saml-single-sign-on) if applicable. If you're creating an organization project, you'll also need the `write:org` scope.
 
 You can import your project using the `gh migrate-project import` command:
 
