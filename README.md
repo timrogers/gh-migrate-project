@@ -4,12 +4,12 @@ A [GitHub CLI](https://cli.github.com/) [extension](https://cli.github.com/manua
 
 ## Supported migration paths
 
-* From GitHub Enterprise Server v3.10+ to:
-  * GitHub.com
-  * GitHub Enterprise Server v3.10+
-* From GitHub.com to:
-  * Another organization or user account on GitHub.com (e.g. from a classic GitHub.com organization to [Enterprise Managed Users](https://docs.github.com/en/enterprise-cloud@latest/admin/identity-and-access-management/using-enterprise-managed-users-for-iam/about-enterprise-managed-users) organization)
-  * GitHub Enterprise Server v3.10+
+- From GitHub Enterprise Server v3.11+ to:
+  - GitHub.com
+  - GitHub Enterprise Server v3.11+
+- From GitHub.com to:
+  - Another organization or user account on GitHub.com (e.g. from a classic GitHub.com organization to [Enterprise Managed Users](https://docs.github.com/en/enterprise-cloud@latest/admin/identity-and-access-management/using-enterprise-managed-users-for-iam/about-enterprise-managed-users) organization)
+  - GitHub Enterprise Server v3.11+
 
 ## Instructions
 
@@ -154,7 +154,8 @@ This tool only commits to supporting [GitHub Enterprise Server releases supporte
 
 If you want to export from or import to an old GitHub Enterprise Server version, you may need to use an earlier version of the tool:
 
-* For exports from GitHub Enterprise Server v3.7, v3.8 or v3.9, use version `v1.3.0` or earlier (`gh extension install timrogers/gh-migrate-project --pin v1.3.0`)
+- For exports from and imports to GitHub Enterprise Server v3.10, use version `v2.1.0` or earlier (`gh extension install timrogers/gh-migrate-project --pin v2.1.0
+- For exports from GitHub Enterprise Server v3.7, v3.8 or v3.9, use version `v1.3.0` or earlier (`gh extension install timrogers/gh-migrate-project --pin v1.3.0`)`)
 
 ### Draft issues will show the person running the migration as the author
 

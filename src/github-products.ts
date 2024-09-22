@@ -11,9 +11,9 @@ type GhesMetaResponse = DotcomMetaResponse & {
   };
 };
 
-export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS = '3.10.0';
+export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS = '3.11.0';
 
-export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_IMPORTS = '3.10.0';
+export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_IMPORTS = '3.11.0';
 
 export const getGitHubProductInformation = async (
   octokit: Octokit,
