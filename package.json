@@ -10,7 +10,7 @@
     "lint-and-fix": "eslint . --ext .ts --fix",
     "dev": "npx tsx --esm src/index.ts",
     "clean-up-organization-projects": "npx tsx script/clean-up-organization-projects.ts",
-    "seed-github-enterprise-server-instance": "npx tsx script/seed-github-enterprise-server-instance.ts"
+    "configure-github-enterprise-server-instance": "npx tsx script/configure-github-enterprise-server-instance.ts"
   },
   "author": "Tim Rogers <me@timrogers.co.uk>",
   "license": "MIT",
@@ -28,6 +28,9 @@
     "winston": "^3.13.1"
   },
   "devDependencies": {
+    "@types/libsodium-wrappers": "^0.7.14",
+    "@types/node": "^22.7.4",
+    "@types/semver": "^7.5.8",
     "@typescript-eslint/eslint-plugin": "^7.16.1",
     "@typescript-eslint/parser": "^7.16.1",
     "@yao-pkg/pkg": "^5.12.0",
@@ -35,6 +38,7 @@
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "libsodium-wrappers": "^0.7.15",
     "prettier": "^3.3.3",
     "tsx": "^4.19.1",
     "typescript": "^5.6.2"
