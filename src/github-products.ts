@@ -15,39 +15,60 @@ export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS = '3
 
 export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_IMPORTS = '3.11.0';
 
+export enum GitHubProduct {
+  GHES = 'GitHub Enterprise Server',
+  DOTCOM = 'GitHub.com',
+  GITHUB_ENTERPRISE_CLOUD_WITH_DATA_RESIDENCY = 'GitHub Enterprise Cloud with Data Residency',
+}
+
 export const getGitHubProductInformation = async (
   octokit: Octokit,
 ): Promise<
   | {
-      isGitHubEnterpriseServer: true;
+      githubProduct: GitHubProduct.GHES;
       gitHubEnterpriseServerVersion: string;
     }
   | {
-      isGitHubEnterpriseServer: false;
+      githubProduct:
+        | GitHubProduct.DOTCOM
+        | GitHubProduct.GITHUB_ENTERPRISE_CLOUD_WITH_DATA_RESIDENCY;
       gitHubEnterpriseServerVersion: undefined;
     }
 > => {
-  const isGitHubEnterpriseServer = isGitHubEnterpriseServerBaseUrl(
+  const githubProduct = getGitHubProductFromBaseUrl(
     octokit.request.endpoint.DEFAULTS.baseUrl,
   );
 
-  if (isGitHubEnterpriseServer) {
+  if (githubProduct === GitHubProduct.GHES) {
     const gitHubEnterpriseServerVersion = await getGitHubEnterpriseServerVersion(octokit);
 
     return {
-      isGitHubEnterpriseServer,
+      githubProduct,
       gitHubEnterpriseServerVersion,
     };
   } else {
     return {
-      isGitHubEnterpriseServer,
+      githubProduct,
       gitHubEnterpriseServerVersion: undefined,
     };
   }
 };
 
-const isGitHubEnterpriseServerBaseUrl = (baseUrl: string): boolean =>
-  baseUrl !== 'https://api.github.com';
+const getGitHubProductFromBaseUrl = (baseUrl: string): GitHubProduct => {
+  if (isDotcomBaseUrl(baseUrl)) {
+    return GitHubProduct.DOTCOM;
+  } else if (isGitHubEnterpriseCloudWithDataResidencyBaseUrl(baseUrl)) {
+    return GitHubProduct.GITHUB_ENTERPRISE_CLOUD_WITH_DATA_RESIDENCY;
+  } else {
+    return GitHubProduct.GHES;
+  }
+};
+
+const isDotcomBaseUrl = (baseUrl: string): boolean =>
+  baseUrl === 'https://api.github.com';
+
+const isGitHubEnterpriseCloudWithDataResidencyBaseUrl = (baseUrl: string): boolean =>
+  baseUrl.includes('.ghe.com');
 
 const getGitHubEnterpriseServerVersion = async (octokit: Octokit): Promise<string> => {
   const {
