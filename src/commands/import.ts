@@ -24,6 +24,7 @@ import {
 } from '../graphql-types.js';
 import { getReferencedRepositories } from '../project-items.js';
 import {
+  GitHubProduct,
   MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_IMPORTS,
   getGitHubProductInformation,
 } from '../github-products.js';
@@ -822,7 +823,7 @@ command
   )
   .option(
     '--base-url <base_url>',
-    'The base URL for the GitHub API (e.g. `https://ghes.acme.corp/api/v3`). You only need to set this if you are not importing to GitHub.com.',
+    'The base URL for the GitHub API if you are importing to a source other than GitHub.com. For GitHub Enterprise Server, this will be something like `https://github.acme.inc/api/v3`. For GitHub Enterprise Cloud with data residency, this will be `https://api.acme.ghe.com`, replacing `acme` with your own tenant.',
     'https://api.github.com',
   )
   .requiredOption(
@@ -953,10 +954,10 @@ command
         );
       }
 
-      const { gitHubEnterpriseServerVersion, isGitHubEnterpriseServer } =
+      const { githubProduct, gitHubEnterpriseServerVersion } =
         await getGitHubProductInformation(octokit);
 
-      if (isGitHubEnterpriseServer) {
+      if (githubProduct === GitHubProduct.GHES) {
         if (
           semver.lte(
             gitHubEnterpriseServerVersion,
@@ -972,7 +973,7 @@ command
           `Running export in GitHub Enterprse Server ${gitHubEnterpriseServerVersion} mode`,
         );
       } else {
-        logger.info(`Running export in GitHub.com mode`);
+        logger.info(`Running export in ${githubProduct} mode`);
       }
 
       if (!disableTelemetry) {
@@ -981,7 +982,7 @@ command
           event: 'import_start',
           properties: {
             github_enterprise_server_version: gitHubEnterpriseServerVersion,
-            is_github_enterprise_server: isGitHubEnterpriseServer,
+            github_product: githubProduct,
             version: VERSION,
           },
         });
