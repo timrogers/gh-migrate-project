@@ -8,7 +8,7 @@
     "package": "node build.js && npx pkg dist/migrate-project.cjs --out-path bin --targets node20-linux-x64,node20-macos-x64,node20-win-x64",
     "lint": "eslint . --ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix",
-    "dev": "npx tsx --esm src/index.ts",
+    "dev": "npx tsx src/index.ts",
     "clean-up-organization-projects": "npx tsx script/clean-up-organization-projects.ts",
     "seed-github-enterprise-server-instance": "npx tsx script/seed-github-enterprise-server-instance.ts"
   },
