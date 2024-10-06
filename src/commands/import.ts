@@ -527,7 +527,7 @@ const promptUntilStatusFieldsCorrelate = async (
       targetProjectStatusFieldId: targetProjectStatusField.id,
       mappings,
     };
-  } catch (e) {
+  } catch {
     const expectedOptionsAsString = expectedOptions.sort().join(', ');
 
     if (isFirstRun) {
