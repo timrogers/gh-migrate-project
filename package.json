@@ -5,10 +5,11 @@
   "description": "A GitHub CLI (https://cli.github.com/) extension for migrating GitHub Projects (https://docs.github.com/en/issues/planning-and-tracking-with-projects) between GitHub accounts and products",
   "homepage": "https://github.com/timrogers/gh-migrate-project",
   "scripts": {
-    "package": "node build.js && npx pkg dist/migrate-project.cjs --out-path bin --targets node20-linux-x64,node20-macos-x64,node20-win-x64",
-    "lint": "eslint .",
+    "package": "node build.js && npx pkg dist/migrate-project.cjs --out-path bin --targets node20-linux-x64,node20-win-x64",
+    "package:macos": "node build.js && npx pkg dist/migrate-project.cjs --out-path bin --targets node20-macos-x64,node20-macos-arm64",
+    "lint": "eslint ",
     "lint-and-fix": "eslint . --fix",
-    "dev": "npx tsx src/index.ts",
+    "dev": "npx tsx --esm src/index.ts",
     "clean-up-organization-projects": "npx tsx script/clean-up-organization-projects.ts",
     "configure-github-enterprise-server-instance": "npx tsx script/configure-github-enterprise-server-instance.ts"
   },

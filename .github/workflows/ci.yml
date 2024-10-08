@@ -344,8 +344,8 @@ jobs:
         with:
           name: linux-outputs-ghes-311
           path: output
-  package-macos-arm64:
-    name: Package macOS binary for Apple Silicon
+  package-macos:
+    name: Package macOS binaries
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -359,10 +359,12 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename macOS binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-macos bin/gh-migrate-project-darwin-arm64
+      - name: Generate binaries for macOS
+        run: npm run package:macos
+      - name: Rename macOS ARM64 binary to conform to GitHub CLI extension rules
+        run: mv bin/migrate-project-arm64 bin/gh-migrate-project-darwin-arm64
+      - name: Rename macOS AMD64 binary to conform to GitHub CLI extension rules
+        run: mv bin/migrate-project-amd64 bin/gh-migrate-project-darwin-amd64
       - name: Write Apple signing key to a file
         env:
           APPLE_SIGNING_KEY_P12: ${{ secrets.APPLE_SIGNING_KEY_P12 }}
@@ -371,7 +373,7 @@ jobs:
         env:
           APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
         run: echo "$APP_STORE_CONNECT_API_KEY" > app_store_connect_api_key.json
-      - name: Sign macOS binary (macOS only)
+      - name: Sign macOS ARM64 binary
         uses: indygreg/apple-code-sign-action@v1
         with:
           input_path: bin/gh-migrate-project-darwin-arm64
@@ -379,22 +381,44 @@ jobs:
           p12_password: ${{ secrets.APPLE_SIGNING_KEY_PASSWORD }}
           sign: true
           sign_args: '--code-signature-flags=runtime'
-      - name: Upload binary as artifact
+      - name: Upload macOS ARM64 binary as artifact
         uses: actions/upload-artifact@v4
         with:
           path: bin/gh-migrate-project-darwin-arm64
           name: gh-migrate-project-darwin-arm64
-      - name: Archive macOS binary for notarisation (macOS only)
+      - name: Archive macOS ARM64 binary for notarisation
         run: zip gh-migrate-project-darwin-arm64.zip bin/gh-migrate-project-darwin-arm64
-      - name: Notarise signed macOS binary (macOS only)
+      - name: Notarise signed macOS ARM64 binary
         uses: indygreg/apple-code-sign-action@v1
         with:
           input_path: gh-migrate-project-darwin-arm64.zip
           sign: false
           notarize: true
           app_store_connect_api_key_json_file: app_store_connect_api_key.json
+      - name: Sign macOS AMD64 binary
+        uses: indygreg/apple-code-sign-action@v1
+        with:
+          input_path: bin/gh-migrate-project-darwin-amd64
+          p12_file: key.p12
+          p12_password: ${{ secrets.APPLE_SIGNING_KEY_PASSWORD }}
+          sign: true
+          sign_args: '--code-signature-flags=runtime'
+      - name: Upload macOS AMD64 binary as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: bin/gh-migrate-project-darwin-amd64
+          name: gh-migrate-project-darwin-amd64
+      - name: Archive macOS AMD64 binary for notarisation
+        run: zip gh-migrate-project-darwin-amd64.zip bin/gh-migrate-project-darwin-amd64
+      - name: Notarise signed macOS AMD64 binary
+        uses: indygreg/apple-code-sign-action@v1
+        with:
+          input_path: gh-migrate-project-darwin-amd64.zip
+          sign: false
+          notarize: true
+          app_store_connect_api_key_json_file: app_store_connect_api_key.json
   package:
-    name: Package binaries
+    name: Package Windows and Linux binaries
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -408,19 +432,12 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
+      - name: Generate binaries for Linux and Windows
         run: npm run package
-      - name: Rename macOS binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-macos bin/gh-migrate-project-darwin-amd64
       - name: Rename Windows binary to conform to GitHub CLI extension rules
         run: mv bin/migrate-project-win.exe bin/gh-migrate-project-windows-amd64.exe
       - name: Rename Linux binary to conform to GitHub CLI extension rules
         run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
-      - name: Upload macOS binary as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: package-macos
-          path: bin/gh-migrate-project-darwin-amd64
       - name: Upload Linux binary as artifact
         uses: actions/upload-artifact@v4
         with:
@@ -437,7 +454,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [
         'package',
-        'package-macos-arm64',
+        'package-macos',
         'test_and_lint',
         #'end_to_end_tests_linux_ghes_315',
         'end_to_end_tests_linux_ghes_314',
@@ -474,7 +491,7 @@ jobs:
       - name: Download macOS AMD64 binary
         uses: actions/download-artifact@v4
         with:
-          name: package-macos
+          name: gh-migrate-project-darwin-amd64
           path: bin
       - name: Download macOS ARM64 binary
         uses: actions/download-artifact@v4
