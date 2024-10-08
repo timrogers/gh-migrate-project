@@ -364,7 +364,7 @@ jobs:
       - name: Rename macOS ARM64 binary to conform to GitHub CLI extension rules
         run: mv bin/migrate-project-arm64 bin/gh-migrate-project-darwin-arm64
       - name: Rename macOS AMD64 binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-amd64 bin/gh-migrate-project-darwin-amd64
+        run: mv bin/migrate-project-x64 bin/gh-migrate-project-darwin-amd64
       - name: Write Apple signing key to a file
         env:
           APPLE_SIGNING_KEY_P12: ${{ secrets.APPLE_SIGNING_KEY_P12 }}
