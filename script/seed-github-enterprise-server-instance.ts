@@ -1,3 +1,4 @@
+import { program } from 'commander';
 import { type Octokit as OctokitType } from 'octokit';
 import { createOctokit } from '../src/octokit';
 import { createLogger } from '../src/logger';
@@ -178,23 +179,48 @@ const createIssue = async ({
 const INTEGRATION_TEST_ORGANIZATION_LOGIN = 'gh-migrate-project-sandbox';
 const INTEGRATION_TEST_REPOSITORY_NAME = 'initial-repository';
 
-(async () => {
-  const logger = createLogger(false);
+program
+  .requiredOption(
+    '--ghes-base-url <ghesBaseUrl>',
+    'The base URL of the GitHub Enterprise Server (GHES) instance (e.g. `https://ghes.acme.corp/api/v3`)',
+  )
+  .option(
+    '--ghes-access-token <ghesAccessToken>',
+    'The access token for the GitHub Enterprise Server (GHES) instance. This can also be set using the $GHES_TOKEN environment variable.',
+  )
+  .option(
+    '--dotcom-access-token <dotcomAccessToken>',
+    'The access token for GitHub.com. This can also be set using the $GITHUB_TOKEN environment variable.',
+  )
+  .option('--verbose', 'Emit detailed, verbose logs', false);
 
-  if (!process.env.GITHUB_BASE_URL) {
-    throw new Error('GITHUB_BASE_URL is not set');
-  }
+program.parse(process.argv);
+
+const opts = program.opts() as {
+  ghesBaseUrl: string;
+  ghesAccessToken?: string;
+  dotcomAccessToken?: string;
+  verbose: boolean;
+};
+
+(async () => {
+  const logger = createLogger(opts.verbose);
 
   const octokit = createOctokit(
-    process.env.GITHUB_TOKEN,
-    process.env.GITHUB_BASE_URL,
+    opts.ghesAccessToken,
+    opts.ghesBaseUrl,
     undefined,
     logger,
   );
 
   logger.info('Seeding GHES instance...');
 
-  if (!(await isOrganizationAlreadyCreated({ login: INTEGRATION_TEST_ORGANIZATION_LOGIN, octokit }))) {
+  if (
+    !(await isOrganizationAlreadyCreated({
+      login: INTEGRATION_TEST_ORGANIZATION_LOGIN,
+      octokit,
+    }))
+  ) {
     logger.info(`Creating organization ${INTEGRATION_TEST_ORGANIZATION_LOGIN}...`);
 
     const organizationId = await createOrganization({
@@ -202,7 +228,9 @@ const INTEGRATION_TEST_REPOSITORY_NAME = 'initial-repository';
       octokit,
     });
 
-    logger.info(`Created organization ${INTEGRATION_TEST_ORGANIZATION_LOGIN} with ID ${organizationId}`);
+    logger.info(
+      `Created organization ${INTEGRATION_TEST_ORGANIZATION_LOGIN} with ID ${organizationId}`,
+    );
   }
 
   if (
