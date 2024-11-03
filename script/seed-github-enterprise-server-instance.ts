@@ -1,5 +1,5 @@
 import { type Octokit as OctokitType } from 'octokit';
-import { Octokit } from 'octokit';
+import { createOctokit } from '../src/octokit';
 import { createLogger } from '../src/logger';
 import { GraphqlResponseError } from '@octokit/graphql';
 
@@ -175,16 +175,24 @@ const createIssue = async ({
   return id;
 };
 
-const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN,
-  baseUrl: process.env.GITHUB_BASE_URL,
-});
-
 const ORGANIZATION_LOGIN = 'gh-migrate-project-sandbox';
 const REPOSITORY_NAME = 'initial-repository';
 
 (async () => {
   const logger = createLogger(false);
+
+  if (!process.env.GITHUB_BASE_URL) {
+    throw new Error('GITHUB_BASE_URL is not set');
+  }
+
+  const octokit = createOctokit(
+    process.env.GITHUB_TOKEN,
+    process.env.GITHUB_BASE_URL,
+    undefined,
+    logger,
+  );
+
+  logger.info('Seeding GHES instance...');
 
   if (!(await isOrganizationAlreadyCreated({ login: ORGANIZATION_LOGIN, octokit }))) {
     logger.info(`Creating organization ${ORGANIZATION_LOGIN}...`);
