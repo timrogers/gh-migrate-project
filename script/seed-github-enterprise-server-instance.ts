@@ -1,8 +1,11 @@
 import { program } from 'commander';
+import _sodium from 'libsodium-wrappers';
+import semver from 'semver';
 import { type Octokit as OctokitType } from 'octokit';
 import { createOctokit } from '../src/octokit';
 import { createLogger } from '../src/logger';
 import { GraphqlResponseError } from '@octokit/graphql';
+import { getGitHubProductInformation, GitHubProduct } from '../src/github-products';
 
 const createOrganization = async ({
   login,
@@ -176,6 +179,93 @@ const createIssue = async ({
   return id;
 };
 
+const encryptSecretValue = ({
+  sodium,
+  key,
+  secretValue,
+}: {
+  sodium: typeof _sodium;
+  key: string;
+  secretValue: string;
+}): string => {
+  const binKey = sodium.from_base64(key, sodium.base64_variants.ORIGINAL);
+  const binSecretValue = sodium.from_string(secretValue);
+  const encryptedSecretValue = sodium.to_base64(
+    sodium.crypto_box_seal(binSecretValue, binKey),
+    sodium.base64_variants.ORIGINAL,
+  );
+
+  return encryptedSecretValue;
+};
+
+const encryptAndSetActionsSecret = async ({
+  octokit,
+  owner,
+  repo,
+  sodium,
+  secretName,
+  secretValue,
+}: {
+  octokit: OctokitType;
+  owner: string;
+  repo: string;
+  sodium: typeof _sodium;
+  secretName: string;
+  secretValue: string;
+}) => {
+  const {
+    data: { key_id: keyId, key },
+  } = await octokit.request('GET /repos/{owner}/{repo}/actions/secrets/public-key', {
+    owner: owner,
+    repo: repo,
+  });
+
+  const encryptedSecretValue = encryptSecretValue({ sodium, key, secretValue });
+
+  await octokit.request('PUT /repos/{owner}/{repo}/actions/secrets/{secret_name}', {
+    owner,
+    repo,
+    secret_name: secretName,
+    encrypted_value: encryptedSecretValue,
+    key_id: keyId,
+  });
+};
+
+const encryptAndSetDependabotSecret = async ({
+  octokit,
+  owner,
+  repo,
+  sodium,
+  secretName,
+  secretValue,
+}: {
+  octokit: OctokitType;
+  owner: string;
+  repo: string;
+  sodium: typeof _sodium;
+  secretName: string;
+  secretValue: string;
+}) => {
+  const {
+    data: { key_id: keyId, key },
+  } = await octokit.request('GET /repos/{owner}/{repo}/dependabot/secrets/public-key', {
+    owner: owner,
+    repo: repo,
+  });
+
+  const encryptedSecretValue = encryptSecretValue({ sodium, key, secretValue });
+
+  await octokit.request('PUT /repos/{owner}/{repo}/dependabot/secrets/{secret_name}', {
+    owner,
+    repo,
+    secret_name: secretName,
+    encrypted_value: encryptedSecretValue,
+    key_id: keyId,
+  });
+};
+
+const PROJECT_OWNER = 'timrogers';
+const PROJECT_REPO = 'gh-migrate-project';
 const INTEGRATION_TEST_ORGANIZATION_LOGIN = 'gh-migrate-project-sandbox';
 const INTEGRATION_TEST_REPOSITORY_NAME = 'initial-repository';
 
@@ -198,12 +288,15 @@ program.parse(process.argv);
 
 const opts = program.opts() as {
   ghesBaseUrl: string;
-  ghesAccessToken?: string;
-  dotcomAccessToken?: string;
+  ghesAccessToken: string;
+  dotcomAccessToken: string;
   verbose: boolean;
 };
 
 (async () => {
+  await _sodium.ready;
+  const sodium = _sodium;
+
   const logger = createLogger(opts.verbose);
 
   const octokit = createOctokit(
@@ -212,6 +305,18 @@ const opts = program.opts() as {
     undefined,
     logger,
   );
+
+  const githubProductInformation = await getGitHubProductInformation(octokit);
+
+  if (githubProductInformation.githubProduct !== GitHubProduct.GHES) {
+    throw new Error(`Expected ${opts.ghesBaseUrl} to be a GitHub Enterprise Server instance`);
+  }
+
+  const parsedGhesVersion = semver.parse(githubProductInformation.gitHubEnterpriseServerVersion);
+
+  if (!parsedGhesVersion) {
+    throw new Error(`Failed to parse GitHub Enterprise Server version: ${githubProductInformation.gitHubEnterpriseServerVersion}`);
+  }
 
   logger.info('Seeding GHES instance...');
 
@@ -279,5 +384,51 @@ const opts = program.opts() as {
     );
   }
 
-  console.log('Done!');
+  logger.info('Finished seeding GHES instance');
+  logger.info('Configuring GitHub Actions and Dependabot secrets...');
+
+  const ghesVersionForSecretName = `${parsedGhesVersion.major}${parsedGhesVersion.minor}`;
+
+  const dotcomOctokit = createOctokit(
+    opts.dotcomAccessToken,
+    'https://api.github.com',
+    undefined,
+    logger,
+  );
+
+  await encryptAndSetActionsSecret({
+    octokit: dotcomOctokit,
+    owner: PROJECT_OWNER,
+    repo: PROJECT_REPO,
+    sodium,
+    secretName: `GHES_${ghesVersionForSecretName}_ACCESS_TOKEN`,
+    secretValue: opts.ghesAccessToken,
+  });
+
+  await encryptAndSetDependabotSecret({
+    octokit: dotcomOctokit,
+    owner: PROJECT_OWNER,
+    repo: PROJECT_REPO,
+    sodium,
+    secretName: `GHES_${ghesVersionForSecretName}_ACCESS_TOKEN`,
+    secretValue: opts.ghesAccessToken,
+  });
+
+  await encryptAndSetActionsSecret({
+    octokit: dotcomOctokit,
+    owner: PROJECT_OWNER,
+    repo: PROJECT_REPO,
+    sodium,
+    secretName: `GHES_${ghesVersionForSecretName}_BASE_URL`,
+    secretValue: opts.ghesBaseUrl,
+  });
+
+  await encryptAndSetDependabotSecret({
+    octokit: dotcomOctokit,
+    owner: PROJECT_OWNER,
+    repo: PROJECT_REPO,
+    sodium,
+    secretName: `GHES_${ghesVersionForSecretName}_BASE_URL`,
+    secretValue: opts.ghesBaseUrl,
+  });
 })();

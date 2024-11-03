@@ -28,14 +28,17 @@
     "winston": "^3.15.0"
   },
   "devDependencies": {
+    "@types/libsodium-wrappers": "^0.7.14",
+    "@types/node": "^22.7.5",
+    "@types/semver": "^7.5.8",
     "@typescript-eslint/eslint-plugin": "^8.8.1",
     "@typescript-eslint/parser": "^8.8.1",
-    "@types/node": "^22.7.5",
     "@yao-pkg/pkg": "^5.15.0",
     "esbuild": "^0.24.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "libsodium-wrappers": "^0.7.15",
     "prettier": "^3.3.3",
     "tsx": "^4.19.1",
     "typescript": "^5.6.2"
