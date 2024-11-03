@@ -1,5 +1,6 @@
 import { type Octokit as OctokitType } from 'octokit';
 import { Octokit } from 'octokit';
+import { createLogger } from '../src/logger';
 import { GraphqlResponseError } from '@octokit/graphql';
 
 const createOrganization = async ({
@@ -183,15 +184,17 @@ const ORGANIZATION_LOGIN = 'gh-migrate-project-sandbox';
 const REPOSITORY_NAME = 'initial-repository';
 
 (async () => {
+  const logger = createLogger(false);
+
   if (!(await isOrganizationAlreadyCreated({ login: ORGANIZATION_LOGIN, octokit }))) {
-    console.log(`Creating organization ${ORGANIZATION_LOGIN}...`);
+    logger.info(`Creating organization ${ORGANIZATION_LOGIN}...`);
 
     const organizationId = await createOrganization({
       login: ORGANIZATION_LOGIN,
       octokit,
     });
 
-    console.log(`Created organization ${ORGANIZATION_LOGIN} with ID ${organizationId}`);
+    logger.info(`Created organization ${ORGANIZATION_LOGIN} with ID ${organizationId}`);
   }
 
   if (
@@ -201,7 +204,7 @@ const REPOSITORY_NAME = 'initial-repository';
       octokit,
     }))
   ) {
-    console.log(
+    logger.info(
       `Creating repository ${REPOSITORY_NAME} in organization ${ORGANIZATION_LOGIN}...`,
     );
 
@@ -211,7 +214,7 @@ const REPOSITORY_NAME = 'initial-repository';
       octokit,
     });
 
-    console.log(
+    logger.info(
       `Created repository ${REPOSITORY_NAME} in organization ${ORGANIZATION_LOGIN} with ID ${repositoryId}`,
     );
   }
@@ -224,7 +227,7 @@ const REPOSITORY_NAME = 'initial-repository';
       octokit,
     }))
   ) {
-    console.log(
+    logger.info(
       `Creating issue #1 in repository ${REPOSITORY_NAME} in organization ${ORGANIZATION_LOGIN}...`,
     );
 
