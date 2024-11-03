@@ -309,13 +309,19 @@ const opts = program.opts() as {
   const githubProductInformation = await getGitHubProductInformation(octokit);
 
   if (githubProductInformation.githubProduct !== GitHubProduct.GHES) {
-    throw new Error(`Expected ${opts.ghesBaseUrl} to be a GitHub Enterprise Server instance`);
+    throw new Error(
+      `Expected ${opts.ghesBaseUrl} to be a GitHub Enterprise Server instance`,
+    );
   }
 
-  const parsedGhesVersion = semver.parse(githubProductInformation.gitHubEnterpriseServerVersion);
+  const parsedGhesVersion = semver.parse(
+    githubProductInformation.gitHubEnterpriseServerVersion,
+  );
 
   if (!parsedGhesVersion) {
-    throw new Error(`Failed to parse GitHub Enterprise Server version: ${githubProductInformation.gitHubEnterpriseServerVersion}`);
+    throw new Error(
+      `Failed to parse GitHub Enterprise Server version: ${githubProductInformation.gitHubEnterpriseServerVersion}`,
+    );
   }
 
   logger.info('Seeding GHES instance...');
