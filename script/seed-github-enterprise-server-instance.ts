@@ -175,8 +175,8 @@ const createIssue = async ({
   return id;
 };
 
-const ORGANIZATION_LOGIN = 'gh-migrate-project-sandbox';
-const REPOSITORY_NAME = 'initial-repository';
+const INTEGRATION_TEST_ORGANIZATION_LOGIN = 'gh-migrate-project-sandbox';
+const INTEGRATION_TEST_REPOSITORY_NAME = 'initial-repository';
 
 (async () => {
   const logger = createLogger(false);
@@ -194,60 +194,60 @@ const REPOSITORY_NAME = 'initial-repository';
 
   logger.info('Seeding GHES instance...');
 
-  if (!(await isOrganizationAlreadyCreated({ login: ORGANIZATION_LOGIN, octokit }))) {
-    logger.info(`Creating organization ${ORGANIZATION_LOGIN}...`);
+  if (!(await isOrganizationAlreadyCreated({ login: INTEGRATION_TEST_ORGANIZATION_LOGIN, octokit }))) {
+    logger.info(`Creating organization ${INTEGRATION_TEST_ORGANIZATION_LOGIN}...`);
 
     const organizationId = await createOrganization({
-      login: ORGANIZATION_LOGIN,
+      login: INTEGRATION_TEST_ORGANIZATION_LOGIN,
       octokit,
     });
 
-    logger.info(`Created organization ${ORGANIZATION_LOGIN} with ID ${organizationId}`);
+    logger.info(`Created organization ${INTEGRATION_TEST_ORGANIZATION_LOGIN} with ID ${organizationId}`);
   }
 
   if (
     !(await isRepositoryAlreadyCreated({
-      organizationLogin: ORGANIZATION_LOGIN,
-      name: REPOSITORY_NAME,
+      organizationLogin: INTEGRATION_TEST_ORGANIZATION_LOGIN,
+      name: INTEGRATION_TEST_REPOSITORY_NAME,
       octokit,
     }))
   ) {
     logger.info(
-      `Creating repository ${REPOSITORY_NAME} in organization ${ORGANIZATION_LOGIN}...`,
+      `Creating repository ${INTEGRATION_TEST_REPOSITORY_NAME} in organization ${INTEGRATION_TEST_ORGANIZATION_LOGIN}...`,
     );
 
     const repositoryId = await createRepository({
-      organizationLogin: ORGANIZATION_LOGIN,
-      name: REPOSITORY_NAME,
+      organizationLogin: INTEGRATION_TEST_ORGANIZATION_LOGIN,
+      name: INTEGRATION_TEST_REPOSITORY_NAME,
       octokit,
     });
 
     logger.info(
-      `Created repository ${REPOSITORY_NAME} in organization ${ORGANIZATION_LOGIN} with ID ${repositoryId}`,
+      `Created repository ${INTEGRATION_TEST_REPOSITORY_NAME} in organization ${INTEGRATION_TEST_ORGANIZATION_LOGIN} with ID ${repositoryId}`,
     );
   }
 
   if (
     !(await isIssueAlreadyCreated({
-      organizationLogin: ORGANIZATION_LOGIN,
-      repositoryName: REPOSITORY_NAME,
+      organizationLogin: INTEGRATION_TEST_ORGANIZATION_LOGIN,
+      repositoryName: INTEGRATION_TEST_REPOSITORY_NAME,
       issueNumber: 1,
       octokit,
     }))
   ) {
     logger.info(
-      `Creating issue #1 in repository ${REPOSITORY_NAME} in organization ${ORGANIZATION_LOGIN}...`,
+      `Creating issue #1 in repository ${INTEGRATION_TEST_REPOSITORY_NAME} in organization ${INTEGRATION_TEST_ORGANIZATION_LOGIN}...`,
     );
 
     const issueId = await createIssue({
-      organizationLogin: ORGANIZATION_LOGIN,
-      repositoryName: REPOSITORY_NAME,
+      organizationLogin: INTEGRATION_TEST_ORGANIZATION_LOGIN,
+      repositoryName: INTEGRATION_TEST_REPOSITORY_NAME,
       title: 'A crucial issue',
       octokit,
     });
 
-    console.log(
-      `Created issue #1 in repository ${REPOSITORY_NAME} in organization ${ORGANIZATION_LOGIN} with ID ${issueId}`,
+    logger.info(
+      `Created issue #1 in repository ${INTEGRATION_TEST_REPOSITORY_NAME} in organization ${INTEGRATION_TEST_ORGANIZATION_LOGIN} with ID ${issueId}`,
     );
   }
 
