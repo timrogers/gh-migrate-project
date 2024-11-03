@@ -41,7 +41,7 @@
     "libsodium-wrappers": "^0.7.15",
     "prettier": "^3.3.3",
     "tsx": "^4.19.1",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.3"
   },
   "repository": {
     "type": "git",
