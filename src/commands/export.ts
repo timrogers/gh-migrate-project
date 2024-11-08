@@ -12,7 +12,7 @@ import {
   normalizeBaseUrl,
 } from '../utils.js';
 import VERSION from '../version.js';
-import { createLogger } from '../logger.js';
+import { createLogger, Logger } from '../logger.js';
 import { createOctokit } from '../octokit.js';
 import { type Project, type ProjectItem } from '../graphql-types.js';
 import { getReferencedRepositories } from '../project-items.js';
@@ -128,9 +128,11 @@ const getGlobalIdForUserOwnedProject = async ({
 const getProjectItems = async ({
   id,
   octokit,
+  logger,
 }: {
   id: string;
   octokit: Octokit;
+  logger: Logger;
 }): Promise<ProjectItem[]> => {
   const response = await octokit.graphql.paginate(
     `query getProjectItems($id: ID!, $cursor: String) {
@@ -235,7 +237,22 @@ const getProjectItems = async ({
     },
   );
 
-  return response.node.items.nodes;
+  const allProjectItems = response.node.items.nodes;
+
+  const validProjectItems = allProjectItems.filter((projectItem) => {
+    if (!projectItem.content) {
+      logger.warn(
+        `Skipping project item ${projectItem.id} because its linked issue or pull request could not be retrieved - it may have been moved, or you may not have read access to it`,
+      );
+      logger.debug('Skipped project item:', projectItem);
+
+      return false;
+    }
+
+    return true;
+  });
+
+  return validProjectItems;
 };
 
 const getProject = async ({
