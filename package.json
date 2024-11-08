@@ -15,7 +15,7 @@
   "author": "Tim Rogers <me@timrogers.co.uk>",
   "license": "MIT",
   "dependencies": {
-    "@fast-csv/parse": "^5.0.0",
+    "@fast-csv/parse": "^5.0.2",
     "@octokit/graphql": "^8.1.1",
     "@octokit/plugin-paginate-graphql": "^5.2.4",
     "boxen": "^7.1.1",
