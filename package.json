@@ -6,8 +6,8 @@
   "homepage": "https://github.com/timrogers/gh-migrate-project",
   "scripts": {
     "package": "node build.js && npx pkg dist/migrate-project.cjs --out-path bin --targets node20-linux-x64,node20-macos-x64,node20-win-x64",
-    "lint": "eslint . --ext .ts",
-    "lint-and-fix": "eslint . --ext .ts --fix",
+    "lint": "eslint .",
+    "lint-and-fix": "eslint . --fix",
     "dev": "npx tsx src/index.ts",
     "clean-up-organization-projects": "npx tsx script/clean-up-organization-projects.ts",
     "seed-github-enterprise-server-instance": "npx tsx script/seed-github-enterprise-server-instance.ts"
@@ -28,20 +28,22 @@
     "winston": "^3.15.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.14.0",
     "@types/libsodium-wrappers": "^0.7.14",
     "@types/node": "^22.7.5",
     "@types/semver": "^7.5.8",
-    "@typescript-eslint/eslint-plugin": "^8.8.1",
-    "@typescript-eslint/parser": "^8.8.1",
     "@yao-pkg/pkg": "^5.15.0",
     "esbuild": "^0.24.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.12.0",
     "libsodium-wrappers": "^0.7.15",
     "prettier": "^3.3.3",
     "tsx": "^4.19.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.13.0"
   },
   "repository": {
     "type": "git",
