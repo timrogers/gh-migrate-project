@@ -22,7 +22,7 @@
     "chalk": "^5.3.0",
     "commander": "^12.1.0",
     "octokit": "^4.0.2",
-    "posthog-node": "^4.2.0",
+    "posthog-node": "^4.2.1",
     "semver": "^7.6.3",
     "undici": "^6.20.1",
     "winston": "^3.15.0"
