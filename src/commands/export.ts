@@ -556,7 +556,7 @@ command
       logger.info(`Successfully fetched project "${project.title}"`);
 
       logger.info(`Fetching project items...`);
-      const projectItems = await getProjectItems({ id: projectId, octokit });
+      const projectItems = await getProjectItems({ id: projectId, octokit, logger });
       logger.info(`Successfully fetched ${projectItems.length} project item(s)`);
 
       logger.info(`Writing project data to ${projectOutputPath}...`);
