@@ -421,7 +421,7 @@ const opts = program.opts() as {
     repo: PROJECT_REPO,
     sodium,
     secretName: `GHES_${ghesVersionForSecretName}_ACCESS_TOKEN`,
-    secretValue: opts.ghesAccessToken,
+    secretValue: ghesAccessToken,
   });
 
   await encryptAndSetDependabotSecret({
@@ -430,7 +430,7 @@ const opts = program.opts() as {
     repo: PROJECT_REPO,
     sodium,
     secretName: `GHES_${ghesVersionForSecretName}_ACCESS_TOKEN`,
-    secretValue: opts.ghesAccessToken,
+    secretValue: ghesAccessToken,
   });
 
   await encryptAndSetActionsSecret({
