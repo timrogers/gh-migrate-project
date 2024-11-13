@@ -390,6 +390,7 @@ jobs:
       [
         'package',
         'test_and_lint',
+        'end_to_end_tests_linux_ghes_315',
         'end_to_end_tests_linux_ghes_314',
         'end_to_end_tests_linux_ghes_313',
         'end_to_end_tests_linux_ghes_312',
