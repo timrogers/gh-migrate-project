@@ -299,12 +299,25 @@ const opts = program.opts() as {
 
   const logger = createLogger(opts.verbose);
 
-  const octokit = createOctokit(
-    opts.ghesAccessToken,
-    opts.ghesBaseUrl,
-    undefined,
-    logger,
-  );
+  const ghesAccessToken = opts.ghesAccessToken || process.env.GHES_TOKEN;
+
+  if (!ghesAccessToken) {
+    logger.error(
+      'No GitHub Enterprise Server token provided - set --ghes-access-token or $GHES_TOKEN',
+    );
+    process.exit(1);
+  }
+
+  const dotcomAccessToken = opts.dotcomAccessToken || process.env.GITHUB_TOKEN;
+
+  if (!dotcomAccessToken) {
+    logger.error(
+      'No GitHub.com token provided - set --dotcom-access-token or $GITHUB_TOKEN',
+    );
+    process.exit(1);
+  }
+
+  const octokit = createOctokit(ghesAccessToken, opts.ghesBaseUrl, undefined, logger);
 
   const githubProductInformation = await getGitHubProductInformation(octokit);
 
@@ -396,7 +409,7 @@ const opts = program.opts() as {
   const ghesVersionForSecretName = `${parsedGhesVersion.major}${parsedGhesVersion.minor}`;
 
   const dotcomOctokit = createOctokit(
-    opts.dotcomAccessToken,
+    dotcomAccessToken,
     'https://api.github.com',
     undefined,
     logger,
@@ -408,7 +421,7 @@ const opts = program.opts() as {
     repo: PROJECT_REPO,
     sodium,
     secretName: `GHES_${ghesVersionForSecretName}_ACCESS_TOKEN`,
-    secretValue: opts.ghesAccessToken,
+    secretValue: ghesAccessToken,
   });
 
   await encryptAndSetDependabotSecret({
@@ -417,7 +430,7 @@ const opts = program.opts() as {
     repo: PROJECT_REPO,
     sodium,
     secretName: `GHES_${ghesVersionForSecretName}_ACCESS_TOKEN`,
-    secretValue: opts.ghesAccessToken,
+    secretValue: ghesAccessToken,
   });
 
   await encryptAndSetActionsSecret({
