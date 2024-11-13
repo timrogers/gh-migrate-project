@@ -139,6 +139,47 @@ jobs:
         with:
           name: windows-outputs
           path: output
+  end_to_end_tests_linux_ghes_315:
+    name: Run end to end tests (GitHub.com to GHES v3.15 on Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4.1.0
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - run: npm ci
+      - name: Generate binaries for macOS, Linux and Windows
+        run: npm run package
+      - name: Rename Linux binary to conform to GitHub CLI extension rules
+        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
+      - name: Create `output` directory
+        run: mkdir output
+      - name: Make Linux binary executable
+        run: chmod +x bin/gh-migrate-project-linux-amd64
+      - name: Export a project from GitHub.com
+        run: ./bin/gh-migrate-project-linux-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1026 --disable-telemetry
+        env:
+          EXPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
+      - name: Copy outputs to output/ directory
+        run: cp project.json output/ && cp repository-mappings.csv output/
+      - name: Print outputted project data
+        run: cat project.json
+      - name: Print repository mappings template
+        run: cat repository-mappings.csv
+      - name: Fill in repository mappings template
+        run: |
+          echo "source_repository,target_repository
+          gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
+      - name: Import project to GHES
+        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry --base-url ${{ secrets.GHES_315_BASE_URL }}
+        env:
+          IMPORT_GITHUB_TOKEN: ${{ secrets.GHES_315_ACCESS_TOKEN }}
+      - name: Upload outputs as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-outputs-ghes-315
+          path: output
   end_to_end_tests_linux_ghes_314:
     name: Run end to end tests (GitHub.com to GHES v3.14 on Linux)
     runs-on: ubuntu-latest
@@ -349,6 +390,7 @@ jobs:
       [
         'package',
         'test_and_lint',
+        'end_to_end_tests_linux_ghes_315',
         'end_to_end_tests_linux_ghes_314',
         'end_to_end_tests_linux_ghes_313',
         'end_to_end_tests_linux_ghes_312',
