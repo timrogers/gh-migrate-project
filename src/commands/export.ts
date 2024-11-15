@@ -242,7 +242,7 @@ const getProjectItems = async ({
   const validProjectItems = allProjectItems.filter((projectItem) => {
     if (!projectItem.content) {
       logger.warn(
-        `Skipping project item ${projectItem.id} because its linked issue or pull request could not be retrieved - it may have been moved, or you may not have read access to it`,
+        `Skipping project item ${projectItem.id} because its linked issue or pull request could not be retrieved - your access token may lack the required permissions, or you may not have access to the issue or pull request.`,
       );
       logger.debug('Skipped project item:', projectItem);
 
