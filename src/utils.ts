@@ -23,9 +23,7 @@ export const validateTokenOAuthScopes = async ({
   requiredScopes: Set<string | Set<string>>;
   logger: Logger;
 }): Promise<void> => {
-  // We use the rate limit API for the scope check because it doesn't use up rate limit
-  // to call it
-  const { headers } = await octokit.request('GET /rate_limit');
+  const { headers } = await octokit.request('GET /meta');
 
   // When authenticating using a token with fine-grained permissions, no `x-oauth-scopes`
   // header is returned and we can't perform the validation
