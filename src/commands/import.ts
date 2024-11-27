@@ -13,6 +13,7 @@ import {
   checkForUpdates,
   logRateLimitInformation,
   normalizeBaseUrl,
+  validateTokenOAuthScopes,
 } from '../utils.js';
 import VERSION from '../version.js';
 import { Logger, createLogger } from '../logger.js';
@@ -987,6 +988,16 @@ command
           },
         });
       }
+
+      const requiredScopes: Set<string | Set<string>> = new Set(['repo', 'project']);
+
+      // When creating an organization-owned project, either the write:org or admin:org
+      // scope must be available
+      if (projectOwnerType === ProjectOwnerType.Organization) {
+        requiredScopes.add(new Set(['write:org', 'admin:org']));
+      }
+
+      await validateTokenOAuthScopes({ octokit, requiredScopes, logger });
 
       logger.info(`Looking up ID for target ${projectOwnerType} ${projectOwner}...`);
       const ownerId = await getOwnerGlobalId({ octokit, projectOwner, projectOwnerType });

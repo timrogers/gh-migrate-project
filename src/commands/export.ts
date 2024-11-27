@@ -10,6 +10,7 @@ import {
   checkForUpdates,
   logRateLimitInformation,
   normalizeBaseUrl,
+  validateTokenOAuthScopes,
 } from '../utils.js';
 import VERSION from '../version.js';
 import { createLogger, Logger } from '../logger.js';
@@ -533,6 +534,12 @@ command
           },
         });
       }
+
+      await validateTokenOAuthScopes({
+        octokit,
+        logger,
+        requiredScopes: new Set(['repo', new Set(['project', 'read:project'])]),
+      });
 
       logger.info(
         `Looking up ID for project ${projectNumber} owned by ${projectOwnerType} ${projectOwner}...`,

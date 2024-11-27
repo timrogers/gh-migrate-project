@@ -7,6 +7,87 @@ import { Logger } from './logger';
 import VERSION from './version.js';
 import { createOctokit } from './octokit.js';
 
+// Validates the OAuth scopes of the token used to authenticate the user. If the token is a
+// scopeless token using fine-grained permissions (e.g. a GitHub App token), the validation
+// will be a no-op.
+//
+// The `requiredScopes` parameter is a Set, where each item in the Set can be either:
+// - a string representing a single required scope, which must be present
+// - an Set of strings, where at least one of the scopes must be present
+export const validateTokenOAuthScopes = async ({
+  octokit,
+  requiredScopes,
+  logger,
+}: {
+  octokit: Octokit;
+  requiredScopes: Set<string | Set<string>>;
+  logger: Logger;
+}): Promise<void> => {
+  // We use the rate limit API for the scope check because it doesn't use up rate limit
+  // to call it
+  const { headers } = await octokit.request('GET /rate_limit');
+
+  // When authenticating using a token with fine-grained permissions, no `x-oauth-scopes`
+  // header is returned and we can't perform the validation
+  if (!headers['x-oauth-scopes']) {
+    logger.info(
+      'Skipped GitHub token permissions validation because your token uses fine-grained permissions (FGPs) instead of OAuth scopes. You may encounter issues if your token does not have the required permissions.',
+    );
+    return;
+  }
+
+  const presentScopes: Set<string> = new Set(headers['x-oauth-scopes'].split(', '));
+
+  for (const requiredScopeOrScopes of requiredScopes) {
+    validateScopeIsPresent(requiredScopeOrScopes, presentScopes);
+  }
+
+  logger.info('Successfully validated GitHub token permissions');
+};
+
+const generateScopesListString = (scopes: Set<string>): string =>
+  Array.from(scopes)
+    .map((scope) => `'${scope}'`)
+    .join(', ');
+
+const validateSingleScopePresent = (
+  requiredScope: string,
+  presentScopes: Set<string>,
+): void => {
+  const presentScopesString = generateScopesListString(presentScopes);
+
+  if (!presentScopes.has(requiredScope)) {
+    throw new Error(
+      `Your token does not have the required '${requiredScope}' scope. The following scopes are present: ${presentScopesString}. Please create a token with the correct scopes, and try again.`,
+    );
+  }
+};
+
+const validateAtLeastOneScopePresent = (
+  scopes: Set<string>,
+  presentScopes: Set<string>,
+): void => {
+  const requiredScopesString = generateScopesListString(scopes);
+  const presentScopesString = generateScopesListString(presentScopes);
+
+  if (Array.from(scopes).every((scope) => !presentScopes.has(scope))) {
+    throw new Error(
+      `Your token must have at least one of the following scopes: ${requiredScopesString}. The following scopes are present: ${presentScopesString}. Please create a token with the correct scopes, and try again.`,
+    );
+  }
+};
+
+const validateScopeIsPresent = (
+  requiredScopeOrScopes: string | Set<string>,
+  presentScopes: Set<string>,
+): void => {
+  if (typeof requiredScopeOrScopes === 'string') {
+    validateSingleScopePresent(requiredScopeOrScopes, presentScopes);
+  } else {
+    validateAtLeastOneScopePresent(requiredScopeOrScopes, presentScopes);
+  }
+};
+
 export const checkForUpdates = async (
   proxyUrl: string | undefined,
   logger: Logger,
