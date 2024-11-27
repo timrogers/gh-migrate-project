@@ -2,9 +2,8 @@ import winston from 'winston';
 const { combine, timestamp, printf, colorize } = winston.format;
 
 // TODO: Figure out how to make ESLint happy with this
-// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+
 const format = printf(({ level, message, timestamp }): string => {
-  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   return `${timestamp} ${level}: ${message}`;
 });
 
