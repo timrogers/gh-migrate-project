@@ -58,7 +58,7 @@ jobs:
   end_to_end_tests_linux:
     name: Run end to end tests (GitHub.com to GitHub.com on Linux)
     runs-on: ubuntu-latest
-    requires: ['package']
+    needs: ['package']
     steps:
       - name: Download Linux AMD64 binary
         uses: actions/download-artifact@v4
@@ -95,7 +95,7 @@ jobs:
   end_to_end_tests_windows:
     name: Run end to end tests (GitHub.com to GitHub.com on Windows)
     runs-on: windows-latest
-    requires: ['package']
+    needs: ['package']
     steps:
       - name: Download Windows AMD64 binary
         uses: actions/download-artifact@v4
