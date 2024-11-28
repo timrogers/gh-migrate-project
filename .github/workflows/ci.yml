@@ -413,12 +413,12 @@ jobs:
       - name: Upload Linux binary as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: package-linux
+          name: gh-migrate-project-linux-amd64
           path: bin/gh-migrate-project-linux-amd64
       - name: Upload Windows binary as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: package-windows
+          name: gh-migrate-project-windows-amd64
           path: bin/gh-migrate-project-windows-amd64.exe
   check_release_tag_matches_version:
     name: Check release tag matches version
