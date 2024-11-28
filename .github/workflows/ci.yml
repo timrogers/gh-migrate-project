@@ -95,8 +95,7 @@ jobs:
   end_to_end_tests_windows:
     name: Run end to end tests (GitHub.com to GitHub.com on Windows)
     runs-on: windows-latest
-    steps:
-      requires: ['package']
+    requires: ['package']
     steps:
       - name: Download Windows AMD64 binary
         uses: actions/download-artifact@v4
