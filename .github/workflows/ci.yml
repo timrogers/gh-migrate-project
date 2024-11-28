@@ -58,17 +58,13 @@ jobs:
   end_to_end_tests_linux:
     name: Run end to end tests (GitHub.com to GitHub.com on Linux)
     runs-on: ubuntu-latest
+    requires: ['package']
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
+      - name: Download Linux AMD64 binary
+        uses: actions/download-artifact@v4
         with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename Linux binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
+          name: gh-migrate-project-linux-amd64
+          path: bin
       - name: Create `output` directory
         run: mkdir output
       - name: Make Linux binary executable
@@ -100,16 +96,13 @@ jobs:
     name: Run end to end tests (GitHub.com to GitHub.com on Windows)
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
+      requires: ['package']
+    steps:
+      - name: Download Windows AMD64 binary
+        uses: actions/download-artifact@v4
         with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename Windows binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-win.exe bin/gh-migrate-project-windows-amd64.exe
+          name: gh-migrate-project-windows-amd64
+          path: bin
       - name: Create `output` directory
         run: mkdir output
       - name: Export a project from GitHub.com
@@ -138,17 +131,13 @@ jobs:
   end_to_end_tests_linux_ghes_315:
     name: Run end to end tests (GitHub.com to GHES v3.15 on Linux)
     runs-on: ubuntu-latest
+    needs: ['package']
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
+      - name: Download Linux AMD64 binary
+        uses: actions/download-artifact@v4
         with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename Linux binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
+          name: gh-migrate-project-linux-amd64
+          path: bin
       - name: Create `output` directory
         run: mkdir output
       - name: Make Linux binary executable
@@ -179,17 +168,13 @@ jobs:
   end_to_end_tests_linux_ghes_314:
     name: Run end to end tests (GitHub.com to GHES v3.14 on Linux)
     runs-on: ubuntu-latest
+    needs: ['package']
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
+      - name: Download Linux AMD64 binary
+        uses: actions/download-artifact@v4
         with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename Linux binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
+          name: gh-migrate-project-linux-amd64
+          path: bin
       - name: Create `output` directory
         run: mkdir output
       - name: Make Linux binary executable
@@ -220,17 +205,13 @@ jobs:
   end_to_end_tests_linux_ghes_313:
     name: Run end to end tests (GitHub.com to GHES v3.13 on Linux)
     runs-on: ubuntu-latest
+    needs: ['package']
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
+      - name: Download Linux AMD64 binary
+        uses: actions/download-artifact@v4
         with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename Linux binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
+          name: gh-migrate-project-linux-amd64
+          path: bin
       - name: Create `output` directory
         run: mkdir output
       - name: Make Linux binary executable
@@ -261,17 +242,13 @@ jobs:
   end_to_end_tests_linux_ghes_312:
     name: Run end to end tests (GitHub.com to GHES v3.12 on Linux)
     runs-on: ubuntu-latest
+    needs: ['package']
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
+      - name: Download Linux AMD64 binary
+        uses: actions/download-artifact@v4
         with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename Linux binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
+          name: gh-migrate-project-linux-amd64
+          path: bin
       - name: Create `output` directory
         run: mkdir output
       - name: Make Linux binary executable
@@ -302,17 +279,13 @@ jobs:
   end_to_end_tests_linux_ghes_311:
     name: Run end to end tests (GitHub.com to GHES v3.11 on Linux)
     runs-on: ubuntu-latest
+    needs: ['package']
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
+      - name: Download Linux AMD64 binary
+        uses: actions/download-artifact@v4
         with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename Linux binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
+          name: gh-migrate-project-linux-amd64
+          path: bin
       - name: Create `output` directory
         run: mkdir output
       - name: Make Linux binary executable
