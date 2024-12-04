@@ -4,18 +4,20 @@ A [GitHub CLI](https://cli.github.com/) [extension](https://cli.github.com/manua
 
 ## Supported migration paths
 
-- From GitHub Enterprise Server v3.11+ to:
+- From GitHub Enterprise Server v3.12+ to:
   - GitHub.com
   - [GitHub Enterprise Cloud with data residency](https://github.com/newsroom/press-releases/data-residency-in-the-eu)
-  - GitHub Enterprise Server v3.11+
+  - GitHub Enterprise Server v3.12+
 - From GitHub.com to:
   - Another organization or user account on GitHub.com (e.g. from a classic GitHub.com organization to [Enterprise Managed Users](https://docs.github.com/en/enterprise-cloud@latest/admin/identity-and-access-management/using-enterprise-managed-users-for-iam/about-enterprise-managed-users) organization)
   - [GitHub Enterprise Cloud with data residency](https://github.com/newsroom/press-releases/data-residency-in-the-eu)
-  - GitHub Enterprise Server v3.11+
+  - GitHub Enterprise Server v3.12+
 - From [GitHub Enterprise Cloud with data residency](https://github.com/newsroom/press-releases/data-residency-in-the-eu) to:
   - GitHub.com
   - Another [GitHub Enterprise Cloud with data residency](https://github.com/newsroom/press-releases/data-residency-in-the-eu) organization or tenant
-  - GitHub Enterprise Server v3.11+
+  - GitHub Enterprise Server v3.12+
+
+Using an earlier GitHub Enterprise Server release? See "Supported GitHub Enterprise Server versions" below to find a version of `gh-migrate-project` which will work for you.
 
 ## Instructions
 
@@ -160,6 +162,7 @@ This tool only commits to supporting [GitHub Enterprise Server releases supporte
 
 If you want to export from or import to an old GitHub Enterprise Server version, you may need to use an earlier version of the tool:
 
+- For exports from and imports to GitHub Enterprise Server v3.11, use version `v3.2.0` or earlier (`gh extension install timrogers/gh-migrate-project --pin v3.2.0`)
 - For exports from and imports to GitHub Enterprise Server v3.10, use version `v2.1.0` or earlier (`gh extension install timrogers/gh-migrate-project --pin v2.1.0`)
 - For exports from GitHub Enterprise Server v3.7, v3.8 or v3.9, use version `v1.3.0` or earlier (`gh extension install timrogers/gh-migrate-project --pin v1.3.0`)
 
