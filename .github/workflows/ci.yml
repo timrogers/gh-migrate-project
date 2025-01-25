@@ -279,58 +279,16 @@ jobs:
         run: bun run package:darwin-arm64
       - name: Generate binary for macOS AMD64
         run: bun run package:darwin-amd64
-      - name: Write Apple signing key to a file
-        env:
-          APPLE_SIGNING_KEY_P12: ${{ secrets.APPLE_SIGNING_KEY_P12 }}
-        run: echo "$APPLE_SIGNING_KEY_P12" | base64 -d -o key.p12
-      - name: Write App Store Connect API key to a file
-        env:
-          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
-        run: echo "$APP_STORE_CONNECT_API_KEY" > app_store_connect_api_key.json
-      - name: Sign macOS ARM64 binary
-        uses: indygreg/apple-code-sign-action@v1
-        with:
-          input_path: bin/gh-migrate-project-darwin-arm64
-          p12_file: key.p12
-          p12_password: ${{ secrets.APPLE_SIGNING_KEY_PASSWORD }}
-          sign: true
-          sign_args: '--code-signature-flags=runtime'
       - name: Upload macOS ARM64 binary as artifact
         uses: actions/upload-artifact@v4
         with:
           name: package-macos-arm64
           path: bin/gh-migrate-project-darwin-arm64
-      - name: Archive macOS ARM64 binary for notarisation
-        run: zip gh-migrate-project-darwin-arm64.zip bin/gh-migrate-project-darwin-arm64
-      - name: Notarise signed macOS ARM64 binary
-        uses: indygreg/apple-code-sign-action@v1
-        with:
-          input_path: gh-migrate-project-darwin-arm64.zip
-          sign: false
-          notarize: true
-          app_store_connect_api_key_json_file: app_store_connect_api_key.json
-      - name: Sign macOS AMD64 binary
-        uses: indygreg/apple-code-sign-action@v1
-        with:
-          input_path: bin/gh-migrate-project-darwin-amd64
-          p12_file: key.p12
-          p12_password: ${{ secrets.APPLE_SIGNING_KEY_PASSWORD }}
-          sign: true
-          sign_args: '--code-signature-flags=runtime'
       - name: Upload macOS AMD64 binary as artifact
         uses: actions/upload-artifact@v4
         with:
           name: package-macos-amd64
           path: bin/gh-migrate-project-darwin-amd64
-      - name: Archive macOS AMD64 binary for notarisation
-        run: zip gh-migrate-project-darwin-amd64.zip bin/gh-migrate-project-darwin-amd64
-      - name: Notarise signed macOS AMD64 binary
-        uses: indygreg/apple-code-sign-action@v1
-        with:
-          input_path: gh-migrate-project-darwin-amd64.zip
-          sign: false
-          notarize: true
-          app_store_connect_api_key_json_file: app_store_connect_api_key.json
   package:
     name: Package binaries (Windows and Linux)
     runs-on: ubuntu-latest
