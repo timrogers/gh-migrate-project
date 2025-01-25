@@ -23,13 +23,13 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install
       - name: Generate binary for macOS
-        run: bun run package:darwin-amd64
+        run: bun run package:darwin-arm64
       - name: Create `output` directory
         run: mkdir output
       - name: Make macOS binary executable
-        run: chmod +x bin/gh-migrate-project-darwin-amd64
+        run: chmod +x bin/gh-migrate-project-darwin-arm64
       - name: Export a project from GitHub.com
-        run: ./bin/gh-migrate-project-darwin-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1026 --disable-telemetry
+        run: ./bin/gh-migrate-project-darwin-arm64 export --project-owner gh-migrate-project-sandbox --project-number 1026 --disable-telemetry
         env:
           EXPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Copy outputs to output/ directory
@@ -43,7 +43,7 @@ jobs:
           echo "source_repository,target_repository
           gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
       - name: Import project to GitHub.com
-        run: ./bin/gh-migrate-project-darwin-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
+        run: ./bin/gh-migrate-project-darwin-arm64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Upload outputs as artifacts
