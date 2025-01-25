@@ -40,7 +40,7 @@
     "@typescript-eslint/parser": "^8.15.0",
     "@yao-pkg/pkg": "^6.1.1",
     "esbuild": "^0.24.2",
-    "eslint": "^9.16.0",
+    "eslint": "^9.19.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "globals": "^15.13.0",
