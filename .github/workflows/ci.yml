@@ -12,32 +12,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
-        with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run lint
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun run lint
   end_to_end_tests_macos:
     name: Run end to end tests (GitHub.com to GitHub.com on macOS)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
-        with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename macOS binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-macos bin/gh-migrate-project-darwin-amd64
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Generate binary for macOS
+        run: bun run package:darwin-arm64
       - name: Create `output` directory
         run: mkdir output
       - name: Make macOS binary executable
-        run: chmod +x bin/gh-migrate-project-darwin-amd64
+        run: chmod +x bin/gh-migrate-project-darwin-arm64
       - name: Export a project from GitHub.com
-        run: ./bin/gh-migrate-project-darwin-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1026 --disable-telemetry
+        run: ./bin/gh-migrate-project-darwin-arm64 export --project-owner gh-migrate-project-sandbox --project-number 1026 --disable-telemetry
         env:
           EXPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Copy outputs to output/ directory
@@ -51,7 +43,7 @@ jobs:
           echo "source_repository,target_repository
           gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
       - name: Import project to GitHub.com
-        run: ./bin/gh-migrate-project-darwin-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
+        run: ./bin/gh-migrate-project-darwin-arm64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Upload outputs as artifacts
@@ -64,15 +56,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
-        with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename Linux binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Generate binary for Linux
+        run: bun run package:linux-amd64
       - name: Create `output` directory
         run: mkdir output
       - name: Make Linux binary executable
@@ -105,15 +92,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
-        with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename Windows binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-win.exe bin/gh-migrate-project-windows-amd64.exe
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Generate binary for Windows
+        run: bun run package:windows-amd64
       - name: Create `output` directory
         run: mkdir output
       - name: Export a project from GitHub.com
@@ -144,15 +126,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
-        with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename Linux binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Generate binary for Linux
+        run: bun run package:linux-amd64
       - name: Create `output` directory
         run: mkdir output
       - name: Make Linux binary executable
@@ -185,15 +162,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
-        with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename Linux binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Generate binary for Linux
+        run: bun run package:linux-amd64
       - name: Create `output` directory
         run: mkdir output
       - name: Make Linux binary executable
@@ -226,15 +198,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
-        with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename Linux binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Generate binary for Linux
+        run: bun run package:linux-amd64
       - name: Create `output` directory
         run: mkdir output
       - name: Make Linux binary executable
@@ -267,15 +234,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4.1.0
-        with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename Linux binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Generate binary for Linux
+        run: bun run package:linux-amd64
       - name: Create `output` directory
         run: mkdir output
       - name: Make Linux binary executable
@@ -303,39 +265,98 @@ jobs:
         with:
           name: linux-outputs-ghes-312
           path: output
+  package_macos:
+    name: Package binaries (macOS)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Generate binary for macOS ARM64
+        run: bun run package:darwin-arm64
+      - name: Generate binary for macOS AMD64
+        run: bun run package:darwin-amd64
+      - name: Write Apple signing key to a file
+        env:
+          APPLE_SIGNING_KEY_P12: ${{ secrets.APPLE_SIGNING_KEY_P12 }}
+        run: echo "$APPLE_SIGNING_KEY_P12" | base64 -d -o key.p12
+      - name: Write App Store Connect API key to a file
+        env:
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: echo "$APP_STORE_CONNECT_API_KEY" > app_store_connect_api_key.json
+      - name: Sign macOS ARM64 binary
+        uses: indygreg/apple-code-sign-action@v1
+        with:
+          input_path: bin/gh-migrate-project-darwin-arm64
+          p12_file: key.p12
+          p12_password: ${{ secrets.APPLE_SIGNING_KEY_PASSWORD }}
+          sign: true
+          sign_args: '--code-signature-flags=runtime'
+      - name: Upload macOS ARM64 binary as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-macos-arm64
+          path: bin/gh-migrate-project-darwin-arm64
+      - name: Archive macOS ARM64 binary for notarisation
+        run: zip gh-migrate-project-darwin-arm64.zip bin/gh-migrate-project-darwin-arm64
+      - name: Notarise signed macOS ARM64 binary
+        uses: indygreg/apple-code-sign-action@v1
+        with:
+          input_path: gh-migrate-project-darwin-arm64.zip
+          sign: false
+          notarize: true
+          app_store_connect_api_key_json_file: app_store_connect_api_key.json
+      - name: Sign macOS AMD64 binary
+        uses: indygreg/apple-code-sign-action@v1
+        with:
+          input_path: bin/gh-migrate-project-darwin-amd64
+          p12_file: key.p12
+          p12_password: ${{ secrets.APPLE_SIGNING_KEY_PASSWORD }}
+          sign: true
+          sign_args: '--code-signature-flags=runtime'
+      - name: Upload macOS AMD64 binary as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-macos-amd64
+          path: bin/gh-migrate-project-darwin-amd64
+      - name: Archive macOS AMD64 binary for notarisation
+        run: zip gh-migrate-project-darwin-amd64.zip bin/gh-migrate-project-darwin-amd64
+      - name: Notarise signed macOS AMD64 binary
+        uses: indygreg/apple-code-sign-action@v1
+        with:
+          input_path: gh-migrate-project-darwin-amd64.zip
+          sign: false
+          notarize: true
+          app_store_connect_api_key_json_file: app_store_connect_api_key.json
   package:
-    name: Package binaries
+    name: Package binaries (Windows and Linux)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Setup Node.js
-        uses: actions/setup-node@v4.1.0
-        with:
-          node-version: 20.x
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Generate binaries for macOS, Linux and Windows
-        run: npm run package
-      - name: Rename macOS binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-macos bin/gh-migrate-project-darwin-amd64
-      - name: Rename Windows binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-win.exe bin/gh-migrate-project-windows-amd64.exe
-      - name: Rename Linux binary to conform to GitHub CLI extension rules
-        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
-      - name: Upload macOS binary as artifact
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Generate binary for Linux AMD64
+        run: bun run package:linux-amd64
+      - name: Generate binary for Linux ARM64
+        run: bun run package:linux-arm64
+      - name: Generate binary for Windows AMD64
+        run: bun run package:windows-amd64
+      - name: Upload Linux AMD64 binary as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: package-macos
-          path: bin/gh-migrate-project-darwin-amd64
-      - name: Upload Linux binary as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: package-linux
+          name: package-linux-amd64
           path: bin/gh-migrate-project-linux-amd64
+      - name: Upload Linux ARM64 binary as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-linux-arm64
+          path: bin/gh-migrate-project-linux-arm64
       - name: Upload Windows binary as artifact
         uses: actions/upload-artifact@v4
         with:
@@ -348,6 +369,7 @@ jobs:
     needs:
       [
         'package',
+        'package_macos',
         'test_and_lint',
         'end_to_end_tests_linux_ghes_315',
         'end_to_end_tests_linux_ghes_314',
@@ -380,21 +402,33 @@ jobs:
         with:
           name: package-windows
           path: bin
-      - name: Download macOS binary
+      - name: Download macOS AMD64 binary
         uses: actions/download-artifact@v4
         with:
-          name: package-macos
+          name: package-macos-amd64
           path: bin
-      - name: Download Linux binary
+      - name: Download macOS ARM64 binary
         uses: actions/download-artifact@v4
         with:
-          name: package-linux
+          name: package-macos-arm64
+          path: bin
+      - name: Download Linux AMD64 binary
+        uses: actions/download-artifact@v4
+        with:
+          name: package-linux-amd64
+          path: bin
+      - name: Download Linux ARM64 binary
+        uses: actions/download-artifact@v4
+        with:
+          name: package-linux-arm64
           path: bin
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             bin/gh-migrate-project-darwin-amd64
+            bin/gh-migrate-project-darwin-arm64
             bin/gh-migrate-project-linux-amd64
+            bin/gh-migrate-project-linux-arm64
             bin/gh-migrate-project-windows-amd64.exe
           generate_release_notes: true

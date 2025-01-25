@@ -5,12 +5,15 @@
   "description": "A GitHub CLI (https://cli.github.com/) extension for migrating GitHub Projects (https://docs.github.com/en/issues/planning-and-tracking-with-projects) between GitHub accounts and products",
   "homepage": "https://github.com/timrogers/gh-migrate-project",
   "scripts": {
-    "package": "node build.js && npx pkg dist/migrate-project.cjs --out-path bin --targets node20-linux-x64,node20-macos-x64,node20-win-x64",
+    "package:darwin-arm64": "bun build --compile --target=bun-darwin-arm64 ./src/index.ts --outfile bin/gh-migrate-project-darwin-arm64",
+    "package:darwin-amd64": "bun build --compile --target=bun-darwin-amd64 ./src/index.ts --outfile bin/gh-migrate-project-darwin-amd64",
+    "package:linux-amd64": "bun build --compile --target=bun-linux-x64 ./src/index.ts --outfile bin/gh-migrate-project-linux-amd64",
+    "package:linux-arm64": "bun build --compile --target=bun-linux-arm64 ./src/index.ts --outfile bin/gh-migrate-project-linux-arm64",
+    "package:windows-amd64": "bun build --compile --target=bun-windows-x64 ./src/index.ts --outfile bin/gh-migrate-project-windows-amd64.exe",
     "lint": "eslint .",
     "lint-and-fix": "eslint . --fix",
-    "dev": "npx tsx src/index.ts",
-    "clean-up-organization-projects": "npx tsx script/clean-up-organization-projects.ts",
-    "configure-github-enterprise-server-instance": "npx tsx script/configure-github-enterprise-server-instance.ts"
+    "dev": "bun src/index.ts",
+    "configure-github-enterprise-server-instance": "bun script/configure-github-enterprise-server-instance.ts"
   },
   "author": "Tim Rogers <me@timrogers.co.uk>",
   "license": "MIT",
@@ -50,5 +53,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/timrogers/gh-migrate-project.git"
+  },
+  "patchedDependencies": {
+    "universal-github-app-jwt@2.2.0": "patches/universal-github-app-jwt@2.2.0.patch"
   }
 }
