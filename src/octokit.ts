@@ -1,9 +1,9 @@
-import { STATUS_CODES } from 'http';
-import { fetch as undiciFetch, ProxyAgent, RequestInfo, RequestInit } from 'undici';
-import { Octokit, RequestError } from 'octokit';
-import { paginateGraphQL } from '@octokit/plugin-paginate-graphql';
+import { STATUS_CODES } from 'node:http';
+import { fetch as undiciFetch, ProxyAgent, RequestInfo, RequestInit } from 'npm:undici';
+import { Octokit, RequestError } from 'npm:octokit';
+import { paginateGraphQL } from 'npm:@octokit/plugin-paginate-graphql';
 
-import { Logger } from './logger';
+import { Logger } from './logger.ts';
 
 const OctokitWithPaginateGraphQL = Octokit.plugin(paginateGraphQL);
 

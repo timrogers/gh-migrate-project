@@ -1,6 +1,6 @@
 import { program } from 'commander';
 import _sodium from 'libsodium-wrappers';
-import semver from 'semver';
+import { parse } from 'jsr:@std/semver';
 import { type Octokit as OctokitType } from 'octokit';
 import { createOctokit } from '../src/octokit';
 import { createLogger } from '../src/logger';
@@ -327,9 +327,7 @@ const opts = program.opts() as {
     );
   }
 
-  const parsedGhesVersion = semver.parse(
-    githubProductInformation.gitHubEnterpriseServerVersion,
-  );
+  const parsedGhesVersion = parse(githubProductInformation.gitHubEnterpriseServerVersion);
 
   if (!parsedGhesVersion) {
     throw new Error(

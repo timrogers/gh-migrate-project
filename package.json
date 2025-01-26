@@ -5,15 +5,15 @@
   "description": "A GitHub CLI (https://cli.github.com/) extension for migrating GitHub Projects (https://docs.github.com/en/issues/planning-and-tracking-with-projects) between GitHub accounts and products",
   "homepage": "https://github.com/timrogers/gh-migrate-project",
   "scripts": {
-    "package:darwin-arm64": "bun build --compile --target=bun-darwin-arm64 ./src/index.ts --outfile bin/gh-migrate-project-darwin-arm64",
-    "package:darwin-amd64": "bun build --compile --target=bun-darwin-amd64 ./src/index.ts --outfile bin/gh-migrate-project-darwin-amd64",
-    "package:linux-amd64": "bun build --compile --target=bun-linux-x64 ./src/index.ts --outfile bin/gh-migrate-project-linux-amd64",
-    "package:linux-arm64": "bun build --compile --target=bun-linux-arm64 ./src/index.ts --outfile bin/gh-migrate-project-linux-arm64",
-    "package:windows-amd64": "bun build --compile --target=bun-windows-x64 ./src/index.ts --outfile bin/gh-migrate-project-windows-amd64.exe",
+    "package:darwin-arm64": "deno compile --unstable-sloppy-imports --allow-read --allow-write --allow-env --allow-net --target aarch64-apple-darwin --output bin/gh-migrate-project-darwin-arm64 src/index.ts",
+    "package:darwin-amd64": "deno compile --unstable-sloppy-imports --allow-read --allow-write --allow-env --allow-net --target x86_64-apple-darwin --output bin/gh-migrate-project-darwin-amd64 src/index.ts",
+    "package:linux-amd64": "deno compile --unstable-sloppy-imports --allow-read --allow-write --allow-env --allow-net --target x86_64-unknown-linux-gnu --output bin/gh-migrate-project-linux-amd64 src/index.ts",
+    "package:linux-arm64": "deno compile --unstable-sloppy-imports --allow-read --allow-write --allow-env --allow-net --target aarch64-unknown-linux-gnu --output bin/gh-migrate-project-linux-arm64 src/index.ts",
+    "package:windows-amd64": "deno compile --unstable-sloppy-imports --allow-read --allow-write --allow-env --allow-net --target x86_64-pc-windows-msvc --output bin/gh-migrate-project-windows-amd64.exe src/index.ts",
     "lint": "eslint .",
     "lint-and-fix": "eslint . --fix",
-    "dev": "bun src/index.ts",
-    "configure-github-enterprise-server-instance": "bun script/configure-github-enterprise-server-instance.ts"
+    "dev": "deno --unstable-sloppy-imports --allow-read --allow-write --allow-env --allow-net src/index.ts",
+    "configure-github-enterprise-server-instance": "deno --unstable-sloppy-imports --allow-env --allow-net script/configure-github-enterprise-server-instance.ts"
   },
   "author": "Tim Rogers <me@timrogers.co.uk>",
   "license": "MIT",
@@ -33,6 +33,8 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.17.0",
+    "@octokit/openapi-types": "^23.0.1",
+    "@octokit/types": "^13.7.0",
     "@types/libsodium-wrappers": "^0.7.14",
     "@types/node": "^22.10.10",
     "@types/semver": "^7.5.8",
