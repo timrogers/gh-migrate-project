@@ -1,11 +1,11 @@
-import { type Octokit } from 'octokit';
-import { RequestError } from '@octokit/request-error';
-import { GraphqlResponseError } from '@octokit/graphql';
-import chalk from 'chalk';
-import semver from 'semver';
+import { type Octokit } from 'npm:octokit';
+import { RequestError } from 'npm:@octokit/request-error';
+import { GraphqlResponseError } from 'npm:@octokit/graphql';
+import chalk from 'npm:chalk';
+import { greaterThan, parse } from 'jsr:@std/semver';
 import { Logger } from './logger';
-import VERSION from './version.js';
-import { createOctokit } from './octokit.js';
+import VERSION from './version.ts';
+import { createOctokit } from './octokit.ts';
 
 // Validates the OAuth scopes of the token used to authenticate the user. If the token is a
 // scopeless token using fine-grained permissions (e.g. a GitHub App token), the validation
@@ -98,7 +98,9 @@ export const checkForUpdates = async (
       repo: 'gh-migrate-project',
     });
 
-    if (semver.gt(release.tag_name, VERSION)) {
+    const latestVersion = parse(release.tag_name);
+
+    if (greaterThan(latestVersion, VERSION)) {
       logger.warn(
         `The version of gh-migrate-project you're running, v${VERSION}, is out of date. You can update to the latest version, ${release.tag_name} by running \`gh extension upgrade timrogers/gh-migrate-project\`.`,
       );

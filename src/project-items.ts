@@ -1,4 +1,4 @@
-import { type ProjectItem } from './graphql-types';
+import { type ProjectItem } from './graphql-types.ts';
 
 export const getReferencedRepositories = (projectItems: ProjectItem[]): string[] => {
   const projectItemsReferencingRepository = projectItems.filter(

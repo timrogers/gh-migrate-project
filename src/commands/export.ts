@@ -1,9 +1,9 @@
-import * as commander from 'commander';
-import { existsSync, writeFileSync } from 'fs';
-import crypto from 'crypto';
-import { type Octokit } from 'octokit';
-import semver from 'semver';
-import { PostHog } from 'posthog-node';
+import * as commander from 'npm:commander';
+import { existsSync, writeFileSync } from 'node:fs';
+import crypto from 'node:crypto';
+import { type Octokit } from 'npm:octokit';
+import { format, lessOrEqual, SemVer } from 'jsr:@std/semver';
+import { PostHog } from 'npm:posthog-node';
 
 import {
   actionRunner,
@@ -11,18 +11,18 @@ import {
   logRateLimitInformation,
   normalizeBaseUrl,
   validateTokenOAuthScopes,
-} from '../utils.js';
-import VERSION from '../version.js';
-import { createLogger, Logger } from '../logger.js';
-import { createOctokit } from '../octokit.js';
-import { type Project, type ProjectItem } from '../graphql-types.js';
-import { getReferencedRepositories } from '../project-items.js';
+} from '../utils.ts';
+import VERSION from '../version.ts';
+import { createLogger, Logger } from '../logger.ts';
+import { createOctokit } from '../octokit.ts';
+import { type Project, type ProjectItem } from '../graphql-types.ts';
+import { getReferencedRepositories } from '../project-items.ts';
 import {
   GitHubProduct,
   MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS,
   getGitHubProductInformation,
-} from '../github-products.js';
-import { POSTHOG_API_KEY, POSTHOG_HOST } from '../posthog.js';
+} from '../github-products.ts';
+import { POSTHOG_API_KEY, POSTHOG_HOST } from '../posthog.ts';
 
 const command = new commander.Command();
 const { Option } = commander;
@@ -238,7 +238,7 @@ const getProjectItems = async ({
     },
   );
 
-  const allProjectItems = response.node.items.nodes;
+  const allProjectItems = response.node.items.nodes as ProjectItem[];
 
   const validProjectItems = allProjectItems.filter((projectItem) => {
     if (!projectItem.content) {
@@ -263,7 +263,7 @@ const getProject = async ({
 }: {
   id: string;
   octokit: Octokit;
-  gitHubEnterpriseServerVersion: string | undefined;
+  gitHubEnterpriseServerVersion: SemVer | undefined;
 }): Promise<Project> => {
   // At the time of writing, these fields are only present on GitHub.com
   const shouldGetFieldDescriptionAndColor =
@@ -380,7 +380,7 @@ const getProject = async ({
 
 command
   .name('export')
-  .version(VERSION)
+  .version(format(VERSION))
   .description('Export a GitHub project')
   .option(
     '--access-token <access_token>',
@@ -506,7 +506,7 @@ command
 
       if (githubProduct === GitHubProduct.GHES) {
         if (
-          semver.lte(
+          lessOrEqual(
             gitHubEnterpriseServerVersion,
             MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS,
           )

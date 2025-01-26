@@ -1,12 +1,13 @@
-import * as commander from 'commander';
-import { createReadStream, existsSync, readFileSync } from 'fs';
-import crypto from 'crypto';
+import * as commander from 'npm:commander';
+import { createReadStream, existsSync, readFileSync } from 'node:fs';
+import crypto from 'node:crypto';
 import * as readline from 'node:readline/promises';
-import { type Octokit } from 'octokit';
-import { parse } from '@fast-csv/parse';
-import boxen from 'boxen';
-import semver from 'semver';
-import { PostHog } from 'posthog-node';
+import { type Octokit } from 'npm:octokit';
+import { parse } from 'npm:@fast-csv/parse';
+import boxen from 'npm:boxen';
+import { format, lessOrEqual } from 'jsr:@std/semver';
+import { PostHog } from 'npm:posthog-node';
+import { GraphqlResponseError } from 'npm:@octokit/graphql';
 
 import {
   actionRunner,
@@ -14,22 +15,22 @@ import {
   logRateLimitInformation,
   normalizeBaseUrl,
   validateTokenOAuthScopes,
-} from '../utils.js';
-import VERSION from '../version.js';
-import { Logger, createLogger } from '../logger.js';
-import { createOctokit } from '../octokit.js';
+} from '../utils.ts';
+import VERSION from '../version.ts';
+import { Logger, createLogger } from '../logger.ts';
+import { createOctokit } from '../octokit.ts';
 import {
   ProjectSingleSelectFieldOptionColor,
   type Project,
   type ProjectItem,
-} from '../graphql-types.js';
-import { getReferencedRepositories } from '../project-items.js';
+} from '../graphql-types.ts';
+import { getReferencedRepositories } from '../project-items.ts';
 import {
   GitHubProduct,
   MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_IMPORTS,
   getGitHubProductInformation,
-} from '../github-products.js';
-import { POSTHOG_API_KEY, POSTHOG_HOST } from '../posthog.js';
+} from '../github-products.ts';
+import { POSTHOG_API_KEY, POSTHOG_HOST } from '../posthog.ts';
 
 const command = new commander.Command();
 const { Option } = commander;
@@ -225,7 +226,10 @@ const getIssueOrPullRequestByRepositoryAndNumber = async ({
 
     return response.repository.issueOrPullRequest;
   } catch (e) {
-    if (e.message.includes('Could not resolve to an issue or pull request')) {
+    if (
+      e instanceof GraphqlResponseError &&
+      e.message.includes('Could not resolve to an issue or pull request')
+    ) {
       return null;
     } else {
       throw e;
@@ -816,7 +820,7 @@ const importProjectItem = async (opts: {
 
 command
   .name('import')
-  .version(VERSION)
+  .version(format(VERSION))
   .description('Import a GitHub project')
   .option(
     '--access-token <access_token>',
@@ -960,7 +964,7 @@ command
 
       if (githubProduct === GitHubProduct.GHES) {
         if (
-          semver.lte(
+          lessOrEqual(
             gitHubEnterpriseServerVersion,
             MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_IMPORTS,
           )

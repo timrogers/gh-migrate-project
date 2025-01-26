@@ -1,4 +1,4 @@
-import winston from 'winston';
+import winston from 'npm:winston';
 const { combine, timestamp, printf, colorize } = winston.format;
 
 // TODO: Figure out how to make ESLint happy with this
