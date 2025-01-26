@@ -12,8 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version-file: .tool-versions
+      - run: deno install
       - run: deno run lint
   end_to_end_tests_macos:
     name: Run end to end tests (GitHub.com to GitHub.com on macOS)
@@ -23,7 +25,7 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version-file: .tool-versions
-      - run: bun install
+      - run: deno install
       - name: Generate binary for macOS
         run: deno run package:darwin-arm64
       - name: Create `output` directory
