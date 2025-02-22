@@ -201,7 +201,7 @@ const isFieldDescriptionAndColorAvailable = (gitHubEnterpriseServerVersion: stri
     let majorVersion = parseInt(version[0]);
     let minorVersion = parseInt(version[1]);
     // At the time of writing, these fields are present on GitHub.com and Enterprise Server Version >= 3.11
-    return majorVersion >= 3 && minorVersion >= 11
+    return (majorVersion > 3) || (majorVersion == 3 && minorVersion >= 11)
   }
 
   // GitHub.com
