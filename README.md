@@ -167,6 +167,14 @@ Optionally, you can specify an existing project using `--project-number` to appl
 
 ## Limitations
 
+### Automatic `Status` field migration to GitHub Enterprise Server
+
+Due to limitations of the GitHub Enterprise Server GraphQL API, automatic migration of `Status` field is not supported for imports against GitHub Enterprise Server.
+
+Due to this limitation, the tool will ask you to manually set up your options for the "Status" field before starting the import if the target is GitHub Enterprise Server. It will explain exactly what to do, and will validate that you've correctly copied the options from your migration source.
+
+Once you've set up the "Status" field, your project will be imported.
+
 ### Classic projects are not supported
 
 This tool can't migrate so-called classic Projects - only the newer version of [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects).
