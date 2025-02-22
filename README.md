@@ -161,9 +161,7 @@ gh migrate-project import \
     --project-number 1337
 ```
 
-Near the start of the import, the tool will ask you to manually set up your options for the "Status" field. It will explain exactly what to do, and will validate that you've correctly copied the options from your migration source.
-
-Once you've set up the "Status" field, your project will be imported. Watch out for `warn` lines in the logs, which will let you know about data which hasn't been imported.
+Watch out for `warn` lines in the logs, which will let you know about data which hasn't been imported.
 
 Optionally, you can specify an existing project using `--project-number` to apply the fields and items to a project you've already created. This can be useful if you want to use a [project template](https://docs.github.com/en/issues/planning-and-tracking-with-projects/managing-your-project/managing-project-templates-in-your-organization) to set up your projects to overcome this tool's lack of support for migrating workflows and views.
 
