@@ -216,8 +216,8 @@ const createProject = async ({
 
 interface SelectOption {
   name: string;
-  color?: ProjectSingleSelectFieldOptionColor;
-  description?: string;
+  color: ProjectSingleSelectFieldOptionColor;
+  description: string;
 }
 
 interface CreatedProjectField {
@@ -489,6 +489,28 @@ const getProjectStatusField = async ({
 
   return response.node.field;
 };
+
+const updateProjectStatusField = async ({octokit, statusFieldId, options}: {octokit: Octokit; statusFieldId: string; options: SelectOption[]}): Promise<void> => {
+  const response = (await octokit.graphql(
+    `mutation updateProjectStatusField($id: ID!, $options: [ProjectV2SingleSelectFieldOptionInput!]) {
+      updateProjectV2Field(input: { fieldId: $id, name: "Status", singleSelectOptions: $options }) {
+        projectV2Field {
+          ... on ProjectV2SingleSelectField {
+            id
+            name
+            options {
+              id
+              name
+            }
+          }
+        }
+      }
+    }`,
+  {
+    id: statusFieldId,
+    options: options,
+  }) as {data: {updateProjectV2Field: {projectV2Field: { id: string; name: string; options: Array<{id: string; name: string}>}}}})
+}
 
 const isCustomField = ({
   dataType,
@@ -1270,19 +1292,26 @@ command
 
       logger.info(`Created ${customFieldsToCreate.length} custom field(s)`);
 
-      logger.info('Checking if "Status" field is configured correctly...');
+      const sourceProjectStatusOptions = sourceProject.fields.nodes.find(field => field.name == "Status")!.options!;
 
-      const { sourceProjectStatusFieldId, targetProjectStatusFieldId, mappings } =
-        await promptUntilStatusFieldsCorrelate({
-          octokit,
-          sourceProject,
-          targetProjectId,
-          targetProjectUrl,
-        });
-      sourceToTargetCustomFieldMappings.set(sourceProjectStatusFieldId, {
-        targetId: targetProjectStatusFieldId,
-        optionMappings: mappings,
+      logger.info(`Configuring "Status" field: ${JSON.stringify(sourceProjectStatusOptions)}`);
+
+      const targetProjectStatusField = await getProjectStatusField({
+        octokit,
+        projectId: targetProjectId,
       });
+
+      await updateProjectStatusField(
+        {
+          octokit,
+          statusFieldId: targetProjectStatusField.id,
+          options: sourceProjectStatusOptions.map(option => ({
+            name: option.name,
+            color: option.color,
+            description: option.description,
+          } as SelectOption))
+        }
+      )
 
       logger.info('Finished configuring "Status" field.');
 
