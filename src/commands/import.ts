@@ -1294,37 +1294,58 @@ command
 
       logger.info(`Created ${customFieldsToCreate.length} custom field(s)`);
 
-      const sourceProjectStatusField = sourceProject.fields.nodes.find(field => field.name == "Status")!;
-      const sourceProjectStatusFieldOptions = sourceProjectStatusField.options!;
+      // At the time of writing this, the GraphQL mutation 'updateProjectV2Field' is only available on
+      // GitHub.com
+      const shouldConfigureStatusField = typeof gitHubEnterpriseServerVersion === 'undefined'
+      if (shouldConfigureStatusField) {
+        const sourceProjectStatusField = sourceProject.fields.nodes.find(field => field.name == "Status")!;
+        const sourceProjectStatusFieldOptions = sourceProjectStatusField.options!;
 
-      logger.info(`Configuring "Status" field: ${JSON.stringify(sourceProjectStatusFieldOptions)}`);
+        logger.info(`Configuring "Status" field: ${JSON.stringify(sourceProjectStatusFieldOptions)}`);
 
-      const targetProjectStatusField = await getProjectStatusField({
-        octokit,
-        projectId: targetProjectId,
-      });
-
-      const targetProjectStatusFieldOptions = await updateProjectStatusField(
-        {
+        const targetProjectStatusField = await getProjectStatusField({
           octokit,
-          statusFieldId: targetProjectStatusField.id,
-          options: sourceProjectStatusFieldOptions.map(option => ({
-            name: option.name,
-            color: option.color,
-            description: option.description,
-          } as SelectOption))
-        }
-      )
+          projectId: targetProjectId,
+        });
 
-      const mappings = correlateCustomFieldOptions(
-      sourceProjectStatusField.options as Array<{ id: string; name: string }> ,
-      targetProjectStatusFieldOptions,
-      );
+        const targetProjectStatusFieldOptions = await updateProjectStatusField(
+          {
+            octokit,
+            statusFieldId: targetProjectStatusField.id,
+            options: sourceProjectStatusFieldOptions.map(option => ({
+              name: option.name,
+              color: option.color,
+              description: option.description,
+            } as SelectOption))
+          }
+        )
 
-      sourceToTargetCustomFieldMappings.set(sourceProjectStatusField.id, {
-        targetId: targetProjectStatusField.id,
-        optionMappings: mappings,
-      });
+        const mappings = correlateCustomFieldOptions(
+          sourceProjectStatusField.options as Array<{ id: string; name: string }>,
+          targetProjectStatusFieldOptions,
+        );
+
+        sourceToTargetCustomFieldMappings.set(sourceProjectStatusField.id, {
+          targetId: targetProjectStatusField.id,
+          optionMappings: mappings,
+        });
+
+      }
+      else {
+        logger.info('Checking if "Status" field is configured correctly...');
+
+        const { sourceProjectStatusFieldId, targetProjectStatusFieldId, mappings } =
+          await promptUntilStatusFieldsCorrelate({
+            octokit,
+            sourceProject,
+            targetProjectId,
+            targetProjectUrl,
+          });
+        sourceToTargetCustomFieldMappings.set(sourceProjectStatusFieldId, {
+          targetId: targetProjectStatusFieldId,
+          optionMappings: mappings,
+        });
+      }
 
       logger.info('Finished configuring "Status" field.');
 
