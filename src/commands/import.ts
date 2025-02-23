@@ -55,6 +55,7 @@ interface Arguments {
   projectOwner: string;
   projectOwnerType: ProjectOwnerType;
   projectTitle?: string;
+  projectNumber?: number;
   proxyUrl: string | undefined;
   repositoryMappingsPath: string;
   skipCertificateVerification: boolean;
@@ -970,7 +971,7 @@ command
   )
   .option('--skip-update-check', 'Skip automatic check for updates to this tool', false)
   .option(
-    '--project-number',
+    '--project-number <project_number>',
     'The number of an existing project you have already created to use as a migration target, importing the items and fields. If this is set, the project title in the export or specified with --project-title will not be applied.',
     (value) => parseInt(value),
   )
@@ -1133,8 +1134,8 @@ command
 
       const title = projectTitle || sourceProject.title;
 
-      let targetProjectId: string = null;
-      let targetProjectUrl: string = null;
+      let targetProjectId: string | null = null;
+      let targetProjectUrl: string | null = null;
 
       if (projectNumber) {
         const result = await getGlobalIdAndUrlForProject({
