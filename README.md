@@ -134,11 +134,17 @@ gh migrate-project import \
     --skip-update-check
 ```
 
-Near the start of the import, the tool will ask you to manually set up your options for the "Status" field. It will explain exactly what to do, and will validate that you've correctly copied the options from your migration source.
-
-Once you've set up the "Status" field, your project will be imported. Watch out for `warn` lines in the logs, which will let you know about data which hasn't been imported.
+Watch out for `warn` lines in the logs, which will let you know about data which hasn't been imported.
 
 ## Limitations
+
+### Automatic `Status` field migration to GitHub Enterprise Server
+
+Due to limitations of the GitHub Enterprise Server GraphQL API, automatic migration of `Status` field is not supported for imports against GitHub Enterprise Server.
+
+Due to this limitation, the tool will ask you to manually set up your options for the "Status" field before starting the import if the target is GitHub Enterprise Server. It will explain exactly what to do, and will validate that you've correctly copied the options from your migration source.
+
+Once you've set up the "Status" field, your project will be imported.
 
 ### Classic projects are not supported
 
