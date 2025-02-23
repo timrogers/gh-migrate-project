@@ -115,7 +115,7 @@ export interface Project {
   };
 }
 
-export interface ProjectItem {
+export interface GenericProjectItem {
   content: {
     __typename: string;
     title: string;
@@ -157,3 +157,17 @@ export interface ProjectItem {
   type: ProjectItemType;
   id: string;
 }
+
+export type DraftIssueProjectItem = GenericProjectItem & {
+  content: {
+    __typeName: 'DraftIssue';
+    assignees: {
+      nodes: {
+        login: string;
+      }[];
+      totalCount: number;
+    };
+  };
+};
+
+export type ProjectItem = GenericProjectItem | DraftIssueProjectItem;

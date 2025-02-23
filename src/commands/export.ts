@@ -16,7 +16,11 @@ import VERSION from '../version.js';
 import { createLogger, Logger } from '../logger.js';
 import { createOctokit } from '../octokit.js';
 import { type Project, type ProjectItem } from '../graphql-types.js';
-import { getReferencedRepositories } from '../project-items.js';
+import {
+  getDraftIssueAssignees,
+  getReferencedRepositories,
+  isDraftProjectItem,
+} from '../project-items.js';
 import {
   GitHubProduct,
   MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS,
@@ -34,6 +38,7 @@ enum ProjectOwnerType {
 
 interface Arguments {
   accessToken?: string;
+  assigneeMappingsOutputPath: string;
   baseUrl: string;
   disableTelemetry: boolean;
   projectOutputPath: string;
@@ -164,6 +169,12 @@ const getProjectItems = async ({
                   creator {
                     login
                   }
+                  assignees(first: 100) {
+                    nodes {
+                      login
+                    }
+                    totalCount
+                  }
                 }
               }
               fieldValues(first: 100) {
@@ -251,7 +262,18 @@ const getProjectItems = async ({
     }
 
     return true;
-  });
+  }) as ProjectItem[];
+
+  for (const projectItem of validProjectItems) {
+    if (
+      isDraftProjectItem(projectItem) &&
+      projectItem.content.assignees.totalCount > 100
+    ) {
+      logger.warn(
+        `Draft issue project item ${projectItem.id} has more than 100 assignees. Only the first 100 assignees will be exported and migrated.`,
+      );
+    }
+  }
 
   return validProjectItems;
 };
@@ -398,8 +420,13 @@ command
   )
   .option(
     '--repository-mappings-output-path <repository_mappings_output_path>',
-    'The path to write the repositories template to',
+    'The path to write the repositories mapping template to',
     'repository-mappings.csv',
+  )
+  .option(
+    '--assignee-mappings-output-path <assignee_mappings_output_path>',
+    'The path to write the assignee mapping template to',
+    'assignee-mappings.csv',
   )
   .requiredOption(
     '--project-owner <project_owner>',
@@ -439,6 +466,7 @@ command
     actionRunner(async (opts: Arguments) => {
       const {
         accessToken: accessTokenFromArguments,
+        assigneeMappingsOutputPath,
         baseUrl: baseUrlFromArguments,
         disableTelemetry,
         projectNumber,
@@ -485,7 +513,13 @@ command
 
       if (existsSync(repositoryMappingsOutputPath)) {
         throw new Error(
-          `The repositories mappings output path, \`${repositoryMappingsOutputPath}\` already exists. Please delete the existing file or specify a different path using the --repository-mappings-output-path argument.`,
+          `The repository mappings output path, \`${repositoryMappingsOutputPath}\` already exists. Please delete the existing file or specify a different path using the --repository-mappings-output-path argument.`,
+        );
+      }
+
+      if (existsSync(assigneeMappingsOutputPath)) {
+        throw new Error(
+          `The assignee mappings output path, \`${assigneeMappingsOutputPath}\` already exists. Please delete the existing file or specify a different path using the --assignee-mappings-output-path argument.`,
         );
       }
 
@@ -586,6 +620,20 @@ command
       writeFileSync(repositoryMappingsOutputPath, repositoriesTemplateCsvOutput);
       logger.info(
         `Successfully wrote repositories mappings CSV to ${repositoryMappingsOutputPath}`,
+      );
+
+      const draftIssueAssignees = getDraftIssueAssignees(projectItems);
+
+      const assigneesTemplateCsvOutput =
+        'source_login,target_login\n' +
+        Array.from(draftIssueAssignees)
+          .map((login) => `${login},`)
+          .join('\n');
+
+      logger.info(`Writing assignee mappings CSV to ${assigneeMappingsOutputPath}...`);
+      writeFileSync(assigneeMappingsOutputPath, assigneesTemplateCsvOutput);
+      logger.info(
+        `Successfully wrote assignee mappings CSV to ${assigneeMappingsOutputPath}`,
       );
 
       await posthog.shutdown();
