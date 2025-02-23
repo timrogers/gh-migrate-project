@@ -1295,7 +1295,7 @@ command
       logger.info(`Created ${customFieldsToCreate.length} custom field(s)`);
 
       // At the time of writing this, the GraphQL mutation 'updateProjectV2Field' is only available on
-      // GitHub.com
+      // GitHub.com and GitHub Enterprise Cloud with Data Residency
       const shouldConfigureStatusField = githubProduct !== GitHubProduct.GHES
       if (shouldConfigureStatusField) {
         const sourceProjectStatusField = sourceProject.fields.nodes.find(field => field.name == "Status")!;
