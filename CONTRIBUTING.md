@@ -80,4 +80,4 @@ From time to time, you may need to update this token due to expiry or having rep
 To refresh the token and ensure an instance is ready:
 
 1. Create a new personal access token (PAT) with the `repo`, `admin:org`, `project` and `site_admin` scopes
-1. Update the Actions and Dependabot secrets by running `bun run seed-github-enterprise-server-instance -- --ghes-access-token TOKEN --ghes-base-url https://ghes.acme.com/api/v3 --dotcom-access-token FOO`.
+1. Update the Actions and Dependabot secrets by running `bun run configure-github-enterprise-server-instance -- --ghes-access-token TOKEN --ghes-base-url https://ghes.acme.com/api/v3 --dotcom-access-token FOO`.
