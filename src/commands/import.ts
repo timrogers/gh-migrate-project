@@ -1312,11 +1312,7 @@ command
           {
             octokit,
             statusFieldId: targetProjectStatusField.id,
-            options: sourceProjectStatusFieldOptions.map(option => ({
-              name: option.name,
-              color: option.color,
-              description: option.description,
-            } as SelectOption))
+            options: sourceProjectStatusFieldOptions
           }
         )
 
