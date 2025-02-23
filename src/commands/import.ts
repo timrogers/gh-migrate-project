@@ -1301,7 +1301,7 @@ command
         const sourceProjectStatusField = sourceProject.fields.nodes.find(field => field.name === "Status")!;
         const sourceProjectStatusFieldOptions = sourceProjectStatusField.options!;
 
-        logger.info(`Configuring "Status" field: ${JSON.stringify(sourceProjectStatusFieldOptions)}`);
+        logger.info('Configuring "Status" field options...');
 
         const targetProjectStatusField = await getProjectStatusField({
           octokit,
