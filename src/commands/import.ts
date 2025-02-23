@@ -508,7 +508,12 @@ const updateProjectStatusField = async ({ octokit, statusFieldId, options }: { o
     }`,
     {
       id: statusFieldId,
-      options: options,
+      // This casting is required, as `id` field does not exist on type `ProjectV2SingleSelectFieldOptionInput`
+      options: options.map(option => ({
+        name: option.name,
+        color: option.color,
+        description: option.description,
+      } as SelectOption)),
     }) as { updateProjectV2Field: { projectV2Field: { id: string; name: string; options: Array<{ id: string; name: string }> } } })
 
   return response.updateProjectV2Field.projectV2Field.options;
