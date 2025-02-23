@@ -198,11 +198,9 @@ const getProjectItems = async ({
 const getProject = async ({
   id,
   octokit,
-  gitHubEnterpriseServerVersion,
 }: {
   id: string;
   octokit: Octokit;
-  gitHubEnterpriseServerVersion: string | undefined;
 }): Promise<Project> => {
   const response = (await octokit.graphql(
     `query getProject($id: ID!) {
