@@ -160,7 +160,7 @@ export interface GenericProjectItem {
 
 export type DraftIssueProjectItem = GenericProjectItem & {
   content: {
-    __typeName: 'DraftIssue';
+    __typename: 'DraftIssue';
     assignees: {
       nodes: {
         login: string;
