@@ -27,14 +27,10 @@ import {
   getGitHubProductInformation,
 } from '../github-products.js';
 import { POSTHOG_API_KEY, POSTHOG_HOST } from '../posthog.js';
+import { getGlobalIdAndUrlForProject, ProjectOwnerType } from '../projects.js';
 
 const command = new commander.Command();
 const { Option } = commander;
-
-enum ProjectOwnerType {
-  Organization = 'organization',
-  User = 'user',
-}
 
 interface Arguments {
   accessToken?: string;
@@ -51,85 +47,6 @@ interface Arguments {
   skipUpdateCheck: boolean;
   verbose: boolean;
 }
-
-const getGlobalIdForProject = async ({
-  owner,
-  ownerType,
-  number,
-  octokit,
-}: {
-  owner: string;
-  ownerType: ProjectOwnerType;
-  number: number;
-  octokit: Octokit;
-}): Promise<string> => {
-  switch (ownerType) {
-    case ProjectOwnerType.Organization:
-      return await getGlobalIdForOrganizationOwnedProject({
-        organization: owner,
-        number,
-        octokit,
-      });
-    case ProjectOwnerType.User:
-      return await getGlobalIdForUserOwnedProject({
-        user: owner,
-        number,
-        octokit,
-      });
-  }
-};
-
-const getGlobalIdForOrganizationOwnedProject = async ({
-  organization,
-  number,
-  octokit,
-}: {
-  organization: string;
-  number: number;
-  octokit: Octokit;
-}): Promise<string> => {
-  const response = (await octokit.graphql(
-    `query getProjectGlobalId($organization: String!, $number: Int!) {
-      organization(login: $organization) {
-        projectV2(number: $number) {
-          id
-        }
-      }
-    }`,
-    {
-      organization,
-      number,
-    },
-  )) as { organization: { projectV2: { id: string } } };
-
-  return response.organization.projectV2.id;
-};
-
-const getGlobalIdForUserOwnedProject = async ({
-  user,
-  number,
-  octokit,
-}: {
-  user: string;
-  number: number;
-  octokit: Octokit;
-}): Promise<string> => {
-  const response = (await octokit.graphql(
-    `query getProjectGlobalId($user: String!, $number: Int!) {
-      user(login: $user) {
-        projectV2(number: $number) {
-          id
-        }
-      }
-    }`,
-    {
-      user,
-      number,
-    },
-  )) as { user: { projectV2: { id: string } } };
-
-  return response.user.projectV2.id;
-};
 
 const getProjectItems = async ({
   id,
@@ -578,7 +495,7 @@ command
       logger.info(
         `Looking up ID for project ${projectNumber} owned by ${projectOwnerType} ${projectOwner}...`,
       );
-      const projectId = await getGlobalIdForProject({
+      const { globalId: projectId } = await getGlobalIdAndUrlForProject({
         owner: projectOwner,
         ownerType: projectOwnerType,
         number: projectNumber,
