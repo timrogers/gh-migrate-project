@@ -195,19 +195,6 @@ const getProjectItems = async ({
   return validProjectItems;
 };
 
-const isFieldDescriptionAndColorAvailable = (gitHubEnterpriseServerVersion: string | undefined): boolean => {
-  if (gitHubEnterpriseServerVersion) {
-    const version = gitHubEnterpriseServerVersion.split('.')
-    let majorVersion = parseInt(version[0]);
-    let minorVersion = parseInt(version[1]);
-    // At the time of writing, these fields are present on GitHub.com and Enterprise Server Version >= 3.11
-    return (majorVersion > 3) || (majorVersion == 3 && minorVersion >= 11)
-  }
-
-  // GitHub.com
-  return typeof gitHubEnterpriseServerVersion === 'undefined'
-}
-
 const getProject = async ({
   id,
   octokit,
@@ -217,8 +204,6 @@ const getProject = async ({
   octokit: Octokit;
   gitHubEnterpriseServerVersion: string | undefined;
 }): Promise<Project> => {
-
-  const shouldGetFieldDescriptionAndColor = isFieldDescriptionAndColorAvailable(gitHubEnterpriseServerVersion)
 
   const response = (await octokit.graphql(
     `query getProject($id: ID!) {
@@ -253,8 +238,8 @@ const getProject = async ({
                 options {
                   id
                   name
-                  ${shouldGetFieldDescriptionAndColor ? 'description' : ''}
-                  ${shouldGetFieldDescriptionAndColor ? 'color' : ''}
+                  description
+                  color
                 }
               }
             }
