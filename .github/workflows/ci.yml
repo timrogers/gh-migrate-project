@@ -275,15 +275,8 @@ jobs:
           fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
       - run: bun install
-      - name: Generate binary for macOS ARM64
-        run: bun run package:darwin-arm64
       - name: Generate binary for macOS AMD64
         run: bun run package:darwin-amd64
-      - name: Upload macOS ARM64 binary as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: package-macos-arm64
-          path: bin/gh-migrate-project-darwin-arm64
       - name: Upload macOS AMD64 binary as artifact
         uses: actions/upload-artifact@v4
         with:
@@ -365,11 +358,6 @@ jobs:
         with:
           name: package-macos-amd64
           path: bin
-      - name: Download macOS ARM64 binary
-        uses: actions/download-artifact@v4
-        with:
-          name: package-macos-arm64
-          path: bin
       - name: Download Linux AMD64 binary
         uses: actions/download-artifact@v4
         with:
@@ -385,7 +373,6 @@ jobs:
         with:
           files: |
             bin/gh-migrate-project-darwin-amd64
-            bin/gh-migrate-project-darwin-arm64
             bin/gh-migrate-project-linux-amd64
             bin/gh-migrate-project-linux-arm64
             bin/gh-migrate-project-windows-amd64.exe
