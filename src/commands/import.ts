@@ -1065,14 +1065,6 @@ command
         );
       }
 
-      logger.info(`Reading assignee mappings from \`${assigneeMappingsPath}\`...`);
-      const assigneeMappings = await readAssigneeMappings(assigneeMappingsPath);
-      const assigneeGlobalIdMappings = await lookupGlobalIdsForAssigneeMappings({
-        assigneeMappings,
-        octokit,
-      });
-      logger.info(`Loaded ${assigneeMappings.size} assignee mapping(s)`);
-
       const { githubProduct, gitHubEnterpriseServerVersion } =
         await getGitHubProductInformation(octokit);
 
@@ -1116,6 +1108,14 @@ command
       }
 
       await validateTokenOAuthScopes({ octokit, requiredScopes, logger });
+
+      logger.info(`Reading assignee mappings from \`${assigneeMappingsPath}\`...`);
+      const assigneeMappings = await readAssigneeMappings(assigneeMappingsPath);
+      const assigneeGlobalIdMappings = await lookupGlobalIdsForAssigneeMappings({
+        assigneeMappings,
+        octokit,
+      });
+      logger.info(`Loaded ${assigneeMappings.size} assignee mapping(s)`);
 
       logger.info(`Looking up ID for target ${projectOwnerType} ${projectOwner}...`);
       const ownerId = await getOwnerGlobalId({ octokit, projectOwner, projectOwnerType });
