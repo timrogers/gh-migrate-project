@@ -971,10 +971,10 @@ command
         }
 
         logger.info(
-          `Running export in GitHub Enterprse Server ${gitHubEnterpriseServerVersion} mode`,
+          `Running import in GitHub Enterprise Server ${gitHubEnterpriseServerVersion} mode`,
         );
       } else {
-        logger.info(`Running export in ${githubProduct} mode`);
+        logger.info(`Running import in ${githubProduct} mode`);
       }
 
       if (!disableTelemetry) {
