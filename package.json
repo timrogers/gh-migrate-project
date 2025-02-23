@@ -33,7 +33,7 @@
     "@types/libsodium-wrappers": "^0.7.14",
     "@types/node": "^22.13.5",
     "@types/semver": "^7.5.8",
-    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/eslint-plugin": "^8.24.1",
     "@typescript-eslint/parser": "^8.15.0",
     "@yao-pkg/pkg": "^6.1.1",
     "esbuild": "^0.24.2",
