@@ -490,7 +490,7 @@ const getProjectStatusField = async ({
   return response.node.field;
 };
 
-const updateProjectStatusField = async ({ octokit, statusFieldId, options }: { octokit: Octokit; statusFieldId: string; options: SelectOption[] }): Promise<Array<{ id: string; name: string }>> => {
+const updateProjectStatusField = async ({ octokit, statusFieldId, options }: { octokit: Octokit; statusFieldId: string; options: SelectOption[] }): Promise<{ id: string; name: string }[]> => {
   const response = (await octokit.graphql(
     `mutation updateProjectStatusField($id: ID!, $options: [ProjectV2SingleSelectFieldOptionInput!]) {
       updateProjectV2Field(input: { fieldId: $id, name: "Status", singleSelectOptions: $options }) {
