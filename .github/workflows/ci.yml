@@ -38,12 +38,18 @@ jobs:
         run: cat project.json
       - name: Print repository mappings template
         run: cat repository-mappings.csv
+      - name: Print assignee mappings template
+        run: cat assignee-mappings.csv
       - name: Fill in repository mappings template
         run: |
           echo "source_repository,target_repository
           gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
+      - name: Fill in assignee mappings template
+        run: |
+          echo "source_login,target_login
+          timrogers,timrogers" > completed-assignee-mappings.csv
       - name: Import project to GitHub.com
-        run: ./bin/gh-migrate-project-darwin-arm64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
+        run: ./bin/gh-migrate-project-darwin-arm64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Upload outputs as artifacts
@@ -74,12 +80,18 @@ jobs:
         run: cat project.json
       - name: Print repository mappings template
         run: cat repository-mappings.csv
+      - name: Print assignee mappings template
+        run: cat assignee-mappings.csv
       - name: Fill in repository mappings template
         run: |
           echo "source_repository,target_repository
           gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
+      - name: Fill in assignee mappings template
+        run: |
+          echo "source_login,target_login
+          timrogers,timrogers" > completed-assignee-mappings.csv
       - name: Import project to GitHub.com
-        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
+        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Upload outputs as artifacts
@@ -108,12 +120,18 @@ jobs:
         run: cat project.json
       - name: Print repository mappings template
         run: cat repository-mappings.csv
+      - name: Print assignee mappings template
+        run: cat assignee-mappings.csv
       - name: Fill in repository mappings template
         run: |
           echo "source_repository,target_repository
           gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
+      - name: Fill in assignee mappings template
+        run: |
+          echo "source_login,target_login
+          timrogers,timrogers" > completed-assignee-mappings.csv
       - name: Import project to GitHub.com
-        run: bin/gh-migrate-project-windows-amd64.exe import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
+        run: bin/gh-migrate-project-windows-amd64.exe import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Upload outputs as artifacts
@@ -180,12 +198,18 @@ jobs:
         run: cat project.json
       - name: Print repository mappings template
         run: cat repository-mappings.csv
+      - name: Print assignee mappings template
+        run: cat assignee-mappings.csv
       - name: Fill in repository mappings template
         run: |
           echo "source_repository,target_repository
           gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
-      - name: Import project to GHES
-        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry --base-url ${{ secrets.GHES_314_BASE_URL }}
+      - name: Fill in assignee mappings template
+        run: |
+          echo "source_login,target_login
+          timrogers,timrogers" > completed-assignee-mappings.csv
+      - name: Import project to GitHub.com
+        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GHES_314_ACCESS_TOKEN }}
       - name: Upload outputs as artifacts
@@ -216,12 +240,18 @@ jobs:
         run: cat project.json
       - name: Print repository mappings template
         run: cat repository-mappings.csv
+      - name: Print assignee mappings template
+        run: cat assignee-mappings.csv
       - name: Fill in repository mappings template
         run: |
           echo "source_repository,target_repository
           gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
-      - name: Import project to GHES
-        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry --base-url ${{ secrets.GHES_313_BASE_URL }}
+      - name: Fill in assignee mappings template
+        run: |
+          echo "source_login,target_login
+          timrogers,timrogers" > completed-assignee-mappings.csv
+      - name: Import project to GitHub.com
+        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GHES_313_ACCESS_TOKEN }}
       - name: Upload outputs as artifacts
@@ -252,12 +282,18 @@ jobs:
         run: cat project.json
       - name: Print repository mappings template
         run: cat repository-mappings.csv
+      - name: Print assignee mappings template
+        run: cat assignee-mappings.csv
       - name: Fill in repository mappings template
         run: |
           echo "source_repository,target_repository
           gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
-      - name: Import project to GHES
-        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry --base-url ${{ secrets.GHES_312_BASE_URL }}
+      - name: Fill in assignee mappings template
+        run: |
+          echo "source_login,target_login
+          timrogers,timrogers" > completed-assignee-mappings.csv
+      - name: Import project to GitHub.com
+        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GHES_312_ACCESS_TOKEN }}
       - name: Upload outputs as artifacts
