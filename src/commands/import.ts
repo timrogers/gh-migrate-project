@@ -1219,6 +1219,9 @@ command
 
       for (const customFieldToCreate of customFieldsToCreate) {
         const { id, dataType, name, options } = customFieldToCreate;
+
+        logger.info(`Creating '${name}' field...`);
+
         const fieldOptionsForCreation = options
           ? options.map((option) => {
               const newOption = {
