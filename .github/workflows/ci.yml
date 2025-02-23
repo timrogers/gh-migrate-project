@@ -173,7 +173,7 @@ jobs:
           echo "source_login,target_login
           timrogers,ghe-admin" > completed-assignee-mappings.csv
       - name: Import project to GHES
-        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
+        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry --base-url ${{ secrets.GHES_315_BASE_URL }}
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GHES_315_ACCESS_TOKEN }}
       - name: Upload outputs as artifacts
@@ -215,7 +215,7 @@ jobs:
           echo "source_login,target_login
           timrogers,ghe-admin" > completed-assignee-mappings.csv
       - name: Import project to GHES
-        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
+        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry --base-url ${{ secrets.GHES_314_BASE_URL }}
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GHES_314_ACCESS_TOKEN }}
       - name: Upload outputs as artifacts
@@ -257,7 +257,7 @@ jobs:
           echo "source_login,target_login
           timrogers,ghe-admin" > completed-assignee-mappings.csv
       - name: Import project to GHES
-        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
+        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry --base-url ${{ secrets.GHES_313_BASE_URL }}
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GHES_313_ACCESS_TOKEN }}
       - name: Upload outputs as artifacts
@@ -299,7 +299,7 @@ jobs:
           echo "source_login,target_login
           timrogers,ghe-admin" > completed-assignee-mappings.csv
       - name: Import project to GHES
-        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry
+        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --disable-telemetry --base-url ${{ secrets.GHES_312_BASE_URL }}
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GHES_312_ACCESS_TOKEN }}
       - name: Upload outputs as artifacts
