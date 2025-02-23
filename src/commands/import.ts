@@ -490,7 +490,15 @@ const getProjectStatusField = async ({
   return response.node.field;
 };
 
-const updateProjectStatusField = async ({ octokit, statusFieldId, options }: { octokit: Octokit; statusFieldId: string; options: SelectOption[] }): Promise<{ id: string; name: string }[]> => {
+const updateProjectStatusField = async ({
+  octokit,
+  statusFieldId,
+  options,
+}: {
+  octokit: Octokit;
+  statusFieldId: string;
+  options: SelectOption[];
+}): Promise<{ id: string; name: string }[]> => {
   const response = (await octokit.graphql(
     `mutation updateProjectStatusField($id: ID!, $options: [ProjectV2SingleSelectFieldOptionInput!]) {
       updateProjectV2Field(input: { fieldId: $id, name: "Status", singleSelectOptions: $options }) {
@@ -509,15 +517,27 @@ const updateProjectStatusField = async ({ octokit, statusFieldId, options }: { o
     {
       id: statusFieldId,
       // This casting is required, as `id` field does not exist on type `ProjectV2SingleSelectFieldOptionInput`
-      options: options.map(option => ({
-        name: option.name,
-        color: option.color,
-        description: option.description,
-      } as SelectOption)),
-    }) as { updateProjectV2Field: { projectV2Field: { id: string; name: string; options: Array<{ id: string; name: string }> } } })
+      options: options.map(
+        (option) =>
+          ({
+            name: option.name,
+            color: option.color,
+            description: option.description,
+          }) as SelectOption,
+      ),
+    },
+  )) as {
+    updateProjectV2Field: {
+      projectV2Field: {
+        id: string;
+        name: string;
+        options: Array<{ id: string; name: string }>;
+      };
+    };
+  };
 
   return response.updateProjectV2Field.projectV2Field.options;
-}
+};
 
 const isCustomField = ({
   dataType,
@@ -1301,9 +1321,11 @@ command
 
       // At the time of writing this, the GraphQL mutation 'updateProjectV2Field' is only available on
       // GitHub.com and GitHub Enterprise Cloud with Data Residency
-      const shouldConfigureStatusField = githubProduct !== GitHubProduct.GHES
+      const shouldConfigureStatusField = githubProduct !== GitHubProduct.GHES;
       if (shouldConfigureStatusField) {
-        const sourceProjectStatusField = sourceProject.fields.nodes.find(field => field.name === "Status")!;
+        const sourceProjectStatusField = sourceProject.fields.nodes.find(
+          (field) => field.name === 'Status',
+        )!;
         const sourceProjectStatusFieldOptions = sourceProjectStatusField.options!;
 
         logger.info('Configuring "Status" field options...');
@@ -1313,13 +1335,11 @@ command
           projectId: targetProjectId,
         });
 
-        const targetProjectStatusFieldOptions = await updateProjectStatusField(
-          {
-            octokit,
-            statusFieldId: targetProjectStatusField.id,
-            options: sourceProjectStatusFieldOptions
-          }
-        )
+        const targetProjectStatusFieldOptions = await updateProjectStatusField({
+          octokit,
+          statusFieldId: targetProjectStatusField.id,
+          options: sourceProjectStatusFieldOptions,
+        });
 
         const mappings = correlateCustomFieldOptions(
           sourceProjectStatusField.options!,
@@ -1330,9 +1350,7 @@ command
           targetId: targetProjectStatusField.id,
           optionMappings: mappings,
         });
-
-      }
-      else {
+      } else {
         logger.info('Checking if "Status" field is configured correctly...');
 
         const { sourceProjectStatusFieldId, targetProjectStatusFieldId, mappings } =
