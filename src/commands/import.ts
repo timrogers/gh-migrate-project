@@ -31,6 +31,7 @@ import {
   getGitHubProductInformation,
 } from '../github-products.js';
 import { POSTHOG_API_KEY, POSTHOG_HOST } from '../posthog.js';
+import { getGlobalIdAndUrlForProject } from '../projects.js';
 
 const command = new commander.Command();
 const { Option } = commander;
@@ -969,6 +970,11 @@ command
   )
   .option('--skip-update-check', 'Skip automatic check for updates to this tool', false)
   .option(
+    '--project-number',
+    'The number of an existing project you have already created to use as a migration target, importing the items and fields. If this is set, the project title in the export or specified with --project-title will not be applied.',
+    (value) => parseInt(value),
+  )
+  .option(
     '--skip-certificate-verification',
     'Skip verification of SSL certificates when connecting to GitHub. You may need to use this option if connecting to a GitHub Enterprise Server instance with a self-signed certificate, or if you have configured a proxy.',
     false,
@@ -984,6 +990,7 @@ command
         projectOwner,
         projectOwnerType,
         projectTitle,
+        projectNumber,
         proxyUrl,
         repositoryMappingsPath,
         skipCertificateVerification,
@@ -1126,12 +1133,33 @@ command
 
       const title = projectTitle || sourceProject.title;
 
-      const { id: targetProjectId, url: targetProjectUrl } = await createProject({
-        octokit,
-        ownerId,
-        title,
-      });
-      logger.info(`Created project "${title}" with ID ${targetProjectId}`);
+      let targetProjectId: string = null;
+      let targetProjectUrl: string = null;
+
+      if (projectNumber) {
+        const result = await getGlobalIdAndUrlForProject({
+          owner: projectOwner,
+          ownerType: projectOwnerType,
+          number: projectNumber,
+          octokit: octokit,
+        });
+        targetProjectId = result.globalId;
+        targetProjectUrl = result.url;
+        logger.info(
+          `Importing into existing project ${projectNumber} with ID ${targetProjectId}`,
+        );
+      } else {
+        const result = await createProject({
+          octokit,
+          ownerId,
+          title,
+        });
+
+        targetProjectId = result.id;
+        targetProjectUrl = result.url;
+
+        logger.info(`Created project "${title}" with ID ${targetProjectId}`);
+      }
 
       const sourceProjectRepositoriesCount = sourceProject.repositories.nodes.length;
 
