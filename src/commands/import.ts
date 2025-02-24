@@ -1296,7 +1296,7 @@ command
 
       // At the time of writing this, the GraphQL mutation 'updateProjectV2Field' is only available on
       // GitHub.com
-      const shouldConfigureStatusField = typeof gitHubEnterpriseServerVersion === 'undefined'
+      const shouldConfigureStatusField = githubProduct !== GitHubProduct.GHES
       if (shouldConfigureStatusField) {
         const sourceProjectStatusField = sourceProject.fields.nodes.find(field => field.name == "Status")!;
         const sourceProjectStatusFieldOptions = sourceProjectStatusField.options!;
