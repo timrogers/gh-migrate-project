@@ -1298,7 +1298,7 @@ command
       // GitHub.com and GitHub Enterprise Cloud with Data Residency
       const shouldConfigureStatusField = githubProduct !== GitHubProduct.GHES
       if (shouldConfigureStatusField) {
-        const sourceProjectStatusField = sourceProject.fields.nodes.find(field => field.name == "Status")!;
+        const sourceProjectStatusField = sourceProject.fields.nodes.find(field => field.name === "Status")!;
         const sourceProjectStatusFieldOptions = sourceProjectStatusField.options!;
 
         logger.info(`Configuring "Status" field: ${JSON.stringify(sourceProjectStatusFieldOptions)}`);
