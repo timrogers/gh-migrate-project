@@ -1317,7 +1317,7 @@ command
         )
 
         const mappings = correlateCustomFieldOptions(
-          sourceProjectStatusField.options as Array<{ id: string; name: string }>,
+          sourceProjectStatusField.options!,
           targetProjectStatusFieldOptions,
         );
 
