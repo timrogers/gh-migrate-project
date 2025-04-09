@@ -165,6 +165,54 @@ Watch out for `warn` lines in the logs, which will let you know about data which
 
 Optionally, you can specify an existing project using `--project-number` to apply the fields and items to a project you've already created. This can be useful if you want to use a [project template](https://docs.github.com/en/issues/planning-and-tracking-with-projects/managing-your-project/managing-project-templates-in-your-organization) to set up your projects to overcome this tool's lack of support for migrating workflows and views.
 
+### Authentication
+
+For the commands [export](#step-3-export-your-project-from-migration-source) and [import](#step-6-import-your-project-into-your-migration-target), this tool supports two types of authentication: `token` which expects a Personal Access Token or `installation` which uses a GitHub App installation for authentication. The tool will automatically determine the authentication type based on the provided parameters.
+
+- If a `--access-token` or `GITHUB_TOKEN` is provided it is assumed that the [token](#token-authentication) approach should be taken.
+- If a `--app-installation-id` or `GITHUB_APP_INSTALLATION_ID` is provided it is assumed that the [installation](#installation-authentication) approach should be taken. This approach also requires that an `--app-id` and also `--private-key` be provided in addition to the `--app-installation-id`.
+
+#### Token Authentication
+
+By default, the extension expects an access token with appropriate scopes to be provided with the `--access-token` argument or `GITHUB_ACCESS_TOKEN` environment variable.
+
+```bash
+gh migrate-project export \
+    # A GitHub access token with the permissions described above. This can also be configured using the `GITHUB_TOKEN` environment variable.
+    --access-token GITHUB_TOKEN \
+    # The login of the user or organization that owns the project
+    --project-owner monalisa \
+    # The type of the owner of the project you want to export (defaults to organization; only required if the owner is a user)
+    --project-owner-type user \
+    # The number of the project you want to export
+    --project-number 1337
+```
+
+#### Installation Authentication
+
+Instead of [token authentication](#token-authentication), installation authentication can be used by providing values for `--app-id`, `--app-installation-id`, and either `--private-key` or `--private-key-file`. Use of environment variables is also supported by providing `GITHUB_APP_ID`, `GITHUB_APP_INSTALLATION_ID`, and either `GITHUB_APP_PRIVATE_KEY` or `GITHUB_APP_PRIVATE_KEY_FILE`.
+
+Installation Authentication uses a `GitHub App` to access resources on behalf of a user in an organization and can provide longer-lived integration. A [personal access token](#token-authentication) is great for short-lived scripts but if you have a large organization you are trying to audit you should consider using a GitHub App instead. Additionally, a personal access token is associated with a user and can cause the process to fail if the user no longer has access to the resources you are migrating. A GitHub App is not dependent on a user.
+
+```bash
+gh migrate-project export \
+    # The GitHub app ID
+    --app-id GITHUB_APP_ID \
+    # The private key of the GitHub App. Alternatively, use --private-key-file if you have a .pem file.
+    --private-key GITHUB_APP_PRIVATE_KEY \
+    # OR
+    # The private key of the GitHub App. For example, path to a *.pem file you downloaded from the about page of the GitHub App.
+    --private-key-file /path/to/private-key-file.pem \
+    # The GitHub app installation ID
+    --app-installation-id GITHUB_APP_INSTALLATION_ID \
+    # The login of the user or organization that owns the project
+    --project-owner monalisa \
+    # The type of the owner of the project you want to export (defaults to organization; only required if the owner is a user)
+    --project-owner-type user \
+    # The number of the project you want to export
+    --project-number 1337
+```
+
 ## Limitations
 
 ### Migrating a `Status` field with custom options to GitHub Enterprise Server requires manual steps
