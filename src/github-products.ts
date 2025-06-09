@@ -1,5 +1,6 @@
 import type { Octokit } from 'octokit';
 import { Endpoints } from '@octokit/types';
+import semver from 'semver';
 
 type DotcomMetaResponse = Endpoints['GET /meta']['response'];
 
@@ -14,6 +15,9 @@ type GhesMetaResponse = DotcomMetaResponse & {
 export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS = '3.12.0';
 
 export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_IMPORTS = '3.12.0';
+
+export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_STATUS_FIELD_UPDATES =
+  '3.17.0';
 
 export enum GitHubProduct {
   GHES = 'GitHub Enterprise Server',
@@ -78,4 +82,29 @@ const getGitHubEnterpriseServerVersion = async (octokit: Octokit): Promise<strin
   } = (await octokit.rest.meta.get()) as GhesMetaResponse;
 
   return installed_version;
+};
+
+export const supportsStatusFieldMigration = async (
+  octokit: Octokit,
+): Promise<boolean> => {
+  const githubProductInformation = await getGitHubProductInformation(octokit);
+
+  // GitHub.com and GitHub Enterprise Cloud with Data Residency support Status field migration
+  if (
+    githubProductInformation.githubProduct === GitHubProduct.DOTCOM ||
+    githubProductInformation.githubProduct ===
+      GitHubProduct.GITHUB_ENTERPRISE_CLOUD_WITH_DATA_RESIDENCY
+  ) {
+    return true;
+  }
+
+  // GitHub Enterprise Server supports Status field migration from version 3.17.0 onwards
+  if (githubProductInformation.githubProduct === GitHubProduct.GHES) {
+    return semver.gte(
+      githubProductInformation.gitHubEnterpriseServerVersion,
+      MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_STATUS_FIELD_UPDATES,
+    );
+  }
+
+  return false;
 };
