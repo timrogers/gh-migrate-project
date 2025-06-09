@@ -1,5 +1,6 @@
 import type { Octokit } from 'octokit';
 import { Endpoints } from '@octokit/types';
+import semver from 'semver';
 
 type DotcomMetaResponse = Endpoints['GET /meta']['response'];
 
@@ -14,6 +15,9 @@ type GhesMetaResponse = DotcomMetaResponse & {
 export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_EXPORTS = '3.12.0';
 
 export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_IMPORTS = '3.12.0';
+
+export const MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_STATUS_FIELD_MIGRATION =
+  '3.17.0';
 
 export enum GitHubProduct {
   GHES = 'GitHub Enterprise Server',
@@ -78,4 +82,24 @@ const getGitHubEnterpriseServerVersion = async (octokit: Octokit): Promise<strin
   } = (await octokit.rest.meta.get()) as GhesMetaResponse;
 
   return installed_version;
+};
+
+export const supportsAutomaticStatusFieldMigration = (
+  githubProduct: GitHubProduct,
+  gitHubEnterpriseServerVersion?: string,
+): boolean => {
+  // GitHub.com and GitHub Enterprise Cloud with Data Residency always support it
+  if (githubProduct !== GitHubProduct.GHES) {
+    return true;
+  }
+
+  // For GHES, check if version is 3.17.0 or later
+  if (!gitHubEnterpriseServerVersion) {
+    return false;
+  }
+
+  return semver.gte(
+    gitHubEnterpriseServerVersion,
+    MINIMUM_SUPPORTED_GITHUB_ENTERPRISE_SERVER_VERSION_FOR_STATUS_FIELD_MIGRATION,
+  );
 };

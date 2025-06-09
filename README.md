@@ -167,11 +167,13 @@ Optionally, you can specify an existing project using `--project-number` to appl
 
 ## Limitations
 
-### Migrating a `Status` field with custom options to GitHub Enterprise Server requires manual steps
+### Migrating a `Status` field with custom options to GitHub Enterprise Server versions before 3.17 requires manual steps
 
-Due to limitations of the GitHub Enterprise Server GraphQL API, automatic migration of the `Status` field is not supported for imports to GitHub Enterprise Server if the `Status` field has custom options configured.
+Due to limitations of the GitHub Enterprise Server GraphQL API in versions before 3.17, automatic migration of the `Status` field is not supported for imports to GitHub Enterprise Server versions before 3.17 if the `Status` field has custom options configured.
 
-Due to this limitation, the tool will ask you to manually set up your options for the "Status" field mid-way through the import if the target is GitHub Enterprise Server. It will explain exactly what to do, and will validate that you've correctly copied the options from your migration source.
+For GitHub Enterprise Server 3.17 and later, automatic `Status` field migration is fully supported, just like on GitHub.com and GitHub Enterprise Cloud with Data Residency.
+
+For older GitHub Enterprise Server versions, the tool will ask you to manually set up your options for the "Status" field mid-way through the import. It will explain exactly what to do, and will validate that you've correctly copied the options from your migration source.
 
 Once you've set up the "Status" field, your project will be imported.
 
