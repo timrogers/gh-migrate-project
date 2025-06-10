@@ -7,6 +7,7 @@ import { parse } from '@fast-csv/parse';
 import boxen from 'boxen';
 import semver from 'semver';
 import { PostHog } from 'posthog-node';
+import { createAuthConfig } from '../auth';
 
 import {
   actionRunner,
@@ -968,9 +969,35 @@ command
   .name('import')
   .version(VERSION)
   .description('Import a GitHub project')
-  .option(
-    '--access-token <access_token>',
-    'The access token used to interact with the GitHub API. This can also be set using the IMPORT_GITHUB_TOKEN environment variable.',
+  .addOption(
+    new Option(
+      '--access-token <access_token>',
+      'The access token used to interact with the GitHub API. This can also be set using the GITHUB_TOKEN environment variable.',
+    ).env('GITHUB_TOKEN'),
+  )
+  .addOption(
+    new Option(
+      '--app-installation-id <app_installation_id>',
+      'The installation ID of the GitHub App. If this is provided, the app ID and private key must also be provided.',
+    ).env('GITHUB_APP_INSTALLATION_ID'),
+  )
+  .addOption(
+    new Option(
+      '--app-id <app_id>',
+      'The App ID of the GitHub App. If this is provided, the installation ID and private key must also be provided.',
+    ).env('GITHUB_APP_ID'),
+  )
+  .addOption(
+    new Option(
+      '--private-key <private_key>',
+      'The private key of the GitHub App. Alternatively, use --private-key-file if you have a .pem file. If this is provided, the app ID and installation ID must also be provided.',
+    ).env('GITHUB_APP_PRIVATE_KEY'),
+  )
+  .addOption(
+    new Option(
+      '--private-key-file <private_key_file>',
+      'The private key of the GitHub App. For example, path to a *.pem file you downloaded from the about page of the GitHub App. If this is provided, the app ID and installation ID must also be provided.',
+    ).env('GITHUB_APP_PRIVATE_KEY_FILE'),
   )
   .option(
     '--base-url <base_url>',
@@ -1066,13 +1093,7 @@ command
         host: POSTHOG_HOST,
       });
 
-      const accessToken = accessTokenFromArguments || process.env.IMPORT_GITHUB_TOKEN;
-
-      if (!accessToken) {
-        throw new Error(
-          'You must specify a GitHub access token using the --access-token argument or IMPORT_GITHUB_TOKEN environment variable.',
-        );
-      }
+      const authConfig = createAuthConfig({ ...opts, logger: logger });
 
       if (!existsSync(inputPath)) {
         throw new Error(
@@ -1094,7 +1115,7 @@ command
 
       const baseUrl = normalizeBaseUrl(baseUrlFromArguments, logger);
 
-      const octokit = createOctokit(accessToken, baseUrl, proxyUrl, logger);
+      const octokit = createOctokit(authConfig, baseUrl, proxyUrl, logger);
 
       const shouldCheckRateLimitAgain = await logRateLimitInformation(logger, octokit);
 

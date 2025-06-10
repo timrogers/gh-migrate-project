@@ -317,7 +317,12 @@ const opts = program.opts() as {
     process.exit(1);
   }
 
-  const octokit = createOctokit(ghesAccessToken, opts.ghesBaseUrl, undefined, logger);
+  const octokit = createOctokit(
+    { auth: ghesAccessToken },
+    opts.ghesBaseUrl,
+    undefined,
+    logger,
+  );
 
   const githubProductInformation = await getGitHubProductInformation(octokit);
 
@@ -409,7 +414,7 @@ const opts = program.opts() as {
   const ghesVersionForSecretName = `${parsedGhesVersion.major}${parsedGhesVersion.minor}`;
 
   const dotcomOctokit = createOctokit(
-    dotcomAccessToken,
+    { auth: dotcomAccessToken },
     'https://api.github.com',
     undefined,
     logger,
