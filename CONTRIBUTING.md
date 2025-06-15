@@ -1,5 +1,48 @@
 # Contributing
 
+## Unit tests
+
+This project includes unit tests for core utilities and logic. The tests are written using Node.js built-in test runner and are located in the `tests/` directory.
+
+### Running unit tests
+
+To run all unit tests:
+
+```bash
+npm test
+```
+
+To run tests for a specific file:
+
+```bash
+npx tsx --test tests/utils.test.js
+```
+
+### Writing tests
+
+Unit tests are written using Node.js built-in test runner with the following structure:
+
+- Tests are located in the `tests/` directory
+- Test files should end with `.test.js`
+- Import from source files using `.ts` extension (e.g., `import { func } from '../src/utils.ts'`)
+- Use `describe()` for grouping tests and `test()` for individual test cases
+- Use Node.js built-in `assert` module for assertions
+
+Example:
+
+```javascript
+import { test, describe } from 'node:test';
+import assert from 'node:assert';
+import { myFunction } from '../src/my-module.ts';
+
+describe('myFunction', () => {
+  test('should return expected value', () => {
+    const result = myFunction('input');
+    assert.strictEqual(result, 'expected');
+  });
+});
+```
+
 ## End-to-end testing
 
 This tool supports exports from and imports to GitHub Enterprise Server (GHES).
