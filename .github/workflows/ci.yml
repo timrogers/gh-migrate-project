@@ -11,7 +11,7 @@ jobs:
     name: Test and lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4.3.0
         with:
           node-version: 20.x
@@ -22,7 +22,7 @@ jobs:
     name: Run end to end tests (GitHub.com to GitHub.com on macOS)
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4.3.0
         with:
           node-version: 20.x
@@ -69,7 +69,7 @@ jobs:
     name: Run end to end tests (GitHub.com to GitHub.com on Linux)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4.3.0
         with:
           node-version: 20.x
@@ -116,7 +116,7 @@ jobs:
     name: Run end to end tests (GitHub.com to GitHub.com on Windows)
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4.3.0
         with:
           node-version: 20.x
@@ -161,7 +161,7 @@ jobs:
     name: Run end to end tests (GitHub.com to GHES v3.15 on Linux)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4.3.0
         with:
           node-version: 20.x
@@ -208,7 +208,7 @@ jobs:
     name: Run end to end tests (GitHub.com to GHES v3.16 on Linux)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4.3.0
         with:
           node-version: 20.x
@@ -255,7 +255,7 @@ jobs:
     name: Run end to end tests (GitHub.com to GHES v3.17 on Linux)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4.3.0
         with:
           node-version: 20.x
@@ -302,7 +302,7 @@ jobs:
     name: Run end to end tests (GitHub.com to GHES v3.14 on Linux)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4.3.0
         with:
           node-version: 20.x
@@ -350,7 +350,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Setup Node.js
@@ -401,7 +401,7 @@ jobs:
       ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Get the version
