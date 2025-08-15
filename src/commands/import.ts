@@ -1403,3 +1403,6 @@ command
   );
 
 export default command;
+
+// Export utility functions for testing
+export { isCustomField, correlateCustomFieldOptions, isProjectItemCustomFieldValue };
