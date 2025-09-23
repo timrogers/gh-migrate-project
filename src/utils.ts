@@ -61,7 +61,7 @@ const validateSingleScopePresent = (
   }
 };
 
-export const validateAtLeastOneScopePresent = (
+const validateAtLeastOneScopePresent = (
   scopes: Set<string>,
   presentScopes: Set<string>,
 ): void => {
