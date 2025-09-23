@@ -61,7 +61,7 @@ const validateSingleScopePresent = (
   }
 };
 
-const validateAtLeastOneScopePresent = (
+export const validateAtLeastOneScopePresent = (
   scopes: Set<string>,
   presentScopes: Set<string>,
 ): void => {
@@ -75,7 +75,7 @@ const validateAtLeastOneScopePresent = (
   }
 };
 
-const validateScopeIsPresent = (
+export const validateScopeIsPresent = (
   requiredScopeOrScopes: string | Set<string>,
   presentScopes: Set<string>,
 ): void => {
