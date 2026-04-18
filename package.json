@@ -10,6 +10,7 @@
     "lint-and-fix": "eslint . --fix",
     "dev": "npx tsx src/index.ts",
     "clean-up-organization-projects": "npx tsx script/clean-up-organization-projects.ts",
+    "test-import-idempotency": "npx tsx script/test-import-idempotency.ts",
     "configure-github-enterprise-server-instance": "npx tsx script/configure-github-enterprise-server-instance.ts"
   },
   "author": "Tim Rogers <me@timrogers.co.uk>",
