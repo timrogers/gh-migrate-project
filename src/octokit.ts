@@ -42,16 +42,13 @@ export const createOctokit = (
     }
   });
 
-  octokit.hook.after(
-    'request',
-    async (response: { status: number; data: unknown }) => {
-      logger.debug(
-        `Response: ${response.status} ${STATUS_CODES[response.status]} - ${JSON.stringify(
-          response.data,
-        )}`,
-      );
-    },
-  );
+  octokit.hook.after('request', async (response: { status: number; data: unknown }) => {
+    logger.debug(
+      `Response: ${response.status} ${STATUS_CODES[response.status]} - ${JSON.stringify(
+        response.data,
+      )}`,
+    );
+  });
 
   octokit.hook.error('request', async (error: Error) => {
     if (error instanceof RequestError) {
