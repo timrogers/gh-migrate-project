@@ -18,6 +18,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run lint
+      - run: npm run typecheck
   end_to_end_tests_macos:
     name: Run end to end tests (GitHub.com to GitHub.com on macOS)
     runs-on: macos-latest
@@ -157,6 +158,110 @@ jobs:
         with:
           name: windows-outputs
           path: output
+  end_to_end_test_import_idempotency:
+    name: Run end to end test for import idempotency (existing project with pre-added item)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4.3.0
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - run: npm ci
+      - name: Generate binaries for macOS, Linux and Windows
+        run: npm run package
+      - name: Rename Linux binary to conform to GitHub CLI extension rules
+        run: mv bin/migrate-project-linux-x64 bin/gh-migrate-project-linux-amd64
+      - name: Make Linux binary executable
+        run: chmod +x bin/gh-migrate-project-linux-amd64
+      - name: Export source project from GitHub.com
+        run: ./bin/gh-migrate-project-linux-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1026 --disable-telemetry
+        env:
+          EXPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
+      - name: Fill in repository mappings template
+        run: |
+          echo "source_repository,target_repository
+          gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
+      - name: Fill in assignee mappings template
+        run: |
+          echo "source_login,target_login
+          timrogers,ghe-admin" > completed-assignee-mappings.csv
+      - name: Create empty target project and pre-add an issue (simulating an auto-add workflow)
+        id: setup
+        run: |
+          npm run setup-import-idempotency-target -- \
+            --input-path project.json \
+            --repository-mappings-path completed-repository-mappings.csv \
+            --project-owner gh-migrate-project-sandbox \
+            --project-title "idempotency-test-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
+      - name: Import project into the existing target project (must succeed despite the duplicate item)
+        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --project-number ${{ steps.setup.outputs.project_number }} --disable-telemetry
+        env:
+          IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
+      - name: Delete temporary target project
+        if: always() && steps.setup.outputs.project_number != ''
+        run: |
+          npm run cleanup-project -- \
+            --project-owner gh-migrate-project-sandbox \
+            --project-number ${{ steps.setup.outputs.project_number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
+  smoke_test_arm64_macos:
+    name: Smoke test arm64 binary on macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4.3.0
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - run: npm ci
+      - name: Generate binaries for macOS, Linux and Windows
+        run: npm run package
+      - name: Rename macOS arm64 binary to conform to GitHub CLI extension rules
+        run: mv bin/migrate-project-macos-arm64 bin/gh-migrate-project-darwin-arm64
+      - name: Make macOS arm64 binary executable
+        run: chmod +x bin/gh-migrate-project-darwin-arm64
+      - name: Run --help on the macOS arm64 binary
+        run: ./bin/gh-migrate-project-darwin-arm64 --help
+  smoke_test_arm64_linux:
+    name: Smoke test arm64 binary on Linux
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4.3.0
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - run: npm ci
+      - name: Generate binaries for macOS, Linux and Windows
+        run: npm run package
+      - name: Rename Linux arm64 binary to conform to GitHub CLI extension rules
+        run: mv bin/migrate-project-linux-arm64 bin/gh-migrate-project-linux-arm64
+      - name: Make Linux arm64 binary executable
+        run: chmod +x bin/gh-migrate-project-linux-arm64
+      - name: Run --help on the Linux arm64 binary
+        run: ./bin/gh-migrate-project-linux-arm64 --help
+  smoke_test_arm64_windows:
+    name: Smoke test arm64 binary on Windows
+    runs-on: windows-11-arm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4.3.0
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - run: npm ci
+      - name: Generate binaries for macOS, Linux and Windows
+        run: npm run package
+      - name: Rename Windows arm64 binary to conform to GitHub CLI extension rules
+        run: mv bin/migrate-project-win-arm64.exe bin/gh-migrate-project-windows-arm64.exe
+      - name: Run --help on the Windows arm64 binary
+        run: bin/gh-migrate-project-windows-arm64.exe --help
   package:
     name: Package binaries
     runs-on: ubuntu-latest
@@ -227,6 +332,10 @@ jobs:
         'end_to_end_tests_windows',
         'end_to_end_tests_linux',
         'end_to_end_tests_macos',
+        'end_to_end_test_import_idempotency',
+        'smoke_test_arm64_macos',
+        'smoke_test_arm64_linux',
+        'smoke_test_arm64_windows',
       ]
     steps:
       - name: Checkout

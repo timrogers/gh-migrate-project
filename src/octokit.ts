@@ -28,7 +28,7 @@ export const createOctokit = (
     },
   });
 
-  octokit.hook.before('request', async (options) => {
+  octokit.hook.before('request', async (options: Record<string, unknown>) => {
     if (options.query) {
       logger.debug(
         `Request: ${options.method} ${options.baseUrl}${options.url} - ${options.query}`,
@@ -42,7 +42,7 @@ export const createOctokit = (
     }
   });
 
-  octokit.hook.after('request', async (response) => {
+  octokit.hook.after('request', async (response: { status: number; data: unknown }) => {
     logger.debug(
       `Response: ${response.status} ${STATUS_CODES[response.status]} - ${JSON.stringify(
         response.data,
@@ -50,7 +50,7 @@ export const createOctokit = (
     );
   });
 
-  octokit.hook.error('request', async (error) => {
+  octokit.hook.error('request', async (error: Error) => {
     if (error instanceof RequestError) {
       logger.debug(
         `Error: ${error.status} ${STATUS_CODES[error.status]}${
