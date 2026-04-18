@@ -362,32 +362,32 @@ jobs:
       contents: write
     steps:
       - name: Download Windows amd64 binary
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: package-windows-amd64
           path: bin
       - name: Download Windows arm64 binary
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: package-windows-arm64
           path: bin
       - name: Download macOS amd64 binary
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: package-macos-amd64
           path: bin
       - name: Download macOS arm64 binary
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: package-macos-arm64
           path: bin
       - name: Download Linux amd64 binary
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: package-linux-amd64
           path: bin
       - name: Download Linux arm64 binary
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: package-linux-arm64
           path: bin
