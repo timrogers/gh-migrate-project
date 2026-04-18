@@ -115,7 +115,7 @@ jobs:
           path: output
   end_to_end_tests_windows:
     name: Run end to end tests (GitHub.com to GitHub.com on Windows)
-    runs-on: windows-latest
+    runs-on: windows-11-arm
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4.3.0
