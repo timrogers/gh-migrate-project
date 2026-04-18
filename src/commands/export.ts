@@ -168,7 +168,7 @@ const getProjectItems = async ({
 
   const allProjectItems = response.node.items.nodes;
 
-  const validProjectItems = allProjectItems.filter((projectItem) => {
+  const validProjectItems = allProjectItems.filter((projectItem: ProjectItem) => {
     if (!projectItem.content) {
       logger.warn(
         `Skipping project item ${projectItem.id} because its linked issue or pull request could not be retrieved - your access token may lack the required permissions, or you may not have access to the issue or pull request.`,
@@ -503,7 +503,6 @@ command
       const project = await getProject({
         id: projectId,
         octokit,
-        gitHubEnterpriseServerVersion,
       });
       logger.info(`Successfully fetched project "${project.title}"`);
 
