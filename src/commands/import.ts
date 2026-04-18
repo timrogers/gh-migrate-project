@@ -1190,8 +1190,8 @@ command
 
       const title = projectTitle || sourceProject.title;
 
-      let targetProjectId: string | null = null;
-      let targetProjectUrl: string | null = null;
+      let targetProjectId: string;
+      let targetProjectUrl: string;
 
       if (projectNumber) {
         const result = await getGlobalIdAndUrlForProject({
