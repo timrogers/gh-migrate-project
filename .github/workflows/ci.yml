@@ -213,6 +213,8 @@ jobs:
   smoke_test_arm64_macos:
     name: Smoke test arm64 binary on macOS
     runs-on: macos-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4.3.0
@@ -231,6 +233,8 @@ jobs:
   smoke_test_arm64_linux:
     name: Smoke test arm64 binary on Linux
     runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4.3.0
@@ -249,6 +253,8 @@ jobs:
   smoke_test_arm64_windows:
     name: Smoke test arm64 binary on Windows
     runs-on: windows-11-arm
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4.3.0
