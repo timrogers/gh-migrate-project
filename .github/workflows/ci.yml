@@ -158,7 +158,7 @@ jobs:
           name: windows-outputs
           path: output
   end_to_end_test_import_idempotency:
-    name: Run end to end test for import idempotency
+    name: Run end to end test for import idempotency (existing project with pre-added item)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -169,8 +169,44 @@ jobs:
           node-version: 20.x
           cache: 'npm'
       - run: npm ci
-      - name: Run idempotency contract test
-        run: npm run test-import-idempotency
+      - name: Generate binaries for macOS, Linux and Windows
+        run: npm run package
+      - name: Rename Linux binary to conform to GitHub CLI extension rules
+        run: mv bin/migrate-project-linux bin/gh-migrate-project-linux-amd64
+      - name: Make Linux binary executable
+        run: chmod +x bin/gh-migrate-project-linux-amd64
+      - name: Export source project from GitHub.com
+        run: ./bin/gh-migrate-project-linux-amd64 export --project-owner gh-migrate-project-sandbox --project-number 1026 --disable-telemetry
+        env:
+          EXPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
+      - name: Fill in repository mappings template
+        run: |
+          echo "source_repository,target_repository
+          gh-migrate-project-sandbox/initial-repository,gh-migrate-project-sandbox/initial-repository" > completed-repository-mappings.csv
+      - name: Fill in assignee mappings template
+        run: |
+          echo "source_login,target_login
+          timrogers,ghe-admin" > completed-assignee-mappings.csv
+      - name: Create empty target project and pre-add an issue (simulating an auto-add workflow)
+        id: setup
+        run: |
+          npm run setup-import-idempotency-target -- \
+            --input-path project.json \
+            --repository-mappings-path completed-repository-mappings.csv \
+            --project-owner gh-migrate-project-sandbox \
+            --project-title "idempotency-test-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
+      - name: Import project into the existing target project (must succeed despite the duplicate item)
+        run: ./bin/gh-migrate-project-linux-amd64 import --input-path project.json --repository-mappings-path completed-repository-mappings.csv --assignee-mappings-path completed-assignee-mappings.csv --project-owner gh-migrate-project-sandbox --project-number ${{ steps.setup.outputs.project_number }} --disable-telemetry
+        env:
+          IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
+      - name: Delete temporary target project
+        if: always() && steps.setup.outputs.project_number != ''
+        run: |
+          npm run cleanup-project -- \
+            --project-owner gh-migrate-project-sandbox \
+            --project-number ${{ steps.setup.outputs.project_number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
   package:
