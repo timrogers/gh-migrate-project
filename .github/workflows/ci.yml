@@ -62,7 +62,7 @@ jobs:
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Upload outputs as artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: macos-outputs
           path: output
@@ -109,7 +109,7 @@ jobs:
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Upload outputs as artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: linux-outputs
           path: output
@@ -154,7 +154,7 @@ jobs:
         env:
           IMPORT_GITHUB_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
       - name: Upload outputs as artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-outputs
           path: output
@@ -298,32 +298,32 @@ jobs:
           mv bin/migrate-project-linux-x64 bin/gh-migrate-project-linux-amd64
           mv bin/migrate-project-linux-arm64 bin/gh-migrate-project-linux-arm64
       - name: Upload macOS amd64 binary as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: package-macos-amd64
           path: bin/gh-migrate-project-darwin-amd64
       - name: Upload macOS arm64 binary as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: package-macos-arm64
           path: bin/gh-migrate-project-darwin-arm64
       - name: Upload Linux amd64 binary as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: package-linux-amd64
           path: bin/gh-migrate-project-linux-amd64
       - name: Upload Linux arm64 binary as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: package-linux-arm64
           path: bin/gh-migrate-project-linux-arm64
       - name: Upload Windows amd64 binary as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: package-windows-amd64
           path: bin/gh-migrate-project-windows-amd64.exe
       - name: Upload Windows arm64 binary as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: package-windows-arm64
           path: bin/gh-migrate-project-windows-arm64.exe
