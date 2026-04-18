@@ -87,7 +87,6 @@ const readRepositoryMappings = (path: string): Map<string, string> => {
 };
 
 interface SourceItem {
-  type: string;
   content: { __typename: string; number: number; repository: { nameWithOwner: string } };
 }
 
@@ -95,11 +94,11 @@ const findFirstMappedIssue = (
   inputPath: string,
   repositoryMappings: Map<string, string>,
 ): { sourceRepository: string; targetRepository: string; number: number } => {
-  const project = JSON.parse(readFileSync(inputPath, 'utf8')) as {
-    items: { nodes: SourceItem[] };
+  const data = JSON.parse(readFileSync(inputPath, 'utf8')) as {
+    projectItems: SourceItem[];
   };
 
-  for (const item of project.items.nodes) {
+  for (const item of data.projectItems) {
     if (item.content?.__typename !== 'Issue') continue;
     const sourceRepository = item.content.repository?.nameWithOwner;
     const targetRepository = repositoryMappings.get(sourceRepository);
