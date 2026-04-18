@@ -2,7 +2,7 @@
  * Integration test for the idempotent handling of project items that
  * already exist in the target project (e.g. items added by the
  * `Auto-add sub-issues to project` workflow before the import gets to
- * them). See: https://github.com/timrogers/gh-migrate-project/issues
+ * them).
  *
  * This script verifies the GraphQL contract that `addItemToProject`
  * (in src/commands/import.ts) relies on:

@@ -160,6 +160,8 @@ jobs:
   end_to_end_test_import_idempotency:
     name: Run end to end test for import idempotency
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4.3.0
