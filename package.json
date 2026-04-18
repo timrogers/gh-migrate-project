@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit",
     "dev": "npx tsx src/index.ts",
     "clean-up-organization-projects": "npx tsx script/clean-up-organization-projects.ts",
+    "setup-import-idempotency-target": "npx tsx script/setup-import-idempotency-target.ts",
+    "cleanup-project": "npx tsx script/cleanup-project.ts",
     "configure-github-enterprise-server-instance": "npx tsx script/configure-github-enterprise-server-instance.ts"
   },
   "author": "Tim Rogers <me@timrogers.co.uk>",

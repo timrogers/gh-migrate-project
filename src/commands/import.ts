@@ -3,6 +3,7 @@ import { createReadStream, existsSync, readFileSync } from 'fs';
 import crypto from 'crypto';
 import * as readline from 'node:readline/promises';
 import { type Octokit } from 'octokit';
+import { GraphqlResponseError } from '@octokit/graphql';
 import { parse } from '@fast-csv/parse';
 import boxen from 'boxen';
 import semver from 'semver';
@@ -363,7 +364,7 @@ const archiveProjectItem = async ({
   );
 };
 
-const addItemToProject = async ({
+const getExistingProjectItemIdForContent = async ({
   octokit,
   projectId,
   contentId,
@@ -371,9 +372,59 @@ const addItemToProject = async ({
   octokit: Octokit;
   projectId: string;
   contentId: string;
-}): Promise<string> => {
+}): Promise<string | undefined> => {
   const response = (await octokit.graphql(
     `
+    query getProjectItemsForContent($contentId: ID!) {
+      node(id: $contentId) {
+        ... on Issue {
+          projectItems(first: 100, includeArchived: true) {
+            nodes {
+              id
+              project {
+                id
+              }
+            }
+          }
+        }
+        ... on PullRequest {
+          projectItems(first: 100, includeArchived: true) {
+            nodes {
+              id
+              project {
+                id
+              }
+            }
+          }
+        }
+      }
+    }
+  `,
+    { contentId },
+  )) as {
+    node: {
+      projectItems?: { nodes: Array<{ id: string; project: { id: string } }> };
+    } | null;
+  };
+
+  const nodes = response.node?.projectItems?.nodes ?? [];
+  return nodes.find((node) => node.project.id === projectId)?.id;
+};
+
+const addItemToProject = async ({
+  octokit,
+  projectId,
+  contentId,
+  logger,
+}: {
+  octokit: Octokit;
+  projectId: string;
+  contentId: string;
+  logger: Logger;
+}): Promise<string> => {
+  try {
+    const response = (await octokit.graphql(
+      `
     mutation createProjectItem($projectId: ID!, $contentId: ID!) {
       addProjectV2ItemById(input: { projectId: $projectId, contentId: $contentId }) {
         item {
@@ -382,10 +433,31 @@ const addItemToProject = async ({
       }
     }
   `,
-    { projectId, contentId },
-  )) as { addProjectV2ItemById: { item: { id: string } } };
+      { projectId, contentId },
+    )) as { addProjectV2ItemById: { item: { id: string } } };
 
-  return response.addProjectV2ItemById.item.id;
+    return response.addProjectV2ItemById.item.id;
+  } catch (e) {
+    if (
+      e instanceof GraphqlResponseError &&
+      e.message.includes('Content already exists in this project')
+    ) {
+      const existingProjectItemId = await getExistingProjectItemIdForContent({
+        octokit,
+        projectId,
+        contentId,
+      });
+
+      if (existingProjectItemId) {
+        logger.warn(
+          `Content ${contentId} already exists in project ${projectId} (existing project item ${existingProjectItemId}). Reusing the existing project item. This can happen when a workflow (e.g. "Auto-add sub-issues to project") adds the content to the project before the import gets to it.`,
+        );
+        return existingProjectItemId;
+      }
+    }
+
+    throw e;
+  }
 };
 
 const updateProjectItemFieldValue = async ({
@@ -750,6 +822,7 @@ const createProjectItemReferencingIssueOrPullRequest = async ({
     octokit,
     projectId: targetProjectId,
     contentId,
+    logger,
   });
 
   return createdProjectItemId;
