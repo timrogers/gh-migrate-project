@@ -263,7 +263,10 @@ const getIssueOrPullRequestByRepositoryAndNumber = async ({
 
     return response.repository.issueOrPullRequest;
   } catch (e) {
-    if (e.message.includes('Could not resolve to an issue or pull request')) {
+    if (
+      e instanceof Error &&
+      e.message.includes('Could not resolve to an issue or pull request')
+    ) {
       return null;
     } else {
       throw e;
@@ -876,7 +879,7 @@ const createProjectItemReferencingDraftIssue = async ({
   );
   const assigneeIds = sourceAssigneeLogins
     .map((login) => assigneeGlobalIdMappings.get(login))
-    .filter((x) => x);
+    .filter((x): x is string => Boolean(x));
 
   const body = `**Created by \`@${creatorLogin}\` on ${createdAt}**\n\n${originalBody}`;
 
@@ -903,7 +906,10 @@ const createProjectItem = async (opts: {
     case 'PullRequest':
       return await createProjectItemReferencingIssueOrPullRequest(opts);
     case 'DraftIssue':
-      return await createProjectItemReferencingDraftIssue(opts);
+      return await createProjectItemReferencingDraftIssue({
+        ...opts,
+        sourceProjectItem: opts.sourceProjectItem as DraftIssueProjectItem,
+      });
     default:
       throw new Error('Unknown content type');
   }
