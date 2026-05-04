@@ -19,6 +19,17 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
+  integration_tests:
+    name: Run integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6.3.0
+        with:
+          node-version: 24.x
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test:integration
   end_to_end_tests_macos:
     name: Run end to end tests (GitHub.com to GitHub.com on macOS)
     runs-on: macos-latest
@@ -335,6 +346,7 @@ jobs:
       [
         'package',
         'test_and_lint',
+        'integration_tests',
         'end_to_end_tests_windows',
         'end_to_end_tests_linux',
         'end_to_end_tests_macos',

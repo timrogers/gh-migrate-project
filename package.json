@@ -13,7 +13,9 @@
     "clean-up-organization-projects": "npx tsx script/clean-up-organization-projects.ts",
     "setup-import-idempotency-target": "npx tsx script/setup-import-idempotency-target.ts",
     "cleanup-project": "npx tsx script/cleanup-project.ts",
-    "configure-github-enterprise-server-instance": "npx tsx script/configure-github-enterprise-server-instance.ts"
+    "configure-github-enterprise-server-instance": "npx tsx script/configure-github-enterprise-server-instance.ts",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' npx jest",
+    "test:integration": "NODE_OPTIONS='--experimental-vm-modules' npx jest --testPathPatterns=tests/integration"
   },
   "author": "Tim Rogers <me@timrogers.co.uk>",
   "license": "MIT",
@@ -33,6 +35,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^10.0.1",
+    "@types/jest": "^30.0.0",
     "@types/libsodium-wrappers": "^0.7.14",
     "@types/node": "^22.13.5",
     "@types/semver": "^7.5.8",
@@ -44,8 +47,10 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "globals": "^16.0.0",
+    "jest": "^30.3.0",
     "libsodium-wrappers": "^0.7.15",
     "prettier": "^3.4.2",
+    "ts-jest": "^29.4.9",
     "tsx": "^4.19.3",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.27.0"
