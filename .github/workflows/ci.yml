@@ -30,8 +30,6 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run test:integration
-        env:
-          GH_MIGRATE_PROJECT_SANDBOX_TOKEN: ${{ secrets.GH_MIGRATE_PROJECT_SANDBOX_TOKEN }}
   end_to_end_tests_macos:
     name: Run end to end tests (GitHub.com to GitHub.com on macOS)
     runs-on: macos-latest

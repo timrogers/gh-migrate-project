@@ -1,6 +1,7 @@
 /**
  * A lightweight mock HTTP server that mimics the GitHub API.
- * It handles REST and GraphQL requests, routing them to appropriate fixture responses.
+ * It handles REST and GraphQL requests, routing them to fixture responses
+ * recorded from the real API.
  */
 
 import * as http from 'http';
@@ -8,8 +9,8 @@ import {
   META_RESPONSE,
   META_HEADERS,
   RATE_LIMIT_RESPONSE,
-  ORGANIZATION_PROJECT_ID_RESPONSE,
-  PROJECT_RESPONSE,
+  PROJECT_ID_RESPONSE,
+  PROJECT_DETAIL_RESPONSE,
   PROJECT_ITEMS_RESPONSE,
   ORGANIZATION_ID_RESPONSE,
   CREATE_PROJECT_RESPONSE,
@@ -27,29 +28,19 @@ import {
   UPDATE_DRAFT_ISSUE_RESPONSE,
 } from '../fixtures/graphql-responses.js';
 
-export interface MockServerOptions {
-  /** Override the default GraphQL handler */
-  graphqlHandler?: (query: string, variables: Record<string, unknown>) => unknown;
-}
-
-interface RequestLog {
+export interface RequestLog {
   method: string;
   url: string;
-  body?: unknown;
+  body?: Record<string, unknown>;
 }
 
 export class MockGitHubServer {
   private server: http.Server;
   private port = 0;
   private requestLog: RequestLog[] = [];
-  private graphqlHandler?: (
-    query: string,
-    variables: Record<string, unknown>,
-  ) => unknown;
   private importItemCounter = 0;
 
-  constructor(options: MockServerOptions = {}) {
-    this.graphqlHandler = options.graphqlHandler;
+  constructor() {
     this.server = http.createServer((req, res) => this.handleRequest(req, res));
   }
 
@@ -66,8 +57,8 @@ export class MockGitHubServer {
   }
 
   async stop(): Promise<void> {
-    return new Promise((resolve) => {
-      this.server.close(() => resolve());
+    return new Promise((resolve, reject) => {
+      this.server.close((err) => (err ? reject(err) : resolve()));
     });
   }
 
@@ -76,13 +67,15 @@ export class MockGitHubServer {
   }
 
   getRequestLog(): RequestLog[] {
-    return this.requestLog;
+    return [...this.requestLog];
   }
 
   getGraphqlQueries(): Array<{ query: string; variables: Record<string, unknown> }> {
     return this.requestLog
       .filter((r) => r.url === '/graphql' && r.body)
-      .map((r) => r.body as { query: string; variables: Record<string, unknown> });
+      .map(
+        (r) => r.body as unknown as { query: string; variables: Record<string, unknown> },
+      );
   }
 
   resetLog(): void {
@@ -92,7 +85,7 @@ export class MockGitHubServer {
 
   private handleRequest(req: http.IncomingMessage, res: http.ServerResponse): void {
     let body = '';
-    req.on('data', (chunk) => {
+    req.on('data', (chunk: Buffer) => {
       body += chunk.toString();
     });
     req.on('end', () => {
@@ -103,17 +96,23 @@ export class MockGitHubServer {
         body: parsedBody,
       });
 
+      // REST: /meta
       if (req.url === '/meta' || req.url === '/api/v3/meta') {
+        // Include installed_version so the CLI treats this as a modern GHES instance
+        // that supports automatic status field migration (>= 3.17.0)
+        const metaWithVersion = { ...META_RESPONSE, installed_version: '3.17.0' };
         res.writeHead(200, { 'content-type': 'application/json', ...META_HEADERS });
-        res.end(JSON.stringify(META_RESPONSE));
+        res.end(JSON.stringify(metaWithVersion));
         return;
       }
 
+      // GraphQL
       if (req.url === '/graphql' || req.url === '/api/graphql') {
         this.handleGraphql(parsedBody, res);
         return;
       }
 
+      // Fallback 404
       res.writeHead(404, { 'content-type': 'application/json' });
       res.end(JSON.stringify({ message: 'Not Found' }));
     });
@@ -126,66 +125,89 @@ export class MockGitHubServer {
     const query = body.query || '';
     const variables = body.variables || {};
 
-    // Use custom handler if provided
-    if (this.graphqlHandler) {
-      const response = this.graphqlHandler(query, variables);
-      if (response) {
-        res.writeHead(200, { 'content-type': 'application/json' });
-        res.end(JSON.stringify(response));
-        return;
-      }
-    }
-
     const response = this.routeGraphqlQuery(query, variables);
     res.writeHead(200, { 'content-type': 'application/json' });
     res.end(JSON.stringify(response));
   }
 
-  private routeGraphqlQuery(
-    query: string,
-    variables: Record<string, unknown>,
-  ): unknown {
-    // Rate limit query
+  private routeGraphqlQuery(query: string, variables: Record<string, unknown>): unknown {
+    // Rate limit
     if (query.includes('rateLimit')) {
       return RATE_LIMIT_RESPONSE;
     }
 
-    // Get project ID for organization
+    // Get project ID for organization (export flow)
     if (
       query.includes('organization') &&
       query.includes('projectV2') &&
-      query.includes('$number')
+      query.includes('$number') &&
+      !query.includes('mutation')
     ) {
-      return ORGANIZATION_PROJECT_ID_RESPONSE;
+      return PROJECT_ID_RESPONSE;
     }
 
-    // Get project details
-    if (query.includes('getProject') || (query.includes('node') && query.includes('fields') && query.includes('views'))) {
-      return PROJECT_RESPONSE;
+    // Get project details (fields, views, repos)
+    if (
+      query.includes('node') &&
+      query.includes('fields') &&
+      query.includes('views') &&
+      query.includes('repositories')
+    ) {
+      return PROJECT_DETAIL_RESPONSE;
     }
 
     // Get project items (paginated)
-    if (query.includes('getProjectItems') || (query.includes('items') && query.includes('pageInfo'))) {
+    if (query.includes('items') && query.includes('pageInfo')) {
       return PROJECT_ITEMS_RESPONSE;
     }
 
-    // Get organization ID
-    if (query.includes('getOrganizationGlobalId')) {
+    // --- Import-related queries ---
+
+    // Get organization global ID
+    if (
+      query.includes('organization') &&
+      query.includes('id') &&
+      !query.includes('projectV2')
+    ) {
       return ORGANIZATION_ID_RESPONSE;
     }
 
-    // Get GitHub product info
-    if (query.includes('enterprise')) {
-      return { data: { enterprise: null } };
+    // Create project field (must be checked BEFORE createProjectV2 since the query contains that substring)
+    if (query.includes('createProjectV2Field')) {
+      const name = (variables.name as string) || 'Unknown';
+      const dataType = variables.dataType as string;
+      const fieldId = `PVTF_new_${name.toLowerCase().replace(/\s/g, '_')}`;
+      const options =
+        dataType === 'SINGLE_SELECT' && variables.singleSelectOptions
+          ? (variables.singleSelectOptions as Array<{ name: string }>).map((opt, i) => ({
+              id: `new_opt_${i}`,
+              name: opt.name,
+            }))
+          : [];
+      return CREATE_FIELD_RESPONSE(fieldId, name, options);
     }
 
-    // Create project
-    if (query.includes('createProjectV2') && query.includes('mutation')) {
+    // Create project (createProjectV2 but NOT createProjectV2Field, not linkProjectV2, not addProjectV2, not updateProjectV2)
+    if (query.includes('createProjectV2(') && query.includes('mutation')) {
       return CREATE_PROJECT_RESPONSE;
     }
 
+    // Get project status field
+    if (query.includes('field(name: "Status")')) {
+      return PROJECT_STATUS_FIELD_RESPONSE;
+    }
+
+    // Update project field (status) - must be before general updateProjectV2ItemFieldValue
+    if (query.includes('updateProjectV2Field') && !query.includes('ItemFieldValue')) {
+      return UPDATE_STATUS_FIELD_RESPONSE;
+    }
+
     // Get repository ID
-    if (query.includes('getGlobalIdForRepository')) {
+    if (
+      query.includes('repository') &&
+      query.includes('id') &&
+      !query.includes('issueOrPullRequest')
+    ) {
       return REPOSITORY_ID_RESPONSE;
     }
 
@@ -194,7 +216,7 @@ export class MockGitHubServer {
       return LINK_REPOSITORY_RESPONSE;
     }
 
-    // Get issue/PR by repo and number
+    // Get issue or PR by number
     if (query.includes('issueOrPullRequest')) {
       const number = variables.number as number;
       return ISSUE_OR_PR_RESPONSE(`I_issue_${number}`, `Issue #${number}`);
@@ -217,40 +239,13 @@ export class MockGitHubServer {
       return UPDATE_FIELD_VALUE_RESPONSE;
     }
 
-    // Create project field
-    if (query.includes('createProjectV2Field')) {
-      const name = variables.name as string;
-      const dataType = variables.dataType as string;
-      const fieldId = `PVTF_new_${name.toLowerCase().replace(/\s/g, '_')}`;
-      const options =
-        dataType === 'SINGLE_SELECT' && variables.singleSelectOptions
-          ? (
-              variables.singleSelectOptions as Array<{ name: string }>
-            ).map((opt, i) => ({
-              id: `new_opt_${i}`,
-              name: opt.name,
-            }))
-          : [];
-      return CREATE_FIELD_RESPONSE(fieldId, name, options);
-    }
-
-    // Get project status field
-    if (query.includes('field(name: "Status")')) {
-      return PROJECT_STATUS_FIELD_RESPONSE;
-    }
-
-    // Update project field (status)
-    if (query.includes('updateProjectV2Field')) {
-      return UPDATE_STATUS_FIELD_RESPONSE;
-    }
-
     // Archive project item
     if (query.includes('archiveProjectV2Item')) {
       return ARCHIVE_ITEM_RESPONSE;
     }
 
     // Get user ID
-    if (query.includes('getGlobalIdForUser') || (query.includes('user') && query.includes('id') && !query.includes('projectV2'))) {
+    if (query.includes('user') && query.includes('id') && !query.includes('projectV2')) {
       const login = (variables.login as string) || 'unknown';
       return USER_ID_RESPONSE(login);
     }
@@ -258,6 +253,11 @@ export class MockGitHubServer {
     // Update draft issue (assignees)
     if (query.includes('updateProjectV2DraftIssue')) {
       return UPDATE_DRAFT_ISSUE_RESPONSE;
+    }
+
+    // GitHub product info (enterprise check)
+    if (query.includes('enterprise')) {
+      return { data: { enterprise: null } };
     }
 
     // Fallback

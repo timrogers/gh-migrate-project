@@ -15,7 +15,7 @@
     "cleanup-project": "npx tsx script/cleanup-project.ts",
     "configure-github-enterprise-server-instance": "npx tsx script/configure-github-enterprise-server-instance.ts",
     "test": "NODE_OPTIONS='--experimental-vm-modules' npx jest",
-    "test:integration": "NODE_OPTIONS='--experimental-vm-modules' npx jest --testPathPattern=tests/integration"
+    "test:integration": "NODE_OPTIONS='--experimental-vm-modules' npx jest --testPathPatterns=tests/integration"
   },
   "author": "Tim Rogers <me@timrogers.co.uk>",
   "license": "MIT",

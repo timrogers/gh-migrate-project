@@ -1,337 +1,49 @@
 /**
- * Fixtures for GraphQL API responses used by the mock server.
- * These represent the responses GitHub's API would return for each query the tool makes.
+ * Fixture data recorded from real GitHub API responses.
+ * Source: gh-migrate-project-sandbox, project #1026
+ * Recorded: 2026-05-04
+ *
+ * These fixtures are used by the mock server to replay realistic API responses
+ * without needing network access or a token.
  */
 
-export const META_RESPONSE = {
-  verifiable_password_authentication: true,
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+const rawFixtures = JSON.parse(
+  readFileSync(join(__dirname, 'recorded-api-responses.json'), 'utf-8'),
+);
+
+// The OAuth scopes header returned by the /meta endpoint
+export const META_HEADERS: Record<string, string> = {
+  'x-oauth-scopes': 'repo, project, write:org',
 };
 
-export const META_HEADERS = {
-  'x-oauth-scopes': 'repo, project',
-};
+// The /meta endpoint response body
+export const META_RESPONSE = rawFixtures.meta.body;
 
-export const RATE_LIMIT_RESPONSE = {
-  data: {
-    rateLimit: {
-      limit: 5000,
-      remaining: 4999,
-      resetAt: '2099-01-01T00:00:00Z',
-    },
-  },
-};
+// GraphQL: rate limit query
+export const RATE_LIMIT_RESPONSE = rawFixtures.rateLimit;
 
-export const ORGANIZATION_PROJECT_ID_RESPONSE = {
-  data: {
-    organization: {
-      projectV2: {
-        id: 'PVT_kwHOTestOrg123',
-        url: 'https://github.com/orgs/gh-migrate-project-sandbox/projects/1026',
-      },
-    },
-  },
-};
+// GraphQL: get project ID by org and number
+export const PROJECT_ID_RESPONSE = rawFixtures.projectId;
 
-export const USER_PROJECT_ID_RESPONSE = {
-  data: {
-    user: {
-      projectV2: {
-        id: 'PVT_kwHOTestUser123',
-        url: 'https://github.com/users/test-user/projects/1',
-      },
-    },
-  },
-};
+// GraphQL: get project details (fields, views, repos)
+export const PROJECT_DETAIL_RESPONSE = rawFixtures.project;
 
-export const PROJECT_RESPONSE = {
-  data: {
-    node: {
-      closed: false,
-      public: true,
-      shortDescription: 'A test project for integration testing',
-      title: 'Integration Test Project',
-      fields: {
-        nodes: [
-          {
-            id: 'PVTF_field_title_001',
-            name: 'Title',
-            dataType: 'TITLE',
-          },
-          {
-            id: 'PVTF_field_status_001',
-            name: 'Status',
-            dataType: 'SINGLE_SELECT',
-            __typename: 'ProjectV2SingleSelectField',
-            options: [
-              { id: 'opt_todo', name: 'Todo', description: 'Items to do', color: 'GREEN' },
-              {
-                id: 'opt_in_progress',
-                name: 'In Progress',
-                description: 'Items in progress',
-                color: 'YELLOW',
-              },
-              {
-                id: 'opt_done',
-                name: 'Done',
-                description: 'Completed items',
-                color: 'PURPLE',
-              },
-            ],
-          },
-          {
-            id: 'PVTF_field_priority_001',
-            name: 'Priority',
-            dataType: 'SINGLE_SELECT',
-            __typename: 'ProjectV2SingleSelectField',
-            options: [
-              { id: 'opt_high', name: 'High', color: 'RED' },
-              { id: 'opt_medium', name: 'Medium', color: 'ORANGE' },
-              { id: 'opt_low', name: 'Low', color: 'BLUE' },
-            ],
-          },
-          {
-            id: 'PVTF_field_estimate_001',
-            name: 'Estimate',
-            dataType: 'NUMBER',
-            __typename: 'ProjectV2Field',
-          },
-          {
-            id: 'PVTF_field_due_date_001',
-            name: 'Due Date',
-            dataType: 'DATE',
-            __typename: 'ProjectV2Field',
-          },
-          {
-            id: 'PVTF_field_notes_001',
-            name: 'Notes',
-            dataType: 'TEXT',
-            __typename: 'ProjectV2Field',
-          },
-          {
-            id: 'PVTF_field_iteration_001',
-            name: 'Sprint',
-            dataType: 'ITERATION',
-            __typename: 'ProjectV2IterationField',
-            configuration: {
-              iterations: [
-                { startDate: '2024-01-01', id: 'iter_1' },
-                { startDate: '2024-01-15', id: 'iter_2' },
-              ],
-            },
-          },
-        ],
-        totalCount: 7,
-      },
-      repositories: {
-        nodes: [{ nameWithOwner: 'gh-migrate-project-sandbox/initial-repository' }],
-        totalCount: 1,
-      },
-      views: {
-        nodes: [
-          {
-            filter: null,
-            layout: 'TABLE_LAYOUT',
-            name: 'All Items',
-            number: 1,
-            fields: {
-              nodes: [{ id: 'PVTF_field_title_001' }, { id: 'PVTF_field_status_001' }],
-              totalCount: 2,
-            },
-            groupByFields: { nodes: [], totalCount: 0 },
-            sortByFields: {
-              nodes: [{ direction: 'ASC', field: { id: 'PVTF_field_priority_001' } }],
-              totalCount: 1,
-            },
-            verticalGroupByFields: { nodes: [], totalCount: 0 },
-            visibleFields: {
-              nodes: [
-                { id: 'PVTF_field_title_001' },
-                { id: 'PVTF_field_status_001' },
-                { id: 'PVTF_field_priority_001' },
-              ],
-              totalCount: 3,
-            },
-          },
-          {
-            filter: 'status:"In Progress"',
-            layout: 'BOARD_LAYOUT',
-            name: 'Board View',
-            number: 2,
-            fields: {
-              nodes: [{ id: 'PVTF_field_title_001' }, { id: 'PVTF_field_status_001' }],
-              totalCount: 2,
-            },
-            groupByFields: { nodes: [{ id: 'PVTF_field_status_001' }], totalCount: 1 },
-            sortByFields: { nodes: [], totalCount: 0 },
-            verticalGroupByFields: { nodes: [], totalCount: 0 },
-            visibleFields: {
-              nodes: [{ id: 'PVTF_field_title_001' }, { id: 'PVTF_field_status_001' }],
-              totalCount: 2,
-            },
-          },
-        ],
-        totalCount: 2,
-      },
-    },
-  },
-};
+// GraphQL: get project items (content, field values)
+export const PROJECT_ITEMS_RESPONSE = rawFixtures.items;
 
-export const PROJECT_ITEMS_RESPONSE = {
-  data: {
-    node: {
-      items: {
-        nodes: [
-          {
-            content: {
-              __typename: 'Issue',
-              title: 'First issue for testing',
-              number: 1,
-              repository: { nameWithOwner: 'gh-migrate-project-sandbox/initial-repository' },
-            },
-            fieldValues: {
-              nodes: [
-                {
-                  __typename: 'ProjectV2ItemFieldSingleSelectValue',
-                  field: { id: 'PVTF_field_status_001', name: 'Status' },
-                  optionId: 'opt_in_progress',
-                },
-                {
-                  __typename: 'ProjectV2ItemFieldSingleSelectValue',
-                  field: { id: 'PVTF_field_priority_001', name: 'Priority' },
-                  optionId: 'opt_high',
-                },
-                {
-                  __typename: 'ProjectV2ItemFieldNumberValue',
-                  field: { id: 'PVTF_field_estimate_001', name: 'Estimate' },
-                  number: 5,
-                },
-                {
-                  __typename: 'ProjectV2ItemFieldDateValue',
-                  field: { id: 'PVTF_field_due_date_001', name: 'Due Date' },
-                  date: '2024-03-01',
-                },
-              ],
-              totalCount: 4,
-            },
-            isArchived: false,
-            type: 'ISSUE',
-            id: 'PVTI_item_001',
-          },
-          {
-            content: {
-              __typename: 'Issue',
-              title: 'Second issue with notes',
-              number: 2,
-              repository: { nameWithOwner: 'gh-migrate-project-sandbox/initial-repository' },
-            },
-            fieldValues: {
-              nodes: [
-                {
-                  __typename: 'ProjectV2ItemFieldSingleSelectValue',
-                  field: { id: 'PVTF_field_status_001', name: 'Status' },
-                  optionId: 'opt_todo',
-                },
-                {
-                  __typename: 'ProjectV2ItemFieldTextValue',
-                  field: { id: 'PVTF_field_notes_001', name: 'Notes' },
-                  text: 'Some important notes',
-                },
-              ],
-              totalCount: 2,
-            },
-            isArchived: false,
-            type: 'ISSUE',
-            id: 'PVTI_item_002',
-          },
-          {
-            content: {
-              __typename: 'PullRequest',
-              title: 'Fix the bug',
-              number: 3,
-              repository: { nameWithOwner: 'gh-migrate-project-sandbox/initial-repository' },
-            },
-            fieldValues: {
-              nodes: [
-                {
-                  __typename: 'ProjectV2ItemFieldSingleSelectValue',
-                  field: { id: 'PVTF_field_status_001', name: 'Status' },
-                  optionId: 'opt_done',
-                },
-              ],
-              totalCount: 1,
-            },
-            isArchived: false,
-            type: 'PULL_REQUEST',
-            id: 'PVTI_item_003',
-          },
-          {
-            content: {
-              __typename: 'DraftIssue',
-              title: 'Draft: Plan the migration',
-              body: 'We need to plan the migration carefully.',
-              createdAt: '2024-01-15T10:00:00Z',
-              creator: { login: 'timrogers' },
-              assignees: { nodes: [{ login: 'timrogers' }], totalCount: 1 },
-            },
-            fieldValues: {
-              nodes: [
-                {
-                  __typename: 'ProjectV2ItemFieldSingleSelectValue',
-                  field: { id: 'PVTF_field_status_001', name: 'Status' },
-                  optionId: 'opt_todo',
-                },
-                {
-                  __typename: 'ProjectV2ItemFieldIterationValue',
-                  field: { id: 'PVTF_field_iteration_001', name: 'Sprint' },
-                  duration: 14,
-                  iterationId: 'iter_1',
-                  startDate: '2024-01-01',
-                  title: 'Sprint 1',
-                  titleHTML: 'Sprint 1',
-                },
-              ],
-              totalCount: 2,
-            },
-            isArchived: false,
-            type: 'DRAFT_ISSUE',
-            id: 'PVTI_item_004',
-          },
-          {
-            content: {
-              __typename: 'Issue',
-              title: 'Archived issue',
-              number: 5,
-              repository: { nameWithOwner: 'gh-migrate-project-sandbox/initial-repository' },
-            },
-            fieldValues: {
-              nodes: [
-                {
-                  __typename: 'ProjectV2ItemFieldSingleSelectValue',
-                  field: { id: 'PVTF_field_status_001', name: 'Status' },
-                  optionId: 'opt_done',
-                },
-              ],
-              totalCount: 1,
-            },
-            isArchived: true,
-            type: 'ISSUE',
-            id: 'PVTI_item_005',
-          },
-        ],
-        pageInfo: {
-          hasNextPage: false,
-          endCursor: 'cursor_end',
-        },
-      },
-    },
-  },
-};
+// The actual project global ID from fixtures
+export const RECORDED_PROJECT_ID: string =
+  rawFixtures.projectId.data.organization.projectV2.id;
 
-// Import-related responses
+// --- Import-related mock responses ---
+
 export const ORGANIZATION_ID_RESPONSE = {
   data: {
     organization: {
-      id: 'O_kwHOTestOrg',
+      id: 'O_kwDOCQuCac',
     },
   },
 };
@@ -340,23 +52,17 @@ export const CREATE_PROJECT_RESPONSE = {
   data: {
     createProjectV2: {
       projectV2: {
-        id: 'PVT_kwHONewProject',
+        id: 'PVT_kwDONewProject',
         url: 'https://github.com/orgs/gh-migrate-project-sandbox/projects/9999',
       },
     },
   },
 };
 
-export const GITHUB_PRODUCT_RESPONSE = {
-  data: {
-    enterprise: null,
-  },
-};
-
 export const REPOSITORY_ID_RESPONSE = {
   data: {
     repository: {
-      id: 'R_kgRepo001',
+      id: 'R_kgDORepo001',
     },
   },
 };
@@ -364,7 +70,7 @@ export const REPOSITORY_ID_RESPONSE = {
 export const LINK_REPOSITORY_RESPONSE = {
   data: {
     linkProjectV2ToRepository: {
-      repository: { id: 'R_kgRepo001' },
+      repository: { id: 'R_kgDORepo001' },
     },
   },
 };
@@ -417,7 +123,7 @@ export const PROJECT_STATUS_FIELD_RESPONSE = {
   data: {
     node: {
       field: {
-        id: 'PVTF_new_status_001',
+        id: 'PVTSSF_new_status',
         options: [
           { id: 'new_opt_todo', name: 'Todo' },
           { id: 'new_opt_in_progress', name: 'In Progress' },
@@ -432,7 +138,7 @@ export const UPDATE_STATUS_FIELD_RESPONSE = {
   data: {
     updateProjectV2Field: {
       projectV2Field: {
-        id: 'PVTF_new_status_001',
+        id: 'PVTSSF_new_status',
         name: 'Status',
         options: [
           { id: 'new_opt_todo', name: 'Todo' },
