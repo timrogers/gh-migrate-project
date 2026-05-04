@@ -12,9 +12,11 @@
 
 import { spawn } from 'child_process';
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 import { MockGitHubServer } from './mock-server.js';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = join(__dirname, '..', '..');
 const TSX_BIN = join(ROOT_DIR, 'node_modules', '.bin', 'tsx');
 const CLI_ENTRY = join(ROOT_DIR, 'src', 'index.ts');
