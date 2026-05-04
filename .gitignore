@@ -3,3 +3,4 @@ node_modules
 project.json
 bin
 migrate-project.cjs
+.test-output
